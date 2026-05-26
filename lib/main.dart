@@ -5,7 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart'
     show rootBundle, HapticFeedback, SystemSound, SystemSoundType;
 import 'package:shared_preferences/shared_preferences.dart';
-
+import 'package:audioplayers/audioplayers.dart';
 import 'package:material_symbols_icons/symbols.dart';
 import 'package:material_symbols_icons/symbols_map.dart';
 
@@ -78,7 +78,7 @@ enum SortMode {
 String sortLabel(SortMode mode) {
   switch (mode) {
     case SortMode.az:
-      return 'A–Z';
+      return 'A-Z';
     case SortMode.progressDesc:
       return 'Almost complete';
     case SortMode.remainingDesc:
@@ -173,13 +173,49 @@ class CategoryScreen extends StatefulWidget {
 
 class _CategoryScreenState extends State<CategoryScreen> {
   static const prefsKey = 'found_map';
-  static const csvPath = 'assets/Car Trip List App V0.10.csv';
+  static const csvPath = 'assets/Car Trip List App Latest Version.csv';
 
   List<TripItem> items = [];
   Map<String, bool> foundById = {};
+  final AudioPlayer _sfxPlayer = AudioPlayer();
+  bool _hapticsEnabled = true;
+  bool _soundEnabled = true;
+  
+  Map<String, bool>? _previousFoundById;
+  Set<String>? _previousCompletedCategoriesShown;
 
   List<GroupStat> categoryStats = [];
+
   int totalScore = 0;
+    final List<String> ranks = [
+    'Noob',
+    'Novice',
+    'Apprentice',
+    'Rookie',
+    'Graduate',
+    'Master',
+    'Heroic',
+    'Legendary',
+    'Mythical',
+    'God-Like',
+  ];
+
+  Color _rankColor(int idx) {
+    const colors = <Color>[
+      Color(0xFF9E9E9E), // Noob - grey
+      Color(0xFF64B5F6), // Novice - blue
+      Color(0xFF81C784), // Apprentice - green
+      Color(0xFFFFF176), // Rookie - yellow
+      Color(0xFFFFB74D), // Graduate - orange
+      Color(0xFFE57373), // Master - red
+      Color(0xFFBA68C8), // Heroic - purple
+      Color(0xFF4DD0E1), // Legendary - cyan
+      Color(0xFF9575CD), // Mythical - deep purple
+      Color(0xFFFFD54F), // God-Like - gold
+    ];
+    return colors[idx.clamp(0, colors.length - 1)];
+  }
+    
   int maxScore = 0;
 
   bool loading = true;
@@ -188,12 +224,26 @@ class _CategoryScreenState extends State<CategoryScreen> {
   SortMode sortMode = SortMode.az;
 
   // prevent repeating category-complete dialog
-  final Set<String> _completedCategoriesShown = {};
+  Set<String> _completedCategoriesShown = {};
+  Set<String> _completedSubcategoriesShownGlobal = {};
+  Set<String>? _previousCompletedSubcategoriesShownGlobal;
+
+  bool _gameCompletedShown = false;
+  int _lastRankIndex = -1;
+  bool _categoryDialogActive = false;
+  int? _pendingRankIndex;
 
   @override
   void initState() {
     super.initState();
+
     _loadAll();
+  }
+  
+  @override
+  void dispose() {
+    _sfxPlayer.dispose();
+    super.dispose();
   }
 
   Future<void> _loadAll() async {
@@ -250,6 +300,8 @@ class _CategoryScreenState extends State<CategoryScreen> {
       }
 
       final prefs = await SharedPreferences.getInstance();
+      _hapticsEnabled = prefs.getBool('haptics_enabled') ?? true;
+      _soundEnabled = prefs.getBool('sound_enabled') ?? true;
       final saved = prefs.getString(prefsKey);
       if (saved != null && saved.trim().isNotEmpty) {
         final map = jsonDecode(saved) as Map<String, dynamic>;
@@ -275,6 +327,33 @@ class _CategoryScreenState extends State<CategoryScreen> {
         loading = false;
       });
     }
+  }
+  
+  double _getTargetPercent() {
+    return winningThresholdPercent(DateTime.now());
+  }
+
+  String _getDayName() {
+    const days = ['Mon.', 'Tue.', 'Wed.', 'Thu.', 'Fri.', 'Sat.', 'Sun.'];
+    return days[DateTime.now().weekday - 1];
+  }
+
+  double _getProgressPercent() {
+    if (maxScore == 0) return 0;
+    return (totalScore / maxScore) * 100;
+  }
+
+  int _getRankIndex() {
+    final progress = _getProgressPercent();
+    final target = _getTargetPercent();
+
+    final stepSize = target / 10;
+
+    int index = (progress / stepSize).floor();
+
+    if (index >= 9) index = 9;
+
+    return index;
   }
 
   void _applySort(List<GroupStat> list) {
@@ -345,10 +424,31 @@ class _CategoryScreenState extends State<CategoryScreen> {
       );
     }
 
-    _applySort(list);
-    categoryStats = list;
-  }
+    // Split into unfinished and completed
+    final unfinished = list.where((e) => !e.complete).toList();
+    final completed = list.where((e) => e.complete).toList();
 
+    // Sort each group alphabetically
+    unfinished.sort((a, b) => a.name.compareTo(b.name));
+    completed.sort((a, b) => a.name.compareTo(b.name));
+
+    if (sortMode == SortMode.az) {
+      final unfinished = list.where((e) => !e.complete).toList();
+      final completed = list.where((e) => e.complete).toList();
+
+      unfinished.sort((a, b) => a.name.compareTo(b.name));
+      completed.sort((a, b) => a.name.compareTo(b.name));
+
+      categoryStats = [...unfinished, ...completed];
+    } else {
+      _applySort(list);
+      categoryStats = List.from(list);
+    }
+
+    _checkGameCompletion();
+    // IMPORTANT: rank check AFTER category celebration
+  }
+  
   Future<void> _toggleAndPersist(String id, bool value) async {
     foundById[id] = value;
     final prefs = await SharedPreferences.getInstance();
@@ -356,76 +456,265 @@ class _CategoryScreenState extends State<CategoryScreen> {
   }
 
   Future<void> _resetProgress() async {
+    _previousFoundById = Map.from(foundById);
+    _previousCompletedCategoriesShown = Set.from(_completedCategoriesShown);
+    _previousCompletedSubcategoriesShownGlobal =
+        Set.from(_completedSubcategoriesShownGlobal);
+
     final prefs = await SharedPreferences.getInstance();
     await prefs.remove(prefsKey);
-
+    
     setState(() {
       for (final k in foundById.keys.toList()) {
         foundById[k] = false;
-      }
+     }
+
       _completedCategoriesShown.clear();
+      _gameCompletedShown = false;
+
+      _pendingRankIndex = null;
+
+      _completedSubcategoriesShownGlobal.clear();
+
       _recomputeCategoryStats();
+
+      // ✅ FIX: properly reset AND recalculate rank
+      final newRank = _getRankIndex();
+      _lastRankIndex = newRank;
     });
+
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: const Text('Checklist reset'),
+        action: SnackBarAction(
+          label: 'UNDO',
+          onPressed: () async {
+            if (_previousFoundById == null) return;
+
+            final prefs = await SharedPreferences.getInstance();
+
+            setState(() {
+              foundById = Map.from(_previousFoundById!);
+              _completedCategoriesShown =
+                  Set.from(_previousCompletedCategoriesShown ?? {});
+              _completedSubcategoriesShownGlobal =
+                  Set.from(_previousCompletedSubcategoriesShownGlobal ?? {});
+
+              _recomputeCategoryStats();
+
+              // ✅ FIX: restore rank display properly
+              final newRank = _getRankIndex();
+              _lastRankIndex = newRank;
+            });
+
+
+            await prefs.setString(prefsKey, jsonEncode(foundById));
+          },
+        ),
+      ),
+    );
   }
+  
+  Future<void> _playCategoryDoneSound() async {
+    if (!_soundEnabled) return;
+    await _sfxPlayer.stop();
+    await _sfxPlayer.play(AssetSource('sounds/category_done.mp3'));
+  }
+  
+  Future<void> _playGameDoneSound() async {
+    if (!_soundEnabled) return;
+    await _sfxPlayer.stop();
+    await _sfxPlayer.play(AssetSource('sounds/game_done.mp3'));
+  }
+
+  Future<void> _playRankUpSound() async {
+    if (!_soundEnabled) return;
+    await _sfxPlayer.stop();
+    await _sfxPlayer.play(AssetSource('sounds/rank_up.mp3'));
+  }
+  
+  void _checkRankMilestone() {
+    final currentRank = _getRankIndex();
+
+    // First time we run this, just store the starting rank.
+    if (_lastRankIndex == -1) {
+      _lastRankIndex = currentRank;
+      return;
+    }
+
+    // Only trigger when rank increases
+    if (currentRank > _lastRankIndex) {
+      // If a dialog is open, delay the sound until the dialog closes
+      if (_categoryDialogActive) {
+        _pendingRankIndex = currentRank;
+        return;
+      }
+
+      // Store the new rank as the latest one we’ve reached
+      _lastRankIndex = currentRank;
+
+      // Feedback
+      if (_hapticsEnabled) {
+        HapticFeedback.mediumImpact();
+      }
+      Future.delayed(const Duration(milliseconds: 15), () {
+        _playRankUpSound();
+      });
+    }
+  }
+
+  void _checkGameCompletion() {
+    if (!_gameCompletedShown && _getProgressPercent() >= _getTargetPercent()) {
+      _gameCompletedShown = true;
+
+      if (_hapticsEnabled) {
+        HapticFeedback.heavyImpact();
+      }
+
+      _playGameDoneSound();
+
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text('🎉 Incredible - You completed the entire list!'),
+        ),
+      );
+    }
+  }
+
+Future<void> _openSettings() async {
+  await showDialog(
+    context: context,
+    builder: (_) => StatefulBuilder(
+      builder: (context, setDialogState) => AlertDialog(
+        title: const Text('Feedback settings'),
+        content: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            SwitchListTile(
+              title: const Text('Haptics'),
+              value: _hapticsEnabled,
+              onChanged: (v) async {
+                setDialogState(() => _hapticsEnabled = v);
+                setState(() => _hapticsEnabled = v);
+
+                final prefs = await SharedPreferences.getInstance();
+                await prefs.setBool('haptics_enabled', v);
+              },
+            ),
+            SwitchListTile(
+              title: const Text('Sound'),
+              value: _soundEnabled,
+              onChanged: (v) async {
+                setDialogState(() => _soundEnabled = v);
+                setState(() => _soundEnabled = v);
+
+                final prefs = await SharedPreferences.getInstance();
+                await prefs.setBool('sound_enabled', v);
+              },
+            ),
+          ],
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(context),
+            child: const Text('Close'),
+          ),
+        ],
+      ),
+    ),
+  );
+}
 
   void _checkAndCelebrateCompletedCategories() {
     for (final stat in categoryStats) {
       if (stat.complete && !_completedCategoriesShown.contains(stat.name)) {
         _completedCategoriesShown.add(stat.name);
+        _categoryDialogActive = true;
+      if (_hapticsEnabled) {
+        HapticFeedback.mediumImpact();
+      }
+      
+      Future.delayed(const Duration(milliseconds: 20), () {
+        _playCategoryDoneSound();
+      });
 
-        Future.delayed(const Duration(milliseconds: 350), () async {
-          if (!mounted) return;
 
-          // built-in "feel" (no extra packages)
-          try {
-            await HapticFeedback.mediumImpact();
-            SystemSound.play(SystemSoundType.click);
-          } catch (_) {}
+      Future.delayed(const Duration(milliseconds: 350), () async {
+        if (!mounted) return;
 
-          // big dialog
-          // ignore: use_build_context_synchronously
-          showDialog(
-            context: context,
-            barrierDismissible: false,
-            builder: (_) => Dialog(
-              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
-              child: Padding(
-                padding: const EdgeInsets.all(24),
-                child: Column(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    const Icon(Icons.emoji_events, size: 72, color: Color(0xFFFFC107)),
-                    const SizedBox(height: 14),
-                    const Text(
-                      '🎉 Category Complete!',
-                      style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold),
-                      textAlign: TextAlign.center,
-                    ),
-                    const SizedBox(height: 10),
-                    Text(
-                      stat.name,
-                      style: const TextStyle(fontSize: 18, fontWeight: FontWeight.w600),
-                      textAlign: TextAlign.center,
-                    ),
-                    const SizedBox(height: 14),
-                    Text(
-                      'Score: ${stat.score}/${stat.maxScore}',
-                      style: const TextStyle(color: Colors.black54),
-                    ),
-                    const SizedBox(height: 18),
-                    ElevatedButton(
-                      onPressed: () => Navigator.pop(context),
-                      child: const Text('Nice!'),
-                    ),
-                  ],
-                ),
+        // built-in "feel" (no extra packages)
+        try {
+          await HapticFeedback.mediumImpact();
+          SystemSound.play(SystemSoundType.click);
+        } catch (_) {}
+
+        // big dialog
+        // ignore: use_build_context_synchronously
+
+        showDialog(
+          context: context,
+          barrierDismissible: false,
+          builder: (_) => Dialog(
+            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
+            child: Padding(
+              padding: const EdgeInsets.all(24),
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  const Icon(Icons.emoji_events, size: 72, color: Color(0xFFFFC107)),
+                  const SizedBox(height: 14),
+                  const Text(
+                    '🎉 Category Complete!',
+                    style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold),
+                    textAlign: TextAlign.center,
+                  ),
+                  const SizedBox(height: 10),
+                  Text(
+                    stat.name,
+                    style: const TextStyle(fontSize: 18, fontWeight: FontWeight.w600),
+                    textAlign: TextAlign.center,
+                  ),
+                  const SizedBox(height: 14),
+                  Text(
+                    'Score: ${stat.score}/${stat.maxScore}',
+                    style: const TextStyle(color: Colors.black54),
+                  ),
+                  const SizedBox(height: 18),
+                  ElevatedButton(
+                    onPressed: () {
+                      Navigator.pop(context);
+
+                      _categoryDialogActive = false;
+
+                      if (_pendingRankIndex != null) {
+                        final pending = _pendingRankIndex!;
+                        _pendingRankIndex = null;
+
+                        Future.delayed(const Duration(milliseconds: 120), () {
+                          // Mark that we've now reached this rank
+                          _lastRankIndex = pending;
+
+                          // Play the delayed rank-up feedback
+                          if (_hapticsEnabled) {
+                            HapticFeedback.mediumImpact();
+                          }
+                          _playRankUpSound();
+                        });
+                      }
+
+                    },
+                    child: const Text('Boom!'),
+                  ),
+
+                ],
               ),
             ),
-          );
-        });
-      }
+          ),
+        );
+      });
     }
   }
+}
 
   @override
   Widget build(BuildContext context) {
@@ -446,11 +735,17 @@ class _CategoryScreenState extends State<CategoryScreen> {
     final percentTotal = (maxScore == 0) ? 0.0 : (totalScore * 100.0 / maxScore);
     final threshold = winningThresholdPercent(DateTime.now());
     final isWinning = percentTotal >= threshold;
+    final currentRankIndex = _getRankIndex();
 
     return Scaffold(
       appBar: AppBar(
         title: const Text('Car Trip Game'),
         actions: [
+          IconButton(
+            tooltip: 'Settings',
+            icon: const Icon(Icons.settings),
+            onPressed: _openSettings,
+          ),
           IconButton(
             tooltip: 'Reset progress',
             icon: const Icon(Icons.refresh),
@@ -462,7 +757,7 @@ class _CategoryScreenState extends State<CategoryScreen> {
         children: [
           Container(
             padding: const EdgeInsets.fromLTRB(16, 12, 16, 12),
-            color: Colors.blue.withOpacity(0.06),
+            color: Colors.blue.withValues(alpha: 0.06),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
@@ -515,10 +810,34 @@ class _CategoryScreenState extends State<CategoryScreen> {
                       ),
                     ],
                   )
-                else
-                  Text(
-                    'Today’s target: ≥ ${threshold.toStringAsFixed(1)}% (${dayName(DateTime.now())}).',
-                    style: const TextStyle(color: Colors.black54),
+                else 
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Text(
+                        'Target >= ${_getTargetPercent().toStringAsFixed(1)}% (${_getDayName()})',
+                        style: const TextStyle(fontSize: 16, color: Colors.black54),
+                      ),
+                      AnimatedSwitcher(
+                        duration: const Duration(milliseconds: 3000),
+                        switchInCurve: Curves.easeOutBack,
+                        switchOutCurve: Curves.easeIn,
+                        transitionBuilder: (child, animation) {
+                          final scale = Tween<double>(begin: 0.60, end: 1.0).animate(animation);
+                          return ScaleTransition(
+                            scale: scale,
+                            child: FadeTransition(opacity: animation, child: child),
+                          );
+                        },
+                        child: RankBadge(
+                          key: ValueKey<int>(currentRankIndex),
+                          text: 'Rank: ${ranks[currentRankIndex]}',
+                          color: _rankColor(currentRankIndex),
+                        ),
+
+                      ),
+                   
+                    ],
                   ),
               ],
             ),
@@ -552,6 +871,9 @@ class _CategoryScreenState extends State<CategoryScreen> {
                             foundById: foundById,
                             onToggle: _toggleAndPersist,
                             initialSortMode: sortMode,
+                            hapticsEnabled: _hapticsEnabled,
+                            soundEnabled: _soundEnabled,
+                            completedSubcategoriesShown: _completedSubcategoriesShownGlobal,
                           ),
                         ),
                       );
@@ -560,7 +882,12 @@ class _CategoryScreenState extends State<CategoryScreen> {
                         _recomputeCategoryStats();
                       });
 
+                      // FIRST: detect category completion (sets dialog + lock)
                       _checkAndCelebrateCompletedCategories();
+
+                      // THEN: check rank AFTER lock is active
+                      _checkRankMilestone();
+
                     },
                     child: Padding(
                       padding: const EdgeInsets.fromLTRB(12, 12, 12, 12),
@@ -568,7 +895,7 @@ class _CategoryScreenState extends State<CategoryScreen> {
                         children: [
                           CircleAvatar(
                             radius: 44,
-                            backgroundColor: color.withOpacity(0.15),
+                            backgroundColor: color.withValues(alpha: 0.15),
                             child: Icon(
                               resolveIcon(iconName: stat.iconName, groupName: stat.name),
                               color: color,
@@ -615,6 +942,67 @@ class _CategoryScreenState extends State<CategoryScreen> {
   }
 }
 
+class RankBadge extends StatelessWidget {
+  final String text;
+  final Color color;
+
+  const RankBadge({
+    super.key,
+    required this.text,
+    required this.color,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return TweenAnimationBuilder<double>(
+      tween: Tween(begin: 0.55, end: 0.0),
+      duration: const Duration(milliseconds: 420),
+      curve: Curves.easeOut,
+      builder: (context, flashOpacity, _) {
+        return Stack(
+          alignment: Alignment.center,
+          children: [
+            AnimatedContainer(
+              duration: const Duration(milliseconds: 260),
+              curve: Curves.easeOut,
+              padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
+              decoration: BoxDecoration(
+                color: color.withValues(alpha: 0.18),
+                borderRadius: BorderRadius.circular(999),
+                border: Border.all(color: color.withValues(alpha: 0.35)),
+                boxShadow: [
+                  BoxShadow(
+                    color: color.withValues(alpha: 0.25),
+                    blurRadius: 10,
+                    spreadRadius: 1,
+                  ),
+                ],
+              ),
+              child: Text(
+                text,
+                style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+              ),
+            ),
+            Positioned.fill(
+              child: IgnorePointer(
+                child: Opacity(
+                  opacity: flashOpacity,
+                  child: DecoratedBox(
+                    decoration: BoxDecoration(
+                      color: color.withValues(alpha: 0.25),
+                      borderRadius: BorderRadius.circular(999),
+                    ),
+                  ),
+                ),
+              ),
+            ),
+          ],
+        );
+      },
+    );
+  }
+}
+
 /* -------------------------
    SUBCATEGORY SCREEN
 -------------------------- */
@@ -625,6 +1013,9 @@ class SubCategoryScreen extends StatefulWidget {
   final Map<String, bool> foundById;
   final Future<void> Function(String, bool) onToggle;
   final SortMode initialSortMode;
+  final bool hapticsEnabled;
+  final bool soundEnabled;
+  final Set<String> completedSubcategoriesShown;
 
   const SubCategoryScreen({
     super.key,
@@ -633,6 +1024,9 @@ class SubCategoryScreen extends StatefulWidget {
     required this.foundById,
     required this.onToggle,
     required this.initialSortMode,
+    required this.hapticsEnabled,
+    required this.soundEnabled,
+    required this.completedSubcategoriesShown,
   });
 
   @override
@@ -640,32 +1034,65 @@ class SubCategoryScreen extends StatefulWidget {
 }
 
 class _SubCategoryScreenState extends State<SubCategoryScreen> {
+  final AudioPlayer _subSfxPlayer = AudioPlayer();
+  bool hideDone = true;
+
   List<GroupStat> subStats = [];
   int categoryScore = 0;
   int categoryMaxScore = 0;
+
   late SortMode sortMode;
 
-  final Set<String> _completedSubcategoriesShown = {};
+  Future<void> _initHideDone() async {
+    final prefs = await SharedPreferences.getInstance();
+    final saved = prefs.getBool('hide_done_${widget.category}');
+
+    if (!mounted) return;
+
+    setState(() {
+      hideDone = saved ?? true;
+    });
+  }
 
   @override
   void initState() {
     super.initState();
+    _initHideDone();
+    
     sortMode = widget.initialSortMode;
     _recomputeSubStats();
     _checkAndCelebrateCompletedSubcategories();
   }
 
+  @override
+  void dispose() {
+    _subSfxPlayer.dispose();
+    super.dispose();
+  }
+
+
   void _applySort(List<GroupStat> list) {
     switch (sortMode) {
       case SortMode.az:
-        list.sort((a, b) => a.name.compareTo(b.name));
+        list.sort((a, b) {
+          // 1. Unfinished before completed
+          if (a.complete != b.complete) {
+            return a.complete ? 1 : -1;
+          }
+
+          // 2. Alphabetical within each group
+          return a.name.compareTo(b.name);
+        });
         break;
+
       case SortMode.progressDesc:
         list.sort((a, b) => b.progress.compareTo(a.progress));
         break;
+
       case SortMode.remainingDesc:
         list.sort((a, b) => b.remainingCount.compareTo(a.remainingCount));
         break;
+
       case SortMode.pointsRemainingDesc:
         list.sort((a, b) => b.scoreRemaining.compareTo(a.scoreRemaining));
         break;
@@ -727,10 +1154,23 @@ class _SubCategoryScreenState extends State<SubCategoryScreen> {
     subStats = list;
   }
 
-  void _checkAndCelebrateCompletedSubcategories() {
+  Future<void> _checkAndCelebrateCompletedSubcategories() async {
     for (final stat in subStats) {
-      if (stat.complete && !_completedSubcategoriesShown.contains(stat.name)) {
-        _completedSubcategoriesShown.add(stat.name);
+      if (stat.complete && !widget.completedSubcategoriesShown.contains(stat.name)) {
+        widget.completedSubcategoriesShown.add(stat.name);
+        if (widget.hapticsEnabled) {
+          HapticFeedback.selectionClick();
+        }
+
+        if (widget.soundEnabled) {
+          Future.delayed(const Duration(milliseconds: 15), () async {
+            await _subSfxPlayer.stop();
+            await _subSfxPlayer.play(
+              AssetSource('sounds/sub_done.mp3'),
+              volume: 0.6,
+            );
+          });
+        }
 
         Future.delayed(const Duration(milliseconds: 250), () {
           if (!mounted) return;
@@ -783,7 +1223,7 @@ class _SubCategoryScreenState extends State<SubCategoryScreen> {
         children: [
           Container(
             padding: const EdgeInsets.fromLTRB(16, 12, 16, 12),
-            color: Colors.blue.withOpacity(0.06),
+            color: Colors.blue.withValues(alpha: 0.06),
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
@@ -839,7 +1279,7 @@ class _SubCategoryScreenState extends State<SubCategoryScreen> {
                         children: [
                           CircleAvatar(
                             radius: 44,
-                            backgroundColor: color.withOpacity(0.15),
+                            backgroundColor: color.withValues(alpha: 0.15),
                             child: Icon(
                               resolveIcon(iconName: stat.iconName, groupName: stat.name),
                               color: color,
@@ -909,13 +1349,36 @@ class ItemScreen extends StatefulWidget {
 }
 
 class _ItemScreenState extends State<ItemScreen> {
-  bool hideDone = false;
+  bool hideDone = true;
+  
+  Future<void> _initHideDone() async {
+    final prefs = await SharedPreferences.getInstance();
+    final saved = prefs.getBool('hide_done_${widget.title}');
+
+    if (!mounted) return;
+
+    setState(() {
+      hideDone = saved ?? true;
+    });
+  }
+  
+  @override
+  void initState() {
+    super.initState();
+    _initHideDone();
+  }
 
   @override
   Widget build(BuildContext context) {
-    final visible = hideDone
-        ? widget.items.where((it) => widget.foundById[it.itemId] != true).toList()
-        : widget.items;
+    late final List<TripItem> visible;
+
+    if (hideDone) {
+      visible = widget.items
+          .where((it) => widget.foundById[it.itemId] != true)
+          .toList();
+    } else {
+      visible = widget.items;
+    }
 
     return Scaffold(
       appBar: AppBar(
@@ -926,7 +1389,14 @@ class _ItemScreenState extends State<ItemScreen> {
               const Text('Hide done'),
               Switch(
                 value: hideDone,
-                onChanged: (v) => setState(() => hideDone = v),
+                onChanged: (v) async {
+                  setState(() {
+                    hideDone = v;
+                  });
+
+                  final prefs = await SharedPreferences.getInstance();
+                  await prefs.setBool('hide_done_${widget.title}', hideDone);
+                },
               ),
               const SizedBox(width: 8),
             ],

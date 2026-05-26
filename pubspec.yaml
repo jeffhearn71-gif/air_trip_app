@@ -34,6 +34,7 @@ dependencies:
   csv: ^8.0.0
   shared_preferences: ^2.5.5
   material_symbols_icons: ^4.2928.1
+  audioplayers: ^6.6.0
 
   # The following adds the Cupertino Icons font to your application.
   # Use with the CupertinoIcons class for iOS style icons.
@@ -62,7 +63,8 @@ flutter_launcher_icons:
 # The following section is specific to Flutter packages.
 flutter:
   assets:
-    - assets/Car Trip List App V0.10.csv
+    - assets/Car Trip List App Latest Version.csv
+    - assets/sounds/
 
   # The following line ensures that the Material Icons font is
   # included with your application, so that you can use the icons in

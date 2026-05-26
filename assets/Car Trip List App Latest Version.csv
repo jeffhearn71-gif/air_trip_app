@@ -1,0 +1,374 @@
+﻿Category,Sub-Category,Item Name,Points,Found,Item ID,Shortened Item ID,Icon
+Animals,Birds - Location,Flock (10+),2,FALSE,Animals_Birds - Location_Flock (10+),Animals_Birds - Location_Flock,raven
+Animals,Birds - Location,Flying,1,FALSE,Animals_Birds - Location_Flying,Animals_Birds - Location_Flying,raven
+Animals,Birds - Location,Grounded,1,FALSE,Animals_Birds - Location_Grounded,Animals_Birds - Location_Grounded,raven
+Animals,Birds - Location,Perched,1,FALSE,Animals_Birds - Location_Perched,Animals_Birds - Location_Perched,raven
+Animals,Birds - Species,Bird of prey,2,FALSE,Animals_Birds - Species_Bird of prey,Animals_Birds - Species_Prey,raven
+Animals,Birds - Species,Black Bird,1,FALSE,Animals_Birds - Species_Black Bird,Animals_Birds - Species_Black,raven
+Animals,Birds - Species,Magpie,1,FALSE,Animals_Birds - Species_Magpie,Animals_Birds - Species_Magpie,raven
+Animals,Birds - Species,Pigeon,1,FALSE,Animals_Birds - Species_Pigeon,Animals_Birds - Species_Pigeon,raven
+Animals,Birds - Species,Seagull,2,FALSE,Animals_Birds - Species_Seagull,Animals_Birds - Species_Seagull,raven
+Animals,Farmyard,Cow,2,FALSE,Animals_Farmyard_Cow,Animals_Farmyard_Cow,pets
+Animals,Farmyard,Dog,1,FALSE,Animals_Farmyard_Dog,Animals_Farmyard_Dog,pets
+Animals,Farmyard,Horse,2,FALSE,Animals_Farmyard_Horse,Animals_Farmyard_Horse,pets
+Animals,Farmyard,Sheep,2,FALSE,Animals_Farmyard_Sheep,Animals_Farmyard_Sheep,pets
+Buildings,Construction,Crane,1,FALSE,Buildings_Construction_Crane,Buildings_Construction_Crane,construction
+Buildings,Construction,Scaffolding,1,FALSE,Buildings_Construction_Scaffolding,Buildings_Construction_Scaffolding,construction
+Buildings,House,Door Black,1,FALSE,Buildings_House_Door Black,Buildings_House_Door Black,home
+Buildings,House,Door Other,1,FALSE,Buildings_House_Door Other,Buildings_House_Door Other,home
+Buildings,House,Door R/G/B,1,FALSE,Buildings_House_Door R/G/B,Buildings_House_Door R/G/B,home
+Buildings,House,Door White,1,FALSE,Buildings_House_Door White,Buildings_House_Door White,home
+Buildings,House,Painted,1,FALSE,Buildings_House_Painted,Buildings_House_Painted,home
+Buildings,Interest,Car Saleroom,1,FALSE,Buildings_Interest_Car Saleroom,Buildings_Interest_Salesroom,location_city
+Buildings,Interest,Carwash,1,FALSE,Buildings_Interest_Carwash,Buildings_Interest_Carwash,location_city
+Buildings,Interest,Church,1,FALSE,Buildings_Interest_Church,Buildings_Interest_Church,location_city
+Buildings,Interest,Hotel,1,FALSE,Buildings_Interest_Hotel,Buildings_Interest_Hotel,location_city
+Buildings,Interest,Storage Facility,2,FALSE,Buildings_Interest_Storage Facility,Buildings_Interest_Storage,location_city
+Buildings,Petrol Station,BP,1,FALSE,Buildings_Petrol Station_BP,Buildings_Petrol Station_BP,local_gas_station
+Buildings,Petrol Station,Esso/Shell,3,FALSE,Buildings_Petrol Station_Esso/Shell,Buildings_Petrol Station_Esso/Shell,local_gas_station
+Buildings,Petrol Station,Other,1,FALSE,Buildings_Petrol Station_Other,Buildings_Petrol Station_Other,local_gas_station
+Buildings,Pubs,Animal,2,FALSE,Buildings_Pubs_Animal,Buildings_Pubs_Animal,sports_bar
+Buildings,Pubs,Name/Royal,2,FALSE,Buildings_Pubs_Name/Royal,Buildings_Pubs_Name_Royal,sports_bar
+Buildings,Pubs,Object,2,FALSE,Buildings_Pubs_Object,Buildings_Pubs_Object,sports_bar
+Buildings,Shops,Barber/Hairdresser,2,FALSE,Buildings_Shops_Barber/Hairdresser,Buildings_Shops_Hairdresser,storefront
+Buildings,Shops,Burger King,1,FALSE,Buildings_Shops_Burger King,Buildings_Shops_Burger King,storefront
+Buildings,Shops,Coffee Shop,1,FALSE,Buildings_Shops_Coffee Shop,Buildings_Shops_Coffee Shop,storefront
+Buildings,Shops,Fashion,2,FALSE,Buildings_Shops_Fashion,Buildings_Shops_Fashion,storefront
+Buildings,Shops,Florist,2,FALSE,Buildings_Shops_Florist,Buildings_Shops_Florist,storefront
+Buildings,Shops,KFC,1,FALSE,Buildings_Shops_KFC,Buildings_Shops_KFC,storefront
+Buildings,Shops,McDonalds,1,FALSE,Buildings_Shops_McDonalds,Buildings_Shops_McDonalds,storefront
+Buildings,Shops,Off Licence/Corner Shop,2,FALSE,Buildings_Shops_Off Licence/Corner Shop,Buildings_Shops_Off Licence,storefront
+Buildings,Shops,Pet Shop/Grooming,2,FALSE,Buildings_Shops_Pet Shop/Grooming,Buildings_Shops_Pet Shop,storefront
+Buildings,Shops,Pharmacy,2,FALSE,Buildings_Shops_Pharmacy,Buildings_Shops_Pharmacy,storefront
+Buildings,Shops,Pizza,1,FALSE,Buildings_Shops_Pizza,Buildings_Shops_Pizza,storefront
+Buildings,Shops,Vape/Person Vaping,2,FALSE,Buildings_Shops_Vape/Person Vaping,Buildings_Shops_Vape,storefront
+Car,Colours,Brown,1,FALSE,Car_Colours_Brown,Car_Colours_Brown,palette
+Car,Colours,Green,1,FALSE,Car_Colours_Green,Car_Colours_Green,palette
+Car,Colours,Orange,2,FALSE,Car_Colours_Orange,Car_Colours_Orange,palette
+Car,Colours,Pink,3,FALSE,Car_Colours_Pink,Car_Colours_Pink,palette
+Car,Colours,Purple,3,FALSE,Car_Colours_Purple,Car_Colours_Purple,palette
+Car,Colours,Two-toned,1,FALSE,Car_Colours_Two-toned,Car_Colours_Two-toned,palette
+Car,Colours,Yellow,1,FALSE,Car_Colours_Yellow,Car_Colours_Yellow,palette
+Car,External,Bike on a boot,1,FALSE,Car_External_Bike on a boot,Car_External_Bike-boot,directions_car
+Car,External,Bike on a roof rack,1,FALSE,Car_External_Bike on a roof rack,Car_External_Bike-roof,directions_car
+Car,External,Car with advertising on it,1,FALSE,Car_External_Car with advertising on it,Car_External_Advertising,directions_car
+Car,External,Convertible,1,FALSE,Car_External_Convertible,Car_External_Convertible,directions_car
+Car,External,Damaged,1,FALSE,Car_External_Damaged,Car_External_Damaged,directions_car
+Car,External,Double Exhaust,1,FALSE,Car_External_Double Exhaust,Car_External_Double Exhaust,directions_car
+Car,External,Hazard lights on,1,FALSE,Car_External_Hazard lights on,Car_External_Hazard,directions_car
+Car,External,Poppy,2,FALSE,Car_External_Poppy,Car_External_Poppy,directions_car
+Car,External,Roof Storage Pod,1,FALSE,Car_External_Roof Storage Pod,Car_External_Roof Storage,directions_car
+Car,External,Spoiler,1,FALSE,Car_External_Spoiler,Car_External_Spoiler,directions_car
+Car,Internal,Car seat,2,FALSE,Car_Internal_Car seat,Car_Internal_Car seat,airline_seat_recline_normal
+Car,Internal,Clothes hanging in car,2,FALSE,Car_Internal_Clothes hanging in car,Car_Internal_Clothes,airline_seat_recline_normal
+Car,Internal,Filled to the brim,2,FALSE,Car_Internal_Filled to the brim,Car_Internal_Filled,airline_seat_recline_normal
+Car,Models,Audi,1,FALSE,Car_Models_Audi,Car_Models_Audi,car_tag
+Car,Models,Bentley/Sports Car etc.,3,FALSE,Car_Models_Bentley/Sports Car etc.,Car_Models_Bentley,car_tag
+Car,Models,BMW,1,FALSE,Car_Models_BMW,Car_Models_BMW,car_tag
+Car,Models,Citroen,1,FALSE,Car_Models_Citroen,Car_Models_Citroen,car_tag
+Car,Models,Cupra,2,FALSE,Car_Models_Cupra,Car_Models_Cupra,car_tag
+Car,Models,Dacia,2,FALSE,Car_Models_Dacia,Car_Models_Dacia,car_tag
+Car,Models,Fiat,1,FALSE,Car_Models_Fiat,Car_Models_Fiat,car_tag
+Car,Models,Ford,1,FALSE,Car_Models_Ford,Car_Models_Ford,car_tag
+Car,Models,Honda,1,FALSE,Car_Models_Honda,Car_Models_Honda,car_tag
+Car,Models,Hyundai,1,FALSE,Car_Models_Hyundai,Car_Models_Hyundai,car_tag
+Car,Models,Jaguar,2,FALSE,Car_Models_Jaguar,Car_Models_Jaguar,car_tag
+Car,Models,Jeep,3,FALSE,Car_Models_Jeep,Car_Models_Jeep,car_tag
+Car,Models,KIA,1,FALSE,Car_Models_KIA,Car_Models_KIA,car_tag
+Car,Models,Land Rover,1,FALSE,Car_Models_Land Rover,Car_Models_Land Rover,car_tag
+Car,Models,Lexus,2,FALSE,Car_Models_Lexus,Car_Models_Lexus,car_tag
+Car,Models,Mazda,1,FALSE,Car_Models_Mazda,Car_Models_Mazda,car_tag
+Car,Models,Mercedes-Benz,1,FALSE,Car_Models_Mercedes-Benz,Car_Models_Mercedes-Benz,car_tag
+Car,Models,MG,2,FALSE,Car_Models_MG,Car_Models_MG,car_tag
+Car,Models,Mini (Regular),1,FALSE,Car_Models_Mini (Regular),Car_Models_Mini (Regular),car_tag
+Car,Models,Mini (Union Jack),2,FALSE,Car_Models_Mini (Union Jack),Car_Models_Mini (Union Jack),car_tag
+Car,Models,Mitsubishi,3,FALSE,Car_Models_Mitsubishi,Car_Models_Mitsubishi,car_tag
+Car,Models,Nissan,1,FALSE,Car_Models_Nissan,Car_Models_Nissan,car_tag
+Car,Models,Peugeot,1,FALSE,Car_Models_Peugeot,Car_Models_Peugeot,car_tag
+Car,Models,Porsche,2,FALSE,Car_Models_Porsche,Car_Models_Porsche,car_tag
+Car,Models,Range Rover,1,FALSE,Car_Models_Range Rover,Car_Models_Range Rover,car_tag
+Car,Models,Renault,1,FALSE,Car_Models_Renault,Car_Models_Renault,car_tag
+Car,Models,Seat/Smart,1,FALSE,Car_Models_Seat/Smart,Car_Models_Seat/Smart,car_tag
+Car,Models,Skoda,1,FALSE,Car_Models_Skoda,Car_Models_Skoda,car_tag
+Car,Models,Suzuki,2,FALSE,Car_Models_Suzuki,Car_Models_Suzuki,car_tag
+Car,Models,Tesla,1,FALSE,Car_Models_Tesla,Car_Models_Tesla,car_tag
+Car,Models,Toyota,1,FALSE,Car_Models_Toyota,Car_Models_Toyota,car_tag
+Car,Models,Vauxhall,1,FALSE,Car_Models_Vauxhall,Car_Models_Vauxhall,car_tag
+Car,Models,Volkswagen,1,FALSE,Car_Models_Volkswagen,Car_Models_Volkswagen,car_tag
+Car,Models,Volvo,1,FALSE,Car_Models_Volvo,Car_Models_Volvo,car_tag
+Car,Number Plates,Alternative,3,FALSE,Car_Number Plates_Alternative,Car_Number Plates_Alternative,confirmation_number
+Car,Number Plates,European,2,FALSE,Car_Number Plates_European,Car_Number Plates_European,confirmation_number
+Car,Number Plates,Personalised,2,FALSE,Car_Number Plates_Personalised,Car_Number Plates_Personalised,confirmation_number
+Car,Stickers,Baby On Board,2,FALSE,Car_Stickers_Baby On Board,Car_Stickers_Baby,branding_watermark
+Car,Stickers,GB,3,FALSE,Car_Stickers_GB,Car_Stickers_GB,branding_watermark
+Car,Stickers,Learner,2,FALSE,Car_Stickers_Learner,Car_Stickers_Learner,branding_watermark
+Car,Stickers,Passed,3,FALSE,Car_Stickers_Passed,Car_Stickers_Passed,branding_watermark
+Car,Stickers,UK,2,FALSE,Car_Stickers_UK,Car_Stickers_UK,branding_watermark
+Misc - Items,Bins,Biffa/Large Bin,2,FALSE,Misc - Items_Bins_Biffa/Large Bin,Misc - Items_Bins_Biffa,recycling
+Misc - Items,Bins,Dog poo bin,2,FALSE,Misc - Items_Bins_Dog poo bin,Misc - Items_Bins_Dog poo,recycling
+Misc - Items,Bins,Litter bin,1,FALSE,Misc - Items_Bins_Litter bin,Misc - Items_Bins_Litter,recycling
+Misc - Items,Bins,Recycling Box Other,2,FALSE,Misc - Items_Bins_Recycling Box Other,Misc - Items_Bins_Recycling,recycling
+Misc - Items,Bins,Skip,1,FALSE,Misc - Items_Bins_Skip,Misc - Items_Bins_Skip,recycling
+Misc - Items,Bins,Wheelie Black/Grey,1,FALSE,Misc - Items_Bins_Wheelie Black/Grey,Misc - Items_Bins_Wheelie Black,recycling
+Misc - Items,Bins,Wheelie Brown,1,FALSE,Misc - Items_Bins_Wheelie Brown,Misc - Items_Bins_Wheelie Brown,recycling
+Misc - Items,Bins,Wheelie Green,1,FALSE,Misc - Items_Bins_Wheelie Green,Misc - Items_Bins_Wheelie Green,recycling
+Misc - Items,Bus Stop,Bus Stop (Pole only),1,FALSE,Misc - Items_Bus Stop_Bus Stop (Pole only),Misc - Items_Bus Stop_Bus Stop Pole,bus_map_pin
+Misc - Items,Bus Stop,Bus Stop with Shelter,2,FALSE,Misc - Items_Bus Stop_Bus Stop with Shelter,Misc - Items_Bus Stop_Bus Stop Shelter,bus_map_pin
+Misc - Items,Flags,Flag - Not Country Related,2,FALSE,Misc - Items_Flags_Flag - Not Country Related,Misc - Items_Flags_Flag - Not Country Related,flag
+Misc - Items,Flags,Flag - Other Country,3,FALSE,Misc - Items_Flags_Flag - Other Country,Misc - Items_Flags_Flag - Other Country,flag
+Misc - Items,Flags,Flag - St. Georges Cross,2,FALSE,Misc - Items_Flags_Flag - St. Georges Cross,Misc - Items_Flags_Flag - St. Georges Cross,flag
+Misc - Items,Flags,Flag - Union Jack,2,FALSE,Misc - Items_Flags_Flag - Union Jack,Misc - Items_Flags_Flag - Union Jack,flag
+Misc - Items,Objects,Bunting/Fairy Lights,2,FALSE,Misc - Items_Objects_Bunting/Fairy Lights,Misc - Items_Objects_Bunting_Fairy Lights,category
+Misc - Items,Objects,Detatched Tyre,1,FALSE,Misc - Items_Objects_Detatched Tyre,Misc - Items_Objects_Detatched Tyre,category
+Misc - Items,Objects,Door or Window Open,2,FALSE,Misc - Items_Objects_Door or Window Open,Misc - Items_Objects_Door_Window Open,category
+Misc - Items,Objects,Graffiti,1,FALSE,Misc - Items_Objects_Graffiti,Misc - Items_Objects_Graffiti,category
+Misc - Items,Objects,Ladder,1,FALSE,Misc - Items_Objects_Ladder,Misc - Items_Objects_Ladder,category
+Misc - Items,Objects,Lifesaving Ring,3,FALSE,Misc - Items_Objects_Lifesaving Ring,Misc - Items_Objects_Lifesaving Ring,category
+Misc - Items,Objects,Mirror Convex,3,FALSE,Misc - Items_Objects_Mirror Convex,Misc - Items_Objects_Mirror Convex,category
+Misc - Items,Objects,Portable toilet/Portaloo,2,FALSE,Misc - Items_Objects_Portable toilet/Portaloo,Misc - Items_Objects_Portaloo,category
+Misc - Items,Objects,Post box,1,FALSE,Misc - Items_Objects_Post box,Misc - Items_Objects_Post box,category
+Misc - Items,Objects,Salt/Grit Container,1,FALSE,Misc - Items_Objects_Salt/Grit Container,Misc - Items_Objects_Salt Container,category
+Misc - Items,Objects,Speed camera,1,FALSE,Misc - Items_Objects_Speed camera,Misc - Items_Objects_Speed camera,category
+Misc - Items,Objects,Telephone box,2,FALSE,Misc - Items_Objects_Telephone box,Misc - Items_Objects_Telephone box,category
+Misc - Items,Objects,Washing/Clothes Hung Up,1,FALSE,Misc - Items_Objects_Washing/Clothes Hung Up,Misc - Items_Objects_Washing,category
+Misc - Items,Objects,Wooden Pallets,1,FALSE,Misc - Items_Objects_Wooden Pallets,Misc - Items_Objects_Wooden Pallets,category
+Misc - Items,People,Hat,2,FALSE,Misc - Items_People_Hat,Misc - Items_People_Hat,person
+Misc - Items,People,Jogger,2,FALSE,Misc - Items_People_Jogger,Misc - Items_People_Jogger,person
+Misc - Items,People,Person on their phone,1,FALSE,Misc - Items_People_Person on their phone,Misc - Items_People_Doom_Scroll,person
+Misc - Items,Technology,CCTV Camera,1,FALSE,Misc - Items_Technology_CCTV Camera,Misc - Items_Technology_CCTV Camera,settings_input_antenna
+Misc - Items,Technology,Pylon (end),3,FALSE,Misc - Items_Technology_Pylon (end),Misc - Items_Technology_End Pylon,settings_input_antenna
+Misc - Items,Technology,Satellite Dish,1,FALSE,Misc - Items_Technology_Satellite Dish,Misc - Items_Technology_Satellite Dish,settings_input_antenna
+Misc - Items,Technology,Solar Panels,1,FALSE,Misc - Items_Technology_Solar Panels,Misc - Items_Technology_Solar Panels,settings_input_antenna
+Misc - Items,Technology,Wind Turbine,3,FALSE,Misc - Items_Technology_Wind Turbine,Misc - Items_Technology_Wind Turbine,settings_input_antenna
+Parks & Nature,Hay Bales,Covered,3,FALSE,Parks & Nature_Hay Bales_Covered,Parks & Nature_Hay Bales_Covered,wheat
+Parks & Nature,Hay Bales,Uncovered,3,FALSE,Parks & Nature_Hay Bales_Uncovered,Parks & Nature_Hay Bales_Uncovered,wheat
+Parks & Nature,Nature,Expanse of water,1,FALSE,Parks & Nature_Nature_Expanse of water,Parks & Nature_Nature_Expanse of water,park
+Parks & Nature,Nature,Flowers,1,FALSE,Parks & Nature_Nature_Flowers,Parks & Nature_Nature_Flowers,park
+Parks & Nature,Nature,Plastic bag in tree,1,FALSE,Parks & Nature_Nature_Plastic bag in tree,Parks & Nature_Nature_Plastic bage,park
+Parks & Nature,Playground,Ball,3,FALSE,Parks & Nature_Playground_Ball,Parks & Nature_Playground_Ball,child_care
+Parks & Nature,Playground,Equipment,2,FALSE,Parks & Nature_Playground_Equipment,Parks & Nature_Playground_Equipment,child_care
+Parks & Nature,Playground,Football Posts,2,FALSE,Parks & Nature_Playground_Football Posts,Parks & Nature_Playground_Football Posts,child_care
+Road,Floor,Bus Lane/Stop,1,FALSE,Road_Floor_Bus Lane/Stop,Road_Floor_Bus Lane/Stop,road
+Road,Floor,Double Yellow Lines,1,FALSE,Road_Floor_Double Yellow Lines,Road_Floor_Double Yellow Lines,road
+Road,Floor,Keep Clear/No Entry,1,FALSE,Road_Floor_Keep Clear/No Entry,Road_Floor_Keep Clear_No Entry,road
+Road,Floor,Road kill,1,FALSE,Road_Floor_Road kill,Road_Floor_Road kill,road
+Road,Floor,Rumble Strip/Speed Bump,1,FALSE,Road_Floor_Rumble Strip/Speed Bump,Road_Floor_Speed Bump,road
+Road,Floor,Slow,1,FALSE,Road_Floor_Slow,Road_Floor_Slow,road
+Road,Floor,Speed Limit (Any),1,FALSE,Road_Floor_Speed Limit (Any),Road_Floor_Speed Limit (Any),road
+Road,Floor,Yellow Box Junction,2,FALSE,Road_Floor_Yellow Box Junction,Road_Floor_Yellow Box Junction,road
+Road,Floor,Zebra crossing,1,FALSE,Road_Floor_Zebra crossing,Road_Floor_Zebra crossing,road
+Road,Traffic Cones,Blue,2,FALSE,Road_Traffic Cones_Blue,Road_Traffic Cones_Blue,warning
+Road,Traffic Cones,Green,3,FALSE,Road_Traffic Cones_Green,Road_Traffic Cones_Green,warning
+Road,Traffic Cones,Orange,1,FALSE,Road_Traffic Cones_Orange,Road_Traffic Cones_Orange,warning
+Road,Traffic Cones,With Light on Top,3,FALSE,Road_Traffic Cones_With Light on Top,Road_Traffic Cones_Light on Top,warning
+Road,Traffic Cones,Yellow,2,FALSE,Road_Traffic Cones_Yellow,Road_Traffic Cones_Yellow,warning
+Signs,Distance,Miles: < 01 (Fraction),1,FALSE,Signs_Distance_Miles: < 01 (Fraction),Signs_Distance_Miles: < 01 (Fraction),signpost
+Signs,Distance,Miles: 01-05,1,FALSE,Signs_Distance_Miles: 01-05,Signs_Distance_Miles: 01-05,signpost
+Signs,Distance,Miles: 06-10,1,FALSE,Signs_Distance_Miles: 06-10,Signs_Distance_Miles: 06-10,signpost
+Signs,Distance,Miles: 10-19,1,FALSE,Signs_Distance_Miles: 10-19,Signs_Distance_Miles: 10-19,signpost
+Signs,Distance,Miles: 20-29,1,FALSE,Signs_Distance_Miles: 20-29,Signs_Distance_Miles: 20-29,signpost
+Signs,Distance,Miles: 30-39,1,FALSE,Signs_Distance_Miles: 30-39,Signs_Distance_Miles: 30-39,signpost
+Signs,Distance,Miles: 40-49,1,FALSE,Signs_Distance_Miles: 40-49,Signs_Distance_Miles: 40-49,signpost
+Signs,Distance,Miles: 50+,2,FALSE,Signs_Distance_Miles: 50+,Signs_Distance_Miles: 50+,signpost
+Signs,Estate Agent,For Sale,1,FALSE,Signs_Estate Agent_For Sale,Signs_Estate Agent_For Sale,house
+Signs,Estate Agent,Sold,1,FALSE,Signs_Estate Agent_Sold,Signs_Estate Agent_Sold,house
+Signs,Estate Agent,To Let/Let,1,FALSE,Signs_Estate Agent_To Let/Let,Signs_Estate Agent_To Let_Let,house
+Signs,Highway Code,Speed 05/15,3,FALSE,Signs_Highway Code_Speed 05/15,Signs_Highway Code_Speed 5 or 15,speed
+Signs,Highway Code,Speed 10,2,FALSE,Signs_Highway Code_Speed 10,Signs_Highway Code_Speed 10,speed
+Signs,Highway Code,Speed 20,3,FALSE,Signs_Highway Code_Speed 20,Signs_Highway Code_Speed 20,speed
+Signs,Highway Code,Speed 30,1,FALSE,Signs_Highway Code_Speed 30,Signs_Highway Code_Speed 30,speed
+Signs,Highway Code,Speed 40,1,FALSE,Signs_Highway Code_Speed 40,Signs_Highway Code_Speed 40,speed
+Signs,Highway Code,Speed 50,1,FALSE,Signs_Highway Code_Speed 50,Signs_Highway Code_Speed 50,speed
+Signs,Highway Code,Speed 60,3,FALSE,Signs_Highway Code_Speed 60,Signs_Highway Code_Speed 60,speed
+Signs,Highway Code,Average Speed Check,2,FALSE,Signs_Highway Code_Average Speed Check,Signs_Highway Code_Average Speed Check,speed
+Signs,Highway Code,National Speed Limit,1,FALSE,Signs_Highway Code_National Speed Limit,Signs_Highway Code_National Speed Limit,speed
+Signs,Highway Code,Reduce Speed Now,1,FALSE,Signs_Highway Code_Reduce Speed Now,Signs_Highway Code_Reduce Speed Now,speed
+Signs,Highway Code,Aeroplane/Airport,1,FALSE,Signs_Highway Code_Aeroplane/Airport,Signs_Highway Code_Aeroplane or Airport,report
+Signs,Highway Code,Animal,2,FALSE,Signs_Highway Code_Animal,Signs_Highway Code_Animal,report
+Signs,Highway Code,Bend to Left/Right,1,FALSE,Signs_Highway Code_Bend to Left/Right,Signs_Highway Code_Bend to Left or Right,report
+Signs,Highway Code,Blank (triangle or circle),2,FALSE,Signs_Highway Code_Blank (triangle or circle),Signs_Highway Code_Blank,report
+Signs,Highway Code,Diverted Traffic,1,FALSE,Signs_Highway Code_Diverted Traffic,Signs_Highway Code_Diverted Traffic,report
+Signs,Highway Code,Exclamation Mark (!),1,FALSE,Signs_Highway Code_Exclamation Mark (!),Signs_Highway Code_Exclamation Mark,report
+Signs,Highway Code,Horse-riding,2,FALSE,Signs_Highway Code_Horse-riding,Signs_Highway Code_Horse-riding,report
+Signs,Highway Code,Human Figure in it,1,FALSE,Signs_Highway Code_Human Figure in it,Signs_Highway Code_Human Figure,report
+Signs,Highway Code,Junction on Bend Ahead,1,FALSE,Signs_Highway Code_Junction on Bend Ahead,Signs_Highway Code_Junction on Bend Ahead,report
+Signs,Highway Code,Men At Work,1,FALSE,Signs_Highway Code_Men At Work,Signs_Highway Code_Men At Work,report
+Signs,Highway Code,Queues Likely,1,FALSE,Signs_Highway Code_Queues Likely,Signs_Highway Code_Queues Likely,report
+Signs,Highway Code,Roundabout,1,FALSE,Signs_Highway Code_Roundabout,Signs_Highway Code_Roundabout,report
+Signs,Highway Code,Sandbag,1,FALSE,Signs_Highway Code_Sandbag,Signs_Highway Code_Sandbag,report
+Signs,Highway Code,School,1,FALSE,Signs_Highway Code_School,Signs_Highway Code_School,report
+Signs,Highway Code,Slippery Road,1,FALSE,Signs_Highway Code_Slippery Road,Signs_Highway Code_Slippery Road,report
+Signs,Highway Code,Traffic Merging,1,FALSE,Signs_Highway Code_Traffic Merging,Signs_Highway Code_Traffic Merging,report
+Signs,Highway Code,Uneven Road - Double Hump,1,FALSE,Signs_Highway Code_Uneven Road - Double Hump,Signs_Highway Code_Uneven Road Double,report
+Signs,Highway Code,Uneven Road - Single Hump,1,FALSE,Signs_Highway Code_Uneven Road - Single Hump,Signs_Highway Code_Uneven Road Single,report
+Signs,Highway Code,Give Way,1,FALSE,Signs_Highway Code_Give Way,Signs_Highway Code_Give Way,rule
+Signs,Highway Code,Height/Width Restriction,2,FALSE,Signs_Highway Code_Height/Width Restriction,Signs_Highway Code_Height/Width Restriction,rule
+Signs,Highway Code,No Entry,1,FALSE,Signs_Highway Code_No Entry,Signs_Highway Code_No Entry,rule
+Signs,Highway Code,No Left/Right Turn,1,FALSE,Signs_Highway Code_No Left/Right Turn,Signs_Highway Code_No Left/Right Turn,rule
+Signs,Highway Code,No Stopping,1,FALSE,Signs_Highway Code_No Stopping,Signs_Highway Code_No Stopping,rule
+Signs,Highway Code,Permit Holders Parking,1,FALSE,Signs_Highway Code_Permit Holders Parking,Signs_Highway Code_Permit Parking,rule
+Signs,Highway Code,Priority Right of Way,2,FALSE,Signs_Highway Code_Priority Right of Way,Signs_Highway Code_Priority,rule
+Signs,Highway Code,Weight Restriction,2,FALSE,Signs_Highway Code_Weight Restriction,Signs_Highway Code_Weight Restriction,rule
+Signs,Highway Code,Countdown Markers (321),1,FALSE,Signs_Highway Code_Countdown Markers (321),Signs_Highway Code_Countdown Markers,info
+Signs,Highway Code,Hospital (Blue),2,FALSE,Signs_Highway Code_Hospital (Blue),Signs_Highway Code_Hospital Blue,info
+Signs,Highway Code,Hospital (Red),2,FALSE,Signs_Highway Code_Hospital (Red),Signs_Highway Code_Hospital Red,info
+Signs,Highway Code,No Through Road,1,FALSE,Signs_Highway Code_No Through Road,Signs_Highway Code_No Through Road,info
+Signs,Highway Code,Railway,1,FALSE,Signs_Highway Code_Railway,Signs_Highway Code_Railway,info
+Signs,Highway Code,SOS,1,FALSE,Signs_Highway Code_SOS,Signs_Highway Code_SOS,info
+Signs,Highway Code,Speed Camera,1,FALSE,Signs_Highway Code_Speed Camera,Signs_Highway Code_Speed Camera,info
+Signs,Highway Code,Welcome to…,2,FALSE,Signs_Highway Code_Welcome to…,Signs_Highway Code_Welcome to…,info
+Signs,Highway Code,Please Drive Carefully,1,FALSE,Signs_Highway Code_Please Drive Carefully,Signs_Highway Code_Please Drive Carefully,info
+Signs,Highway Code,Tourism Sign - No Writing,1,FALSE,Signs_Highway Code_Tourism Sign - No Writing,Signs_Highway Code_Tourism Sign - No Writing,info
+Signs,Highway Code,Tourism Sign - With Writing,1,FALSE,Signs_Highway Code_Tourism Sign - With Writing,Signs_Highway Code_Tourism Sign - With Writing,info
+Signs,Orange,Orange Circle/Filled,1,FALSE,Signs_Orange_Orange Circle/Filled,Signs_Orange_Orange Circle/Filled,category
+Signs,Orange,Orange Circle/Unfilled,1,FALSE,Signs_Orange_Orange Circle/Unfilled,Signs_Orange_Orange Circle/Unfilled,category
+Signs,Orange,Orange Cross (X),3,FALSE,Signs_Orange_Orange Cross (X),Signs_Orange_Orange Cross (X),category
+Signs,Orange,Orange Diamond/Filled,1,FALSE,Signs_Orange_Orange Diamond/Filled,Signs_Orange_Orange Diamond/Filled,category
+Signs,Orange,Orange Diamond/Unfilled,1,FALSE,Signs_Orange_Orange Diamond/Unfilled,Signs_Orange_Orange Diamond/Unfilled,category
+Signs,Orange,Orange Square/Filled,1,FALSE,Signs_Orange_Orange Square/Filled,Signs_Orange_Orange Square/Filled,category
+Signs,Orange,Orange Square/Unfilled,1,FALSE,Signs_Orange_Orange Square/Unfilled,Signs_Orange_Orange Square/Unfilled,category
+Signs,Orange,Orange Triangle/Filled,1,FALSE,Signs_Orange_Orange Triangle/Filled,Signs_Orange_Orange Triangle/Filled,category
+Signs,Orange,Orange Triangle/Unfilled,1,FALSE,Signs_Orange_Orange Triangle/Unfilled,Signs_Orange_Orange Triangle/Unfilled,category
+Signs,Road Names,Avenue/Court/Crescent,2,FALSE,Signs_Road Names_Avenue/Court/Crescent,Signs_Road Names_Avenue/Court/Crescent,add_road
+Signs,Road Names,Close,2,FALSE,Signs_Road Names_Close,Signs_Road Names_Close,add_road
+Signs,Road Names,Lane,2,FALSE,Signs_Road Names_Lane,Signs_Road Names_Lane,add_road
+Signs,Road Names,Road,1,FALSE,Signs_Road Names_Road,Signs_Road Names_Road,add_road
+Signs,Road Names,Street,1,FALSE,Signs_Road Names_Street,Signs_Road Names_Street,add_road
+Signs,Road Names,Way,2,FALSE,Signs_Road Names_Way,Signs_Road Names_Way,add_road
+Van,Delivery,DHL,1,FALSE,Van_Delivery_DHL,Van_Delivery_DHL,local_shipping
+Van,Delivery,DPD Blue (Local),2,FALSE,Van_Delivery_DPD Blue (Local),Van_Delivery_DPD Blue (Local),local_shipping
+Van,Delivery,DPD Red (National),1,FALSE,Van_Delivery_DPD Red (National),Van_Delivery_DPD Red (National),local_shipping
+Van,Delivery,Evri/Hermes,1,FALSE,Van_Delivery_Evri/Hermes,Van_Delivery_Evri/Hermes,local_shipping
+Van,Delivery,FedEx/UPS,3,FALSE,Van_Delivery_FedEx/UPS,Van_Delivery_FedEx/UPS,local_shipping
+Van,Delivery,Gist,1,FALSE,Van_Delivery_Gist,Van_Delivery_Gist,local_shipping
+Van,Delivery,Parcel Force,1,FALSE,Van_Delivery_Parcel Force,Van_Delivery_Parcel Force,local_shipping
+Van,Delivery,Royal Mail,1,FALSE,Van_Delivery_Royal Mail,Van_Delivery_Royal Mail,local_shipping
+Van,Delivery,Yodel,1,FALSE,Van_Delivery_Yodel,Van_Delivery_Yodel,local_shipping
+Van,External,Blind Spot Take Care,2,FALSE,Van_External_Blind Spot Take Care,Van_External_Blind Spot Take Care,directions_car
+Van,External,Bodyless,2,FALSE,Van_External_Bodyless,Van_External_Bodyless,directions_car
+Van,External,Flammable Sign,1,FALSE,Van_External_Flammable Sign,Van_External_Flammable Sign,directions_car
+Van,External,Union Jack on truck,1,FALSE,Van_External_Union Jack on truck,Van_External_Union Jack,directions_car
+Van,Haulage & Logistics,A2B Online,1,FALSE,Van_Haulage & Logistics_A2B Online,Van_Haulage & Logistics_A2B Online,local_shipping
+Van,Haulage & Logistics,AA,1,FALSE,Van_Haulage & Logistics_AA,Van_Haulage & Logistics_AA,auto_towing
+Van,Haulage & Logistics,Best (Food Logistics),1,FALSE,Van_Haulage & Logistics_Best (Food Logistics),Van_Haulage & Logistics_Best,local_shipping
+Van,Haulage & Logistics,Boughey,1,FALSE,Van_Haulage & Logistics_Boughey,Van_Haulage & Logistics_Boughey,local_shipping
+Van,Haulage & Logistics,Brakes (Food Supplier),1,FALSE,Van_Haulage & Logistics_Brakes (Food Supplier),Van_Haulage & Logistics_Brakes,local_shipping
+Van,Haulage & Logistics,Culina: Culina,1,FALSE,Van_Haulage & Logistics_Culina: Culina,Van_Haulage & Logistics_Culina: Culina,local_shipping
+Van,Haulage & Logistics,Culina: Fowler Welch,1,FALSE,Van_Haulage & Logistics_Culina: Fowler Welch,Van_Haulage & Logistics_Culina: Fowler Welch,local_shipping
+Van,Haulage & Logistics,Culina: Great Bear,1,FALSE,Van_Haulage & Logistics_Culina: Great Bear,Van_Haulage & Logistics_Culina: Great Bear,local_shipping
+Van,Haulage & Logistics,Culina: Stobart,1,FALSE,Van_Haulage & Logistics_Culina: Stobart,Van_Haulage & Logistics_Culina: Stobart,local_shipping
+Van,Haulage & Logistics,Culina: Warrens,1,FALSE,Van_Haulage & Logistics_Culina: Warrens,Van_Haulage & Logistics_Culina: Warrens,local_shipping
+Van,Haulage & Logistics,DFDS,1,FALSE,Van_Haulage & Logistics_DFDS,Van_Haulage & Logistics_DFDS,local_shipping
+Van,Haulage & Logistics,Discordia,2,FALSE,Van_Haulage & Logistics_Discordia,Van_Haulage & Logistics_Discordia,local_shipping
+Van,Haulage & Logistics,Eddie Stobart (Original),1,FALSE,Van_Haulage & Logistics_Eddie Stobart (Original),Van_Haulage & Logistics_Eddie Stobart (Original),local_shipping
+Van,Haulage & Logistics,Ellerman/YANG MING,2,FALSE,Van_Haulage & Logistics_Ellerman/YANG MING,Van_Haulage & Logistics_Ellerman/YANG MING,local_shipping
+Van,Haulage & Logistics,Evergreen,2,FALSE,Van_Haulage & Logistics_Evergreen,Van_Haulage & Logistics_Evergreen,local_shipping
+Van,Haulage & Logistics,FreshLinc Haulage,1,FALSE,Van_Haulage & Logistics_FreshLinc Haulage,Van_Haulage & Logistics_FreshLinc Haulage,local_shipping
+Van,Haulage & Logistics,Gregory,1,FALSE,Van_Haulage & Logistics_Gregory,Van_Haulage & Logistics_Gregory,local_shipping
+Van,Haulage & Logistics,GXO Logistics,1,FALSE,Van_Haulage & Logistics_GXO Logistics,Van_Haulage & Logistics_GXO Logistics,local_shipping
+Van,Haulage & Logistics,H.Z. Logistics,1,FALSE,Van_Haulage & Logistics_H.Z. Logistics,Van_Haulage & Logistics_H.Z. Logistics,local_shipping
+Van,Haulage & Logistics,Hapag-Lloyd (Orange/Blue),1,FALSE,Van_Haulage & Logistics_Hapag-Lloyd (Orange/Blue),Van_Haulage & Logistics_Hapag-Lloyd (Orange/Blue),local_shipping
+Van,Haulage & Logistics,Hapag-Lloyd (White/Blue),1,FALSE,Van_Haulage & Logistics_Hapag-Lloyd (White/Blue),Van_Haulage & Logistics_Hapag-Lloyd (White/Blue),local_shipping
+Van,Haulage & Logistics,Heidelberg Materials,3,FALSE,Van_Haulage & Logistics_Heidelberg Materials,Van_Haulage & Logistics_Heidelberg Materials,local_shipping
+Van,Haulage & Logistics,Lenham Storage,1,FALSE,Van_Haulage & Logistics_Lenham Storage,Van_Haulage & Logistics_Lenham Storage,local_shipping
+Van,Haulage & Logistics,MAERSK,1,FALSE,Van_Haulage & Logistics_MAERSK,Van_Haulage & Logistics_MAERSK,local_shipping
+Van,Haulage & Logistics,Maritime,1,FALSE,Van_Haulage & Logistics_Maritime,Van_Haulage & Logistics_Maritime,local_shipping
+Van,Haulage & Logistics,Moran Logistics,1,FALSE,Van_Haulage & Logistics_Moran Logistics,Van_Haulage & Logistics_Moran Logistics,local_shipping
+Van,Haulage & Logistics,MSC,1,FALSE,Van_Haulage & Logistics_MSC,Van_Haulage & Logistics_MSC,local_shipping
+Van,Haulage & Logistics,Nicholls Transport,1,FALSE,Van_Haulage & Logistics_Nicholls Transport,Van_Haulage & Logistics_Nicholls Transport,local_shipping
+Van,Haulage & Logistics,Owens,1,FALSE,Van_Haulage & Logistics_Owens,Van_Haulage & Logistics_Owens,local_shipping
+Van,Haulage & Logistics,Petrol Tanker,1,FALSE,Van_Haulage & Logistics_Petrol Tanker,Van_Haulage & Logistics_Petrol Tanker,local_shipping
+Van,Haulage & Logistics,Power (Electric/Gas),1,FALSE,Van_Haulage & Logistics_Power (Electric/Gas),Van_Haulage & Logistics_Electric/Gas,local_shipping
+Van,Haulage & Logistics,PrimaFrio,1,FALSE,Van_Haulage & Logistics_PrimaFrio,Van_Haulage & Logistics_PrimaFrio,local_shipping
+Van,Haulage & Logistics,RAC,1,FALSE,Van_Haulage & Logistics_RAC,Van_Haulage & Logistics_RAC,auto_towing
+Van,Haulage & Logistics,RB (Reed Boardall),1,FALSE,Van_Haulage & Logistics_RB (Reed Boardall),Van_Haulage & Logistics_RB (Reed Boardall),local_shipping
+Van,Haulage & Logistics,Reynolds,1,FALSE,Van_Haulage & Logistics_Reynolds,Van_Haulage & Logistics_Reynolds,local_shipping
+Van,Haulage & Logistics,ROMAC,1,FALSE,Van_Haulage & Logistics_ROMAC,Van_Haulage & Logistics_ROMAC,local_shipping
+Van,Haulage & Logistics,SITRA,1,FALSE,Van_Haulage & Logistics_SITRA,Van_Haulage & Logistics_SITRA,local_shipping
+Van,Haulage & Logistics,Turners Transport,1,FALSE,Van_Haulage & Logistics_Turners Transport,Van_Haulage & Logistics_Turners Transport,local_shipping
+Van,Haulage & Logistics,Waberer’s,1,FALSE,Van_Haulage & Logistics_Waberer’s,Van_Haulage & Logistics_Waberer’s,local_shipping
+Van,Haulage & Logistics,Water Company,1,FALSE,Van_Haulage & Logistics_Water Company,Van_Haulage & Logistics_Water,local_shipping
+Van,Haulage & Logistics,Weaver,1,FALSE,Van_Haulage & Logistics_Weaver,Van_Haulage & Logistics_Weaver,local_shipping
+Van,Haulage & Logistics,Whistl,1,FALSE,Van_Haulage & Logistics_Whistl,Van_Haulage & Logistics_Whistl,local_shipping
+Van,Haulage & Logistics,XPO Logistics,1,FALSE,Van_Haulage & Logistics_XPO Logistics,Van_Haulage & Logistics_XPO Logistics,local_shipping
+Van,Model,DAF,1,FALSE,Van_Model_DAF,Van_Model_DAF,badge
+Van,Model,IVECO,1,FALSE,Van_Model_IVECO,Van_Model_IVECO,badge
+Van,Model,KRONE,1,FALSE,Van_Model_KRONE,Van_Model_KRONE,badge
+Van,Model,LAWRENCE DAVID,1,FALSE,Van_Model_LAWRENCE DAVID,Van_Model_LAWRENCE DAVID,badge
+Van,Model,MAN,1,FALSE,Van_Model_MAN,Van_Model_MAN,badge
+Van,Model,MERCEDES-BENZ,1,FALSE,Van_Model_MERCEDES-BENZ,Van_Model_MERCEDES-BENZ,badge
+Van,Model,SCANIA,1,FALSE,Van_Model_SCANIA,Van_Model_SCANIA,badge
+Van,Model,SCHMITZ,1,FALSE,Van_Model_SCHMITZ,Van_Model_SCHMITZ,badge
+Van,Model,VOLVO,1,FALSE,Van_Model_VOLVO,Van_Model_VOLVO,badge
+Van,Retail,Amazon Prime,1,FALSE,Van_Retail_Amazon Prime,Van_Retail_Amazon Prime,shopping_bag
+Van,Retail,Argos,2,FALSE,Van_Retail_Argos,Van_Retail_Argos,shopping_bag
+Van,Retail,Arla,2,FALSE,Van_Retail_Arla,Van_Retail_Arla,shopping_bag
+Van,Retail,B&M,1,FALSE,Van_Retail_B&M,Van_Retail_B&M,shopping_bag
+Van,Retail,B&Q,1,FALSE,Van_Retail_B&Q,Van_Retail_B&Q,shopping_bag
+Van,Retail,COSTCO,2,FALSE,Van_Retail_COSTCO,Van_Retail_COSTCO,shopping_bag
+Van,Retail,Crisps/Biscuits,1,FALSE,Van_Retail_Crisps/Biscuits,Van_Retail_Crisps/Biscuits,shopping_bag
+Van,Retail,Downton/Heygates,3,FALSE,Van_Retail_Downton/Heygates,Van_Retail_Downton/Heygates,shopping_bag
+Van,Retail,Enterprise,1,FALSE,Van_Retail_Enterprise,Van_Retail_Enterprise,shopping_bag
+Van,Retail,Fast Food Truck,1,FALSE,Van_Retail_Fast Food Truck,Van_Retail_Fast Food Truck,shopping_bag
+Van,Retail,Greggs,1,FALSE,Van_Retail_Greggs,Van_Retail_Greggs,shopping_bag
+Van,Retail,Home Bargains,1,FALSE,Van_Retail_Home Bargains,Van_Retail_Home Bargains,shopping_bag
+Van,Retail,Hovis,1,FALSE,Van_Retail_Hovis,Van_Retail_Hovis,shopping_bag
+Van,Retail,John Lewis,1,FALSE,Van_Retail_John Lewis,Van_Retail_John Lewis,shopping_bag
+Van,Retail,Kingsmill,1,FALSE,Van_Retail_Kingsmill,Van_Retail_Kingsmill,shopping_bag
+Van,Retail,Menzies,1,FALSE,Van_Retail_Menzies,Van_Retail_Menzies,shopping_bag
+Van,Retail,Müller,1,FALSE,Van_Retail_Müller,Van_Retail_Müller,shopping_bag
+Van,Retail,Next,1,FALSE,Van_Retail_Next,Van_Retail_Next,shopping_bag
+Van,Retail,Oakland,3,FALSE,Van_Retail_Oakland,Van_Retail_Oakland,shopping_bag
+Van,Retail,Poundland,1,FALSE,Van_Retail_Poundland,Van_Retail_Poundland,shopping_bag
+Van,Retail,Samworth Brothers,1,FALSE,Van_Retail_Samworth Brothers,Van_Retail_Samworth Brothers,shopping_bag
+Van,Retail,TK Maxx,1,FALSE,Van_Retail_TK Maxx,Van_Retail_TK Maxx,shopping_bag
+Van,Retail,Warburtons,1,FALSE,Van_Retail_Warburtons,Van_Retail_Warburtons,shopping_bag
+Van,Supermarket,Aldi,1,FALSE,Van_Supermarket_Aldi,Van_Supermarket_Aldi,shopping_cart
+Van,Supermarket,ASDA,1,FALSE,Van_Supermarket_ASDA,Van_Supermarket_ASDA,shopping_cart
+Van,Supermarket,Co-Op,2,FALSE,Van_Supermarket_Co-Op,Van_Supermarket_Co-Op,shopping_cart
+Van,Supermarket,Iceland,1,FALSE,Van_Supermarket_Iceland,Van_Supermarket_Iceland,shopping_cart
+Van,Supermarket,Lidl,1,FALSE,Van_Supermarket_Lidl,Van_Supermarket_Lidl,shopping_cart
+Van,Supermarket,Marks & Spencer,1,FALSE,Van_Supermarket_Marks & Spencer,Van_Supermarket_Marks & Spencer,shopping_cart
+Van,Supermarket,Morrisons,1,FALSE,Van_Supermarket_Morrisons,Van_Supermarket_Morrisons,shopping_cart
+Van,Supermarket,Ocado,1,FALSE,Van_Supermarket_Ocado,Van_Supermarket_Ocado,shopping_cart
+Van,Supermarket,Sainsbury’s,1,FALSE,Van_Supermarket_Sainsbury’s,Van_Supermarket_Sainsbury’s,shopping_cart
+Van,Supermarket,TESCO,1,FALSE,Van_Supermarket_TESCO,Van_Supermarket_TESCO,shopping_cart
+Van,Supermarket,Waitrose,1,FALSE,Van_Supermarket_Waitrose,Van_Supermarket_Waitrose,shopping_cart
+Vehicle - Other,Bus & Coaches,Coach (Flixbus),2,FALSE,Vehicle - Other_Bus & Coaches_Coach (Flixbus),Vehicle - Other_Bus & Coaches_Coach (Flixbus),airport_shuttle
+Vehicle - Other,Bus & Coaches,Coach (National Express),1,FALSE,Vehicle - Other_Bus & Coaches_Coach (National Express),Vehicle - Other_Bus & Coaches_Coach (National Express),airport_shuttle
+Vehicle - Other,Bus & Coaches,Coach (Other),1,FALSE,Vehicle - Other_Bus & Coaches_Coach (Other),Vehicle - Other_Bus & Coaches_Coach (Other),airport_shuttle
+Vehicle - Other,Bus & Coaches,Double Decker Bus,1,FALSE,Vehicle - Other_Bus & Coaches_Double Decker Bus,Vehicle - Other_Bus & Coaches_Double Decker Bus,airport_shuttle
+Vehicle - Other,Bus & Coaches,Single Decker Bus,1,FALSE,Vehicle - Other_Bus & Coaches_Single Decker Bus,Vehicle - Other_Bus & Coaches_Single Decker Bus,airport_shuttle
+Vehicle - Other,Car Transporters,Empty,1,FALSE,Vehicle - Other_Car Transporters_Empty,Vehicle - Other_Car Transporters_Empty,traffic_jam
+Vehicle - Other,Car Transporters,Full,1,FALSE,Vehicle - Other_Car Transporters_Full,Vehicle - Other_Car Transporters_Full,traffic_jam
+Vehicle - Other,Car Transporters,Single,1,FALSE,Vehicle - Other_Car Transporters_Single,Vehicle - Other_Car Transporters_Single,traffic_jam
+Vehicle - Other,Cyclists,Cyclist with a helmet,1,FALSE,Vehicle - Other_Cyclists_Cyclist with a helmet,Vehicle - Other_Cyclists_Cyclist helmet,pedal_bike
+Vehicle - Other,Cyclists,Cyclist without a helmet,1,FALSE,Vehicle - Other_Cyclists_Cyclist without a helmet,Vehicle - Other_Cyclists_Cyclist helmet,pedal_bike
+Vehicle - Other,Cyclists,Electric Bike/Scooter,2,FALSE,Vehicle - Other_Cyclists_Electric Bike/Scooter,Vehicle - Other_Cyclists_Electric Bike/Scooter,pedal_bike
+Vehicle - Other,Emergency Vehicles,Ambulance,1,FALSE,Vehicle - Other_Emergency Vehicles_Ambulance,Vehicle - Other_Emergency Vehicles_Ambulance,emergency
+Vehicle - Other,Emergency Vehicles,Fire Engine,3,FALSE,Vehicle - Other_Emergency Vehicles_Fire Engine,Vehicle - Other_Emergency Vehicles_Fire Engine,emergency
+Vehicle - Other,Emergency Vehicles,Highway Maintenance,2,FALSE,Vehicle - Other_Emergency Vehicles_Highway Maintenance,Vehicle - Other_Emergency Vehicles_Highway Maintenance,emergency
+Vehicle - Other,Emergency Vehicles,Police Car,2,FALSE,Vehicle - Other_Emergency Vehicles_Police Car,Vehicle - Other_Emergency Vehicles_Police Car,emergency
+Vehicle - Other,Emergency Vehicles,Traffic Patrol,2,FALSE,Vehicle - Other_Emergency Vehicles_Traffic Patrol,Vehicle - Other_Emergency Vehicles_Traffic Patrol,emergency
+Vehicle - Other,Flying Vehicles,Commercial Aeroplane,2,FALSE,Vehicle - Other_Flying Vehicles_Commercial Aeroplane,Vehicle - Other_Flying Vehicles_Commercial Aeroplane,flight
+Vehicle - Other,Flying Vehicles,Other Non-Commercial,3,FALSE,Vehicle - Other_Flying Vehicles_Other Non-Commercial,Vehicle - Other_Flying Vehicles_Other Non-Commercial,flight
+Vehicle - Other,Misc,Boat/Canoe/Kayak,2,FALSE,Vehicle - Other_Misc_Boat/Canoe/Kayak,Vehicle - Other_Misc_Boat,commute
+Vehicle - Other,Misc,Broken down vehicle,1,FALSE,Vehicle - Other_Misc_Broken down vehicle,Vehicle - Other_Misc_Broken down,commute
+Vehicle - Other,Misc,Caravan,1,FALSE,Vehicle - Other_Misc_Caravan,Vehicle - Other_Misc_Caravan,commute
+Vehicle - Other,Misc,Construction Vehicle,1,FALSE,Vehicle - Other_Misc_Construction Vehicle,Vehicle - Other_Misc_Construction Vehicle,commute
+Vehicle - Other,Misc,Farm vehicle,1,FALSE,Vehicle - Other_Misc_Farm vehicle,Vehicle - Other_Misc_Farm vehicle,commute
+Vehicle - Other,Misc,Horse Box/Transporter,1,FALSE,Vehicle - Other_Misc_Horse Box/Transporter,Vehicle - Other_Misc_Horse Box,commute
+Vehicle - Other,Misc,Motorhome,1,FALSE,Vehicle - Other_Misc_Motorhome,Vehicle - Other_Misc_Motorhome,commute
+Vehicle - Other,Misc,Pram,2,FALSE,Vehicle - Other_Misc_Pram,Vehicle - Other_Misc_Pram,commute
+Vehicle - Other,Misc,Taxi (regular),1,FALSE,Vehicle - Other_Misc_Taxi (regular),Vehicle - Other_Misc_Taxi (regular),commute
+Vehicle - Other,Misc,Taxi (sign on top),1,FALSE,Vehicle - Other_Misc_Taxi (sign on top),Vehicle - Other_Misc_Taxi (sign on top),commute
+Vehicle - Other,Misc,Train,3,FALSE,Vehicle - Other_Misc_Train,Vehicle - Other_Misc_Train,commute
+Vehicle - Other,Misc,Train Track,2,FALSE,Vehicle - Other_Misc_Train Track,Vehicle - Other_Misc_Train Track,commute
+Vehicle - Other,Motorcycles,Bike: Black,1,FALSE,Vehicle - Other_Motorcycles_Bike: Black,Vehicle - Other_Motorcycles_Bike: Black,two_wheeler
+Vehicle - Other,Motorcycles,Bike: Blue,2,FALSE,Vehicle - Other_Motorcycles_Bike: Blue,Vehicle - Other_Motorcycles_Bike: Blue,two_wheeler
+Vehicle - Other,Motorcycles,Bike: Other,2,FALSE,Vehicle - Other_Motorcycles_Bike: Other,Vehicle - Other_Motorcycles_Bike: Other,two_wheeler
+Vehicle - Other,Motorcycles,Bike: Red,2,FALSE,Vehicle - Other_Motorcycles_Bike: Red,Vehicle - Other_Motorcycles_Bike: Red,two_wheeler
+Vehicle - Other,Motorcycles,Bike: Tandem,3,FALSE,Vehicle - Other_Motorcycles_Bike: Tandem,Vehicle - Other_Motorcycles_Bike: Tandem,two_wheeler
+Vehicle - Other,Motorcycles,Helmet: Black,1,FALSE,Vehicle - Other_Motorcycles_Helmet: Black,Vehicle - Other_Motorcycles_Helmet: Black,sports_motorsports
+Vehicle - Other,Motorcycles,Helmet: Other,1,FALSE,Vehicle - Other_Motorcycles_Helmet: Other,Vehicle - Other_Motorcycles_Helmet: Other,sports_motorsports
+Vehicle - Other,Motorcycles,Helmet: White,1,FALSE,Vehicle - Other_Motorcycles_Helmet: White,Vehicle - Other_Motorcycles_Helmet: White,sports_motorsports
