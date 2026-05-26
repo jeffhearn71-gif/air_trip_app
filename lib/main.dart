@@ -899,7 +899,7 @@ Future<void> _openSettings() async {
                             child: Icon(
                               resolveIcon(iconName: stat.iconName, groupName: stat.name),
                               color: color,
-                              size: 36
+                              size: 50
                             ),
                           ),
                           const SizedBox(width: 16),
@@ -908,7 +908,7 @@ Future<void> _openSettings() async {
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
                                 Text(stat.name,
-                                    style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 15)),
+                                    style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 18)),
                                 const SizedBox(height: 8),
                                 ClipRRect(
                                   borderRadius: BorderRadius.circular(8),
@@ -1283,7 +1283,7 @@ class _SubCategoryScreenState extends State<SubCategoryScreen> {
                             child: Icon(
                               resolveIcon(iconName: stat.iconName, groupName: stat.name),
                               color: color,
-                              size: 36,
+                              size: 50,
                             ),
                           ),
                           const SizedBox(width: 12),
@@ -1292,7 +1292,7 @@ class _SubCategoryScreenState extends State<SubCategoryScreen> {
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
                                 Text(stat.name,
-                                    style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 15)),
+                                    style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 18)),
                                 const SizedBox(height: 8),
                                 ClipRRect(
                                   borderRadius: BorderRadius.circular(8),
