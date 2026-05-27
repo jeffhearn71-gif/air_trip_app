@@ -2,8 +2,8 @@ import 'dart:convert';
 
 import 'package:csv/csv.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart'
-    show rootBundle, HapticFeedback, SystemSound, SystemSoundType;
+import 'package:flutter/services.dart' show rootBundle, HapticFeedback;
+
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:audioplayers/audioplayers.dart';
 import 'package:material_symbols_icons/symbols.dart';
@@ -69,6 +69,12 @@ class GroupStat {
 }
 
 enum SortMode { az, progressDesc, remainingDesc, pointsRemainingDesc }
+
+// Sound priorities (higher number = more important)
+const int SFX_SUB = 1;
+const int SFX_CATEGORY = 2;
+const int SFX_RANK = 3;
+const int SFX_WIN = 4;
 
 String sortLabel(SortMode mode) {
   switch (mode) {
@@ -222,6 +228,9 @@ class _CategoryScreenState extends State<CategoryScreen> {
 
   bool _gameCompletedShown = false;
   int _lastRankIndex = -1;
+
+  // Tracks the priority of the sound currently allowed to play
+  int _activeSfxPriority = 0;
 
   @override
   void initState() {
@@ -505,22 +514,43 @@ class _CategoryScreenState extends State<CategoryScreen> {
     );
   }
 
-  Future<void> _playCategoryDoneSound() async {
+  Future<void> _requestSfx({
+    required int priority,
+    required String assetPath,
+    double volume = 1.0,
+  }) async {
     if (!_soundEnabled) return;
+
+    // If a higher (or equal) priority sound is already active, ignore this request.
+    if (priority <= _activeSfxPriority) return;
+
+    _activeSfxPriority = priority;
+
     await _sfxPlayer.stop();
-    await _sfxPlayer.play(AssetSource('sounds/category_done.mp3'));
+    await _sfxPlayer.play(AssetSource(assetPath), volume: volume);
+
+    // When playback finishes, release the priority lock (only if nothing higher replaced it)
+    _sfxPlayer.onPlayerComplete.first.then((_) {
+      if (!mounted) return;
+      if (_activeSfxPriority == priority) {
+        _activeSfxPriority = 0;
+      }
+    });
+  }
+
+  Future<void> _playCategoryDoneSound() async {
+    await _requestSfx(
+      priority: SFX_CATEGORY,
+      assetPath: 'sounds/category_done.mp3',
+    );
   }
 
   Future<void> _playGameDoneSound() async {
-    if (!_soundEnabled) return;
-    await _sfxPlayer.stop();
-    await _sfxPlayer.play(AssetSource('sounds/game_done.mp3'));
+    await _requestSfx(priority: SFX_WIN, assetPath: 'sounds/game_done.mp3');
   }
 
   Future<void> _playRankUpSound() async {
-    if (!_soundEnabled) return;
-    await _sfxPlayer.stop();
-    await _sfxPlayer.play(AssetSource('sounds/rank_up.mp3'));
+    await _requestSfx(priority: SFX_RANK, assetPath: 'sounds/rank_up.mp3');
   }
 
   void _checkRankMilestone() {
@@ -632,27 +662,6 @@ class _CategoryScreenState extends State<CategoryScreen> {
             ),
           );
         });
-
-        if (_hapticsEnabled) {
-          HapticFeedback.mediumImpact();
-        }
-
-        Future.delayed(const Duration(milliseconds: 20), () {
-          _playCategoryDoneSound();
-        });
-
-        Future.delayed(const Duration(milliseconds: 350), () async {
-          if (!mounted) return;
-
-          // built-in "feel" (no extra packages)
-          try {
-            await HapticFeedback.mediumImpact();
-            SystemSound.play(SystemSoundType.click);
-          } catch (_) {}
-
-          // big dialog
-          // ignore: use_build_context_synchronously
-        });
       }
     }
   }
@@ -758,7 +767,7 @@ class _CategoryScreenState extends State<CategoryScreen> {
                       const SizedBox(width: 8),
                       Expanded(
                         child: Text(
-                          'You Won! ${dayName(DateTime.now())} target met (≥ ${threshold.toStringAsFixed(1)}%). Keep going!',
+                          'You Won! ${dayName(DateTime.now())} target met (≥ ${threshold.toStringAsFixed(1)}%).',
                           style: const TextStyle(fontWeight: FontWeight.bold),
                         ),
                       ),
@@ -841,6 +850,7 @@ class _CategoryScreenState extends State<CategoryScreen> {
                             initialSortMode: sortMode,
                             hapticsEnabled: _hapticsEnabled,
                             soundEnabled: _soundEnabled,
+                            playSfx: _requestSfx,
                             completedSubcategoriesShown:
                                 _completedSubcategoriesShownGlobal,
                           ),
@@ -851,11 +861,8 @@ class _CategoryScreenState extends State<CategoryScreen> {
                         _recomputeCategoryStats();
                       });
 
-                      // FIRST: detect category completion (sets dialog + lock)
-                      _checkAndCelebrateCompletedCategories();
-
-                      // THEN: check rank AFTER lock is active
                       _checkRankMilestone();
+                      _checkAndCelebrateCompletedCategories();
                     },
                     child: Padding(
                       padding: const EdgeInsets.fromLTRB(12, 12, 12, 12),
@@ -996,6 +1003,12 @@ class SubCategoryScreen extends StatefulWidget {
   final SortMode initialSortMode;
   final bool hapticsEnabled;
   final bool soundEnabled;
+  final Future<void> Function({
+    required int priority,
+    required String assetPath,
+    double volume,
+  })?
+  playSfx;
   final Set<String> completedSubcategoriesShown;
 
   const SubCategoryScreen({
@@ -1007,6 +1020,7 @@ class SubCategoryScreen extends StatefulWidget {
     required this.initialSortMode,
     required this.hapticsEnabled,
     required this.soundEnabled,
+    this.playSfx,
     required this.completedSubcategoriesShown,
   });
 
@@ -1015,7 +1029,6 @@ class SubCategoryScreen extends StatefulWidget {
 }
 
 class _SubCategoryScreenState extends State<SubCategoryScreen> {
-  final AudioPlayer _subSfxPlayer = AudioPlayer();
   bool hideDone = true;
 
   List<GroupStat> subStats = [];
@@ -1047,7 +1060,6 @@ class _SubCategoryScreenState extends State<SubCategoryScreen> {
 
   @override
   void dispose() {
-    _subSfxPlayer.dispose();
     super.dispose();
   }
 
@@ -1143,11 +1155,11 @@ class _SubCategoryScreenState extends State<SubCategoryScreen> {
           HapticFeedback.selectionClick();
         }
 
-        if (widget.soundEnabled) {
-          Future.delayed(const Duration(milliseconds: 15), () async {
-            await _subSfxPlayer.stop();
-            await _subSfxPlayer.play(
-              AssetSource('sounds/sub_done.mp3'),
+        if (widget.soundEnabled && widget.playSfx != null) {
+          Future.delayed(const Duration(milliseconds: 15), () {
+            widget.playSfx!(
+              priority: SFX_SUB,
+              assetPath: 'sounds/sub_done.mp3',
               volume: 0.6,
             );
           });
