@@ -45,6 +45,47 @@ class TripItem {
   });
 }
 
+class Trip {
+  final String tripId;
+  final String tripName;
+  final String startLocation;
+  final String endLocation;
+
+  final int score;
+  final int maxScore;
+  final double percent;
+
+  final int itemsFound;
+  final int maxItemsFound;
+
+  final int subCategoriesCompleted;
+  final int categoriesCompleted;
+  final int finalRankIndex;
+
+  final bool perfectRun;
+
+  final DateTime startTime;
+  final DateTime endTime;
+
+  Trip({
+    required this.tripId,
+    required this.tripName,
+    required this.startLocation,
+    required this.endLocation,
+    required this.score,
+    required this.maxScore,
+    required this.percent,
+    required this.itemsFound,
+    required this.maxItemsFound,
+    required this.subCategoriesCompleted,
+    required this.categoriesCompleted,
+    required this.finalRankIndex,
+    required this.perfectRun,
+    required this.startTime,
+    required this.endTime,
+  });
+}
+
 class GroupStat {
   final String name;
   final int found;
@@ -76,6 +117,34 @@ const int SFX_CATEGORY = 2;
 const int SFX_RANK = 3;
 const int SFX_WIN = 4;
 const int SFX_PERFECT = 5;
+const List<String> kRanks = [
+  'Noob',
+  'Novice',
+  'Rookie',
+  'Amateur',
+  'Mid',
+  'Decent',
+  'Master',
+  'Expert',
+  'Legendary',
+  'God-Like',
+];
+
+Color rankColor(int idx) {
+  const colors = <Color>[
+    Color(0xFFE0E0E0),
+    Color(0xFF64B5F6),
+    Color(0xFF4CAF50),
+    Color(0xFFFBC02D),
+    Color(0xFFFB8C00),
+    Color(0xFFE57373),
+    Color(0xFFE53935),
+    Color(0xFF5E35B1),
+    Color(0xFF2C3E50),
+    Color(0xFF000000),
+  ];
+  return colors[idx.clamp(0, colors.length - 1)];
+}
 
 String sortLabel(SortMode mode) {
   switch (mode) {
@@ -186,34 +255,6 @@ class _CategoryScreenState extends State<CategoryScreen> {
   List<GroupStat> categoryStats = [];
 
   int totalScore = 0;
-  final List<String> ranks = [
-    'Noob',
-    'Novice',
-    'Rookie',
-    'Amateur',
-    'Mid',
-    'Decent',
-    'Master',
-    'Expert',
-    'Legendary',
-    'God-Like',
-  ];
-
-  Color _rankColor(int idx) {
-    const colors = <Color>[
-      Color(0xFFE0E0E0), // Noob
-      Color(0xFF64B5F6), // Novice
-      Color(0xFF4CAF50), // Rookie
-      Color(0xFFFBC02D), // Amateur
-      Color(0xFFFB8C00), // Mid
-      Color(0xFFE57373), // Decent
-      Color(0xFFE53935), // Master
-      Color(0xFF5E35B1), // Expert
-      Color(0xFF2C3E50), // Legendary
-      Color(0xFF000000), // God-Like
-    ];
-    return colors[idx.clamp(0, colors.length - 1)];
-  }
 
   int maxScore = 0;
 
@@ -226,6 +267,12 @@ class _CategoryScreenState extends State<CategoryScreen> {
   Set<String> _completedCategoriesShown = {};
   Set<String> _completedSubcategoriesShownGlobal = {};
   Set<String>? _previousCompletedSubcategoriesShownGlobal;
+
+  // --- Trip session state ---
+  String? _currentTripType;
+  String? _currentStartLocation;
+  String? _currentEndLocation;
+  DateTime? _tripStartTime;
 
   bool _gameCompletedShown = false;
   bool _perfectRunShown = false;
@@ -342,6 +389,31 @@ class _CategoryScreenState extends State<CategoryScreen> {
   double _getProgressPercent() {
     if (maxScore == 0) return 0;
     return (totalScore / maxScore) * 100;
+  }
+
+  String _generateTripId({
+    required DateTime date,
+    required String start,
+    required String end,
+  }) {
+    final yy = (date.year % 100).toString().padLeft(2, '0');
+    final mm = date.month.toString().padLeft(2, '0');
+    final dd = date.day.toString().padLeft(2, '0');
+
+    final datePart = '$yy$mm$dd';
+
+    String clean(String text) {
+      return text
+          .trim()
+          .toLowerCase()
+          .replaceAll(' ', '_')
+          .replaceAll(RegExp(r'[^a-z0-9_]'), '');
+    }
+
+    final startClean = clean(start);
+    final endClean = clean(end);
+
+    return '${datePart}_${startClean}_${endClean}';
   }
 
   int _getRankIndex() {
@@ -628,6 +700,81 @@ class _CategoryScreenState extends State<CategoryScreen> {
     }
   }
 
+  void _endTrip() async {
+    final confirm = await showDialog<bool>(
+      context: context,
+      builder: (context) {
+        return AlertDialog(
+          title: const Text('End Trip?'),
+          content: const Text('Are you sure you want to end the trip?'),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.pop(context, false),
+              child: const Text('No'),
+            ),
+            ElevatedButton(
+              onPressed: () => Navigator.pop(context, true),
+              child: const Text('Yes'),
+            ),
+          ],
+        );
+      },
+    );
+
+    if (confirm != true) return;
+    // ✅ Check if trip was started
+    if (_tripStartTime == null ||
+        _currentTripType == null ||
+        _currentStartLocation == null ||
+        _currentEndLocation == null) {
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(const SnackBar(content: Text('Start a trip first')));
+      return;
+    }
+
+    final endTime = DateTime.now();
+
+    final percent = _getProgressPercent();
+
+    final tripId = _generateTripId(
+      date: endTime,
+      start: _currentStartLocation!,
+      end: _currentEndLocation!,
+    );
+
+    final trip = Trip(
+      tripId: tripId,
+      tripName: _currentTripType!, // using “Type of Trip”
+      startLocation: _currentStartLocation!,
+      endLocation: _currentEndLocation!,
+      score: totalScore,
+      maxScore: maxScore,
+      percent: percent,
+      itemsFound: foundById.values.where((v) => v).length,
+      maxItemsFound: items.length,
+      subCategoriesCompleted: 0,
+      categoriesCompleted: categoryStats.where((c) => c.complete).length,
+      finalRankIndex: _getRankIndex(),
+      perfectRun: percent >= 100.0,
+      startTime: _tripStartTime!,
+      endTime: endTime,
+    );
+
+    // ✅ clear current trip after ending
+    setState(() {
+      _tripStartTime = null;
+      _currentTripType = null;
+      _currentStartLocation = null;
+      _currentEndLocation = null;
+    });
+
+    Navigator.push(
+      context,
+      MaterialPageRoute(builder: (_) => TripSummaryScreen(trip: trip)),
+    );
+  }
+
   void _checkPerfectRun() {
     // Perfect Run = exactly 100% of points
     if (_perfectRunShown) return;
@@ -696,6 +843,57 @@ class _CategoryScreenState extends State<CategoryScreen> {
     );
   }
 
+  Future<void> _startTripDialog() async {
+    final typeController = TextEditingController();
+    final startController = TextEditingController();
+    final endController = TextEditingController();
+
+    await showDialog(
+      context: context,
+      builder: (context) {
+        return AlertDialog(
+          title: const Text('Start Trip'),
+          content: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              TextField(
+                controller: typeController,
+                decoration: const InputDecoration(labelText: 'Type of Trip'),
+              ),
+              TextField(
+                controller: startController,
+                decoration: const InputDecoration(labelText: 'Location Start'),
+              ),
+              TextField(
+                controller: endController,
+                decoration: const InputDecoration(labelText: 'Location End'),
+              ),
+            ],
+          ),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.pop(context),
+              child: const Text('Cancel'),
+            ),
+            ElevatedButton(
+              onPressed: () {
+                setState(() {
+                  _currentTripType = typeController.text.trim();
+                  _currentStartLocation = startController.text.trim();
+                  _currentEndLocation = endController.text.trim();
+                  _tripStartTime = DateTime.now();
+                });
+
+                Navigator.pop(context);
+              },
+              child: const Text('Start'),
+            ),
+          ],
+        );
+      },
+    );
+  }
+
   void _checkAndCelebrateCompletedCategories() {
     for (final stat in categoryStats) {
       if (stat.complete && !_completedCategoriesShown.contains(stat.name)) {
@@ -760,6 +958,18 @@ class _CategoryScreenState extends State<CategoryScreen> {
       appBar: AppBar(
         title: const Text('Car Trip Game'),
         actions: [
+          TextButton.icon(
+            icon: Icon(_tripStartTime == null ? Icons.play_arrow : Icons.stop),
+            label: Text(_tripStartTime == null ? 'START' : 'END'),
+            onPressed: () {
+              if (_tripStartTime == null) {
+                _startTripDialog();
+              } else {
+                _endTrip();
+              }
+            },
+          ),
+
           IconButton(
             tooltip: 'Settings',
             icon: const Icon(Icons.settings),
@@ -774,6 +984,19 @@ class _CategoryScreenState extends State<CategoryScreen> {
       ),
       body: Column(
         children: [
+          if (_tripStartTime != null)
+            Container(
+              width: double.infinity,
+              padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+              color: Colors.green.withValues(alpha: 0.06),
+              child: Text(
+                '🚗 ${_currentTripType ?? ''} • ${_currentStartLocation ?? ''} → ${_currentEndLocation ?? ''} • ${_tripStartTime!.hour.toString().padLeft(2, '0')}:${_tripStartTime!.minute.toString().padLeft(2, '0')}',
+                maxLines: 1,
+                overflow: TextOverflow.ellipsis,
+                style: const TextStyle(fontWeight: FontWeight.w500),
+              ),
+            ),
+
           Container(
             padding: const EdgeInsets.fromLTRB(16, 12, 16, 12),
             color: Colors.blue.withValues(alpha: 0.06),
@@ -869,8 +1092,8 @@ class _CategoryScreenState extends State<CategoryScreen> {
                         },
                         child: RankBadge(
                           key: ValueKey<int>(currentRankIndex),
-                          text: 'Rank: ${ranks[currentRankIndex]}',
-                          color: _rankColor(currentRankIndex),
+                          text: 'Rank: ${kRanks[currentRankIndex]}',
+                          color: rankColor(currentRankIndex),
                         ),
                       ),
                     ],
@@ -919,6 +1142,7 @@ class _CategoryScreenState extends State<CategoryScreen> {
                             playSfx: _requestSfx,
                             completedSubcategoriesShown:
                                 _completedSubcategoriesShownGlobal,
+                            isTripActive: _tripStartTime != null,
                           ),
                         ),
                       );
@@ -1069,6 +1293,7 @@ class SubCategoryScreen extends StatefulWidget {
   final SortMode initialSortMode;
   final bool hapticsEnabled;
   final bool soundEnabled;
+  final bool isTripActive;
   final Future<void> Function({
     required int priority,
     required String assetPath,
@@ -1088,6 +1313,7 @@ class SubCategoryScreen extends StatefulWidget {
     required this.soundEnabled,
     this.playSfx,
     required this.completedSubcategoriesShown,
+    required this.isTripActive,
   });
 
   @override
@@ -1340,6 +1566,7 @@ class _SubCategoryScreenState extends State<SubCategoryScreen> {
                             items: filtered,
                             foundById: widget.foundById,
                             onToggle: widget.onToggle,
+                            isTripActive: widget.isTripActive,
                           ),
                         ),
                       );
@@ -1426,6 +1653,7 @@ class ItemScreen extends StatefulWidget {
   final List<TripItem> items;
   final Map<String, bool> foundById;
   final Future<void> Function(String, bool) onToggle;
+  final bool isTripActive;
 
   const ItemScreen({
     super.key,
@@ -1433,6 +1661,7 @@ class ItemScreen extends StatefulWidget {
     required this.items,
     required this.foundById,
     required this.onToggle,
+    required this.isTripActive,
   });
 
   @override
@@ -1508,7 +1737,15 @@ class _ItemScreenState extends State<ItemScreen> {
               size: 36,
             ),
             value: checked,
+
             onChanged: (v) async {
+              if (!widget.isTripActive) {
+                ScaffoldMessenger.of(context).showSnackBar(
+                  const SnackBar(content: Text('Start a trip first')),
+                );
+                return;
+              }
+
               final newVal = v ?? false;
 
               setState(() {
@@ -1571,6 +1808,187 @@ class _PerfectRunContentState extends State<_PerfectRunContent>
             color: Colors.white,
             letterSpacing: 0.6,
           ),
+        ),
+      ),
+    );
+  }
+}
+
+class TripSummaryScreen extends StatelessWidget {
+  final Trip trip;
+
+  const TripSummaryScreen({super.key, required this.trip});
+
+  String _formatTime(DateTime dt) {
+    final h = dt.hour.toString().padLeft(2, '0');
+    final m = dt.minute.toString().padLeft(2, '0');
+    return '$h:$m';
+  }
+
+  String _formatDuration(DateTime start, DateTime end) {
+    final diff = end.difference(start);
+
+    final minutes = diff.inMinutes;
+
+    if (minutes < 60) {
+      return '$minutes min';
+    }
+
+    final hours = minutes ~/ 60;
+    final remainingMinutes = minutes % 60;
+
+    if (remainingMinutes == 0) {
+      return '${hours}h';
+    }
+
+    return '${hours}h ${remainingMinutes}m';
+  }
+
+  String _formatRate(int value, DateTime start, DateTime end) {
+    final minutes = end.difference(start).inMinutes;
+
+    if (minutes == 0) return '0';
+
+    final rate = value / minutes;
+
+    return rate.toStringAsFixed(1);
+  }
+
+  TableRow _tableRow(String label, String value) {
+    return TableRow(
+      children: [
+        Padding(
+          padding: const EdgeInsets.all(8),
+          child: Align(
+            alignment: Alignment.centerRight,
+            child: Text(
+              label,
+              style: const TextStyle(fontWeight: FontWeight.w500),
+            ),
+          ),
+        ),
+        Padding(
+          padding: const EdgeInsets.all(8),
+          child: Align(alignment: Alignment.centerLeft, child: Text(value)),
+        ),
+      ],
+    );
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(title: const Text('Trip Complete')),
+      body: Padding(
+        padding: const EdgeInsets.all(20),
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            const Text(
+              '🚗 Trip Complete',
+              style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
+            ),
+
+            const SizedBox(height: 20),
+
+            Text(
+              '${trip.percent.round()}%',
+              style: const TextStyle(fontSize: 48, fontWeight: FontWeight.w900),
+            ),
+
+            const SizedBox(height: 20),
+
+            // --- Trip Identity ---
+            Table(
+              border: TableBorder.all(color: Colors.grey.shade300, width: 1),
+              columnWidths: const {
+                0: IntrinsicColumnWidth(),
+                1: FlexColumnWidth(),
+              },
+              children: [
+                _tableRow('Trip', trip.tripName),
+                _tableRow('ID', trip.tripId),
+                _tableRow(
+                  'Route',
+                  '${trip.startLocation} → ${trip.endLocation}',
+                ),
+                TableRow(
+                  children: [
+                    const Padding(
+                      padding: EdgeInsets.all(8),
+                      child: Align(
+                        alignment: Alignment.centerRight,
+                        child: Text(
+                          'Final Rank',
+                          style: TextStyle(fontWeight: FontWeight.w500),
+                        ),
+                      ),
+                    ),
+                    Padding(
+                      padding: const EdgeInsets.all(8),
+                      child: Align(
+                        alignment: Alignment.centerLeft,
+                        child: Text(
+                          kRanks[trip.finalRankIndex],
+                          style: TextStyle(
+                            fontWeight: FontWeight.bold,
+                            color: rankColor(trip.finalRankIndex),
+                          ),
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+                _tableRow('Score', '${trip.score} / ${trip.maxScore}'),
+                _tableRow(
+                  'Score/min',
+                  _formatRate(trip.score, trip.startTime, trip.endTime),
+                ),
+                _tableRow(
+                  'Items',
+                  '${trip.itemsFound} / ${trip.maxItemsFound}',
+                ),
+                _tableRow(
+                  'Items/min',
+                  _formatRate(trip.itemsFound, trip.startTime, trip.endTime),
+                ),
+                _tableRow(
+                  'Sub-Categories',
+                  '${trip.subCategoriesCompleted} / 44',
+                ),
+                _tableRow('Categories', '${trip.categoriesCompleted} / 9'),
+
+                _tableRow('Start', _formatTime(trip.startTime)),
+                _tableRow('End', _formatTime(trip.endTime)),
+
+                _tableRow(
+                  'Duration',
+                  _formatDuration(trip.startTime, trip.endTime),
+                ),
+              ],
+            ),
+
+            const SizedBox(height: 20),
+
+            if (trip.perfectRun)
+              const Text(
+                '⭐ PERFECT RUN ⭐',
+                style: TextStyle(
+                  fontSize: 20,
+                  fontWeight: FontWeight.bold,
+                  color: Colors.amber,
+                ),
+              ),
+
+            const SizedBox(height: 30),
+
+            ElevatedButton(
+              onPressed: () {
+                Navigator.pop(context);
+              },
+              child: const Text('Done'),
+            ),
+          ],
         ),
       ),
     );
