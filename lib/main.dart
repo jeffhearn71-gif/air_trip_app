@@ -75,6 +75,7 @@ const int SFX_SUB = 1;
 const int SFX_CATEGORY = 2;
 const int SFX_RANK = 3;
 const int SFX_WIN = 4;
+const int SFX_PERFECT = 5;
 
 String sortLabel(SortMode mode) {
   switch (mode) {
@@ -227,6 +228,7 @@ class _CategoryScreenState extends State<CategoryScreen> {
   Set<String>? _previousCompletedSubcategoriesShownGlobal;
 
   bool _gameCompletedShown = false;
+  bool _perfectRunShown = false;
   int _lastRankIndex = -1;
 
   // Tracks the priority of the sound currently allowed to play
@@ -445,6 +447,7 @@ class _CategoryScreenState extends State<CategoryScreen> {
     }
 
     _checkGameCompletion();
+    _checkPerfectRun();
     // IMPORTANT: rank check AFTER category celebration
   }
 
@@ -471,7 +474,7 @@ class _CategoryScreenState extends State<CategoryScreen> {
 
       _completedCategoriesShown.clear();
       _gameCompletedShown = false;
-
+      _perfectRunShown = false;
       _completedSubcategoriesShownGlobal.clear();
 
       _recomputeCategoryStats();
@@ -549,6 +552,13 @@ class _CategoryScreenState extends State<CategoryScreen> {
     await _requestSfx(priority: SFX_WIN, assetPath: 'sounds/game_done.mp3');
   }
 
+  Future<void> _playPerfectDoneSound() async {
+    await _requestSfx(
+      priority: SFX_PERFECT,
+      assetPath: 'sounds/perfect_done.mp3',
+    );
+  }
+
   Future<void> _playRankUpSound() async {
     await _requestSfx(priority: SFX_RANK, assetPath: 'sounds/rank_up.mp3');
   }
@@ -575,7 +585,17 @@ class _CategoryScreenState extends State<CategoryScreen> {
   }
 
   void _checkGameCompletion() {
-    if (!_gameCompletedShown && _getProgressPercent() >= _getTargetPercent()) {
+    // If already won, do nothing
+    if (_gameCompletedShown) return;
+
+    // If perfect run, let the Perfect Run handler take over (no normal win snackbar)
+    if (maxScore > 0 && totalScore == maxScore) {
+      _gameCompletedShown = true; // still mark as "won"
+      return;
+    }
+
+    // Normal win condition (80%/90%)
+    if (_getProgressPercent() >= _getTargetPercent()) {
       _gameCompletedShown = true;
 
       if (_hapticsEnabled) {
@@ -585,8 +605,54 @@ class _CategoryScreenState extends State<CategoryScreen> {
       _playGameDoneSound();
 
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-          content: Text('🎉 Incredible - You completed the entire list!'),
+        SnackBar(
+          duration: const Duration(seconds: 8),
+          backgroundColor: Colors.orange[800],
+          behavior: SnackBarBehavior.floating,
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(16),
+          ),
+          content: Center(
+            child: Text(
+              '⭐ You reached the winning target! ⭐',
+              textAlign: TextAlign.center,
+              style: const TextStyle(
+                fontSize: 20,
+                fontWeight: FontWeight.bold,
+                color: Colors.white,
+              ),
+            ),
+          ),
+        ),
+      );
+    }
+  }
+
+  void _checkPerfectRun() {
+    // Perfect Run = exactly 100% of points
+    if (_perfectRunShown) return;
+    if (maxScore <= 0) return;
+
+    if (totalScore == maxScore) {
+      _perfectRunShown = true;
+
+      if (_hapticsEnabled) {
+        HapticFeedback.heavyImpact();
+      }
+
+      _playPerfectDoneSound();
+
+      ScaffoldMessenger.of(context).clearSnackBars();
+
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          duration: const Duration(seconds: 8), // ✅ long
+          backgroundColor: Colors.amber[800], // ✅ flashy gold
+          behavior: SnackBarBehavior.floating,
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(16),
+          ),
+          content: const _PerfectRunContent(), // ✅ pulsing text widget
         ),
       );
     }
@@ -1453,6 +1519,59 @@ class _ItemScreenState extends State<ItemScreen> {
             },
           );
         },
+      ),
+    );
+  }
+}
+
+class _PerfectRunContent extends StatefulWidget {
+  const _PerfectRunContent();
+
+  @override
+  State<_PerfectRunContent> createState() => _PerfectRunContentState();
+}
+
+class _PerfectRunContentState extends State<_PerfectRunContent>
+    with SingleTickerProviderStateMixin {
+  late final AnimationController _controller;
+  late final Animation<double> _scale;
+
+  @override
+  void initState() {
+    super.initState();
+
+    _controller = AnimationController(
+      vsync: this,
+      duration: const Duration(milliseconds: 1000),
+    )..repeat(reverse: true);
+
+    _scale = Tween<double>(
+      begin: 1.0,
+      end: 1.06,
+    ).animate(CurvedAnimation(parent: _controller, curve: Curves.easeInOut));
+  }
+
+  @override
+  void dispose() {
+    _controller.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Center(
+      child: ScaleTransition(
+        scale: _scale,
+        child: const Text(
+          '⭐ PERFECT RUN — 100% COMPLETE! ⭐',
+          textAlign: TextAlign.center,
+          style: TextStyle(
+            fontSize: 18,
+            fontWeight: FontWeight.w900,
+            color: Colors.white,
+            letterSpacing: 0.6,
+          ),
+        ),
       ),
     );
   }
