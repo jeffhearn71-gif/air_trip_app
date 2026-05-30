@@ -34,6 +34,7 @@ class TripItem {
   final String itemId;
   final String iconName; // from CSV Icon column
   final int points; // from CSV Points column
+  final List<String> achievementIds;
 
   TripItem({
     required this.category,
@@ -42,6 +43,7 @@ class TripItem {
     required this.itemId,
     required this.iconName,
     required this.points,
+    required this.achievementIds,
   });
 }
 
@@ -69,6 +71,10 @@ class Trip {
   final int totalDoubleItems;
   final int doubleScore;
   final int doubleMaxScore;
+  final List<String> completedAchievementIds;
+
+  final Map<String, int> achievementTotals;
+  final Map<String, int> achievementFoundCounts;
 
   final bool perfectRun;
 
@@ -97,6 +103,9 @@ class Trip {
     required this.totalDoubleItems,
     required this.doubleScore,
     required this.doubleMaxScore,
+    required this.completedAchievementIds,
+    required this.achievementTotals,
+    required this.achievementFoundCounts,
   });
 }
 
@@ -130,8 +139,9 @@ const int SFX_SUB = 1;
 const int SFX_CATEGORY = 2;
 const int SFX_RANK = 3;
 const int SFX_DOUBLE = 4;
-const int SFX_WIN = 4;
-const int SFX_PERFECT = 5;
+const int SFX_ACHIEVEMENT = 5;
+const int SFX_WIN = 6;
+const int SFX_PERFECT = 7;
 const List<String> kRanks = [
   'Noob',
   'Novice',
@@ -161,6 +171,42 @@ Color rankColor(int idx) {
   return colors[idx.clamp(0, colors.length - 1)];
 }
 
+const Map<String, String> achievementLabels = {
+  'flying': 'Air today gone tomorrow!',
+  'animals': 'Animals crackers!',
+  'farmer': 'Me and the farmer!',
+  'builder': 'Bob the builder!',
+  'location': 'Location location location!',
+  'rainbow': 'Somewhere over the rainbow!',
+  'interest': 'Been there done that!',
+  'fuel': 'Fuel the imagination!',
+  'rule': 'Rule Britannia!',
+  'pub': 'Cheers!',
+  'shop_drop': "Shop 'til you drop!",
+  'bike': 'On yer bike!',
+  'poppy': 'Lest we forget!',
+  'park_mate': "You can't park there mate!",
+  'top_gear': 'Top Gear!',
+  'plate': 'Put it on a plate!',
+  'learning': 'Learning the hard way!',
+  'bin': "It's bin a long time coming!",
+  'bus_coach': 'Bus-ted!',
+  'object': 'Object of desire!',
+  'wavelength': "We're on the same wavelength!",
+  'naturel': 'Au naturel!',
+  'middle_road': 'Middle of the road!',
+  'speed_freak': 'Speed freak!',
+  'cone_head': 'Cone head!',
+  'distance': 'Long distance runner!',
+  'highway': 'Highway robbery!',
+  'orange_black': 'Orange is the new black!',
+  'stand_deliver': 'Stand and deliver!',
+  'long_haul': 'In it for the long haul!',
+  'vans_man': 'A vans man!',
+  'retail_therapy': 'Retail therapy!',
+  'little_help': 'Every little helps!',
+  'blues_twos': 'Blues and twos!',
+};
 String sortLabel(SortMode mode) {
   switch (mode) {
     case SortMode.az:
@@ -291,7 +337,11 @@ class _CategoryScreenState extends State<CategoryScreen> {
   String? _currentStartLocation;
   String? _currentEndLocation;
   DateTime? _tripStartTime;
+
   Set<String> _bonusItemIds = {};
+
+  Set<String> _completedAchievements = {};
+  Map<String, Set<String>> _achievementItemIds = {};
 
   bool _gameCompletedShown = false;
   bool _perfectRunShown = false;
@@ -328,6 +378,7 @@ class _CategoryScreenState extends State<CategoryScreen> {
       const cPoints = 3;
       const cItemId = 5;
       const cIcon = 7;
+      const cAchievementIds = 8;
 
       final raw = await rootBundle.loadString(csvPath);
 
@@ -347,6 +398,16 @@ class _CategoryScreenState extends State<CategoryScreen> {
         final points = int.tryParse(row[cPoints].toString().trim()) ?? 1;
         final itemId = row[cItemId].toString().trim();
         final iconName = row[cIcon].toString().trim();
+        final rawAchievementIds = row.length > cAchievementIds
+            ? row[cAchievementIds].toString().trim()
+            : '';
+        final achievementIds = rawAchievementIds.isEmpty
+            ? <String>[]
+            : rawAchievementIds
+                  .split('|')
+                  .map((s) => s.trim())
+                  .where((s) => s.isNotEmpty)
+                  .toList();
 
         if (category.isEmpty || sub.isEmpty || name.isEmpty || itemId.isEmpty) {
           continue;
@@ -360,6 +421,7 @@ class _CategoryScreenState extends State<CategoryScreen> {
             itemId: itemId,
             iconName: iconName,
             points: points,
+            achievementIds: achievementIds,
           ),
         );
 
@@ -481,6 +543,14 @@ class _CategoryScreenState extends State<CategoryScreen> {
     return items.map((e) => e.subCategory).toSet().length;
   }
 
+  int _getCompletedAchievementCount() {
+    return _completedAchievements.length;
+  }
+
+  int _getTotalAchievementCount() {
+    return achievementLabels.length;
+  }
+
   Set<String> _generateBonusItemIds() {
     final Map<int, List<TripItem>> groupedByPoints = {};
 
@@ -540,26 +610,34 @@ class _CategoryScreenState extends State<CategoryScreen> {
     totalScore = 0;
     maxScore = 0;
 
+    // ✅ Build achievement → itemId mapping
+    _achievementItemIds.clear();
+
+    for (final it in items) {
+      for (final achievementId in it.achievementIds) {
+        _achievementItemIds.putIfAbsent(achievementId, () => <String>{});
+        _achievementItemIds[achievementId]!.add(it.itemId);
+      }
+    }
+
+    // ✅ MAIN LOOP — THIS IS THE IMPORTANT PART
     for (final it in items) {
       final isBonus = _bonusItemIds.contains(it.itemId);
       final itemMaxPoints = isBonus ? it.points * 2 : it.points;
 
       totals[it.category] = (totals[it.category] ?? 0) + 1;
-
       maxScores[it.category] = (maxScores[it.category] ?? 0) + itemMaxPoints;
-
       maxScore += itemMaxPoints;
 
       iconCounts.putIfAbsent(it.category, () => <String, int>{});
       final m = iconCounts[it.category]!;
+
       final key = it.iconName.isEmpty ? 'category' : it.iconName;
       m[key] = (m[key] ?? 0) + 1;
 
       if (foundById[it.itemId] == true) {
         founds[it.category] = (founds[it.category] ?? 0) + 1;
-
         scores[it.category] = (scores[it.category] ?? 0) + itemMaxPoints;
-
         totalScore += itemMaxPoints;
       }
     }
@@ -854,6 +932,25 @@ class _CategoryScreenState extends State<CategoryScreen> {
       }
     }
 
+    final completedAchievementIds = <String>[];
+    final achievementTotals = <String, int>{};
+    final achievementFoundCounts = <String, int>{};
+
+    for (final entry in _achievementItemIds.entries) {
+      final achievementId = entry.key;
+      final itemSet = entry.value;
+
+      final total = itemSet.length;
+      final found = itemSet.where((id) => foundById[id] == true).length;
+
+      achievementTotals[achievementId] = total;
+      achievementFoundCounts[achievementId] = found;
+
+      if (total > 0 && found == total) {
+        completedAchievementIds.add(achievementId);
+      }
+    }
+
     final trip = Trip(
       tripId: tripId,
       tripName: _currentTripType!, // using “Type of Trip”
@@ -870,6 +967,9 @@ class _CategoryScreenState extends State<CategoryScreen> {
       totalDoubleItems: totalDoubleItems,
       doubleScore: doubleScore,
       doubleMaxScore: doubleMaxScore,
+      completedAchievementIds: completedAchievementIds,
+      achievementTotals: achievementTotals,
+      achievementFoundCounts: achievementFoundCounts,
       totalCategories: _getTotalCategories(),
       totalSubCategories: _getTotalSubCategories(),
       finalRankIndex: _getRankIndex(),
@@ -1000,6 +1100,8 @@ class _CategoryScreenState extends State<CategoryScreen> {
                   _currentEndLocation = endController.text.trim();
                   _tripStartTime = DateTime.now();
                   _bonusItemIds = _generateBonusItemIds();
+                  _recomputeCategoryStats();
+                  _completedAchievements.clear();
                 });
 
                 Navigator.pop(context);
@@ -1046,6 +1148,31 @@ class _CategoryScreenState extends State<CategoryScreen> {
         });
       }
     }
+  }
+
+  List<String> _handleAchievementCheck(
+    String itemId,
+    Map<String, bool> foundById,
+  ) {
+    final unlockedLabels = <String>[];
+
+    for (final entry in _achievementItemIds.entries) {
+      final achievementId = entry.key;
+      final itemSet = entry.value;
+
+      if (!itemSet.contains(itemId)) continue;
+
+      final allFound = itemSet.every((id) => foundById[id] == true);
+
+      if (allFound && !_completedAchievements.contains(achievementId)) {
+        _completedAchievements.add(achievementId);
+
+        final label = achievementLabels[achievementId] ?? achievementId;
+        unlockedLabels.add(label);
+      }
+    }
+
+    return unlockedLabels;
   }
 
   @override
@@ -1124,12 +1251,25 @@ class _CategoryScreenState extends State<CategoryScreen> {
                 Row(
                   children: [
                     Expanded(
-                      child: Text(
-                        'Total Score: $totalScore / $maxScore  (${percentTotal.toStringAsFixed(1)}%)',
-                        style: const TextStyle(
-                          fontWeight: FontWeight.bold,
-                          fontSize: 16,
-                        ),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            'Total Score: $totalScore / $maxScore  (${percentTotal.toStringAsFixed(1)}%)',
+                            style: const TextStyle(
+                              fontWeight: FontWeight.bold,
+                              fontSize: 16,
+                            ),
+                          ),
+                          const SizedBox(height: 2),
+                          Text(
+                            'Target >= ${_getTargetPercent().toStringAsFixed(1)}% (${_getDayName()})',
+                            style: const TextStyle(
+                              fontSize: 16,
+                              color: Colors.black54,
+                            ),
+                          ),
+                        ],
                       ),
                     ),
                     DropdownButtonHideUnderline(
@@ -1185,10 +1325,10 @@ class _CategoryScreenState extends State<CategoryScreen> {
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
                       Text(
-                        'Target >= ${_getTargetPercent().toStringAsFixed(1)}% (${_getDayName()})',
+                        'Achievements: ${_getCompletedAchievementCount()} / ${_getTotalAchievementCount()}',
                         style: const TextStyle(
+                          fontWeight: FontWeight.bold,
                           fontSize: 16,
-                          color: Colors.black54,
                         ),
                       ),
                       AnimatedSwitcher(
@@ -1262,6 +1402,7 @@ class _CategoryScreenState extends State<CategoryScreen> {
                                 _completedSubcategoriesShownGlobal,
                             isTripActive: _tripStartTime != null,
                             bonusItemIds: _bonusItemIds,
+                            onAchievementCheck: _handleAchievementCheck,
                           ),
                         ),
                       );
@@ -1414,6 +1555,7 @@ class SubCategoryScreen extends StatefulWidget {
   final bool soundEnabled;
   final bool isTripActive;
   final Set<String> bonusItemIds;
+  final List<String> Function(String, Map<String, bool>) onAchievementCheck;
   final Future<void> Function({
     required int priority,
     required String assetPath,
@@ -1435,6 +1577,7 @@ class SubCategoryScreen extends StatefulWidget {
     required this.completedSubcategoriesShown,
     required this.isTripActive,
     required this.bonusItemIds,
+    required this.onAchievementCheck,
   });
 
   @override
@@ -1690,6 +1833,7 @@ class _SubCategoryScreenState extends State<SubCategoryScreen> {
                             isTripActive: widget.isTripActive,
                             bonusItemIds: widget.bonusItemIds,
                             playSfx: widget.playSfx,
+                            onAchievementCheck: widget.onAchievementCheck,
                           ),
                         ),
                       );
@@ -1784,7 +1928,7 @@ class ItemScreen extends StatefulWidget {
     double volume,
   })?
   playSfx;
-
+  final List<String> Function(String, Map<String, bool>) onAchievementCheck;
   const ItemScreen({
     super.key,
     required this.title,
@@ -1794,6 +1938,7 @@ class ItemScreen extends StatefulWidget {
     required this.isTripActive,
     required this.bonusItemIds,
     required this.playSfx,
+    required this.onAchievementCheck,
   });
 
   @override
@@ -1919,7 +2064,38 @@ class _ItemScreenState extends State<ItemScreen> {
 
               final newVal = v ?? false;
 
-              if (newVal &&
+              setState(() {
+                widget.foundById[it.itemId] = newVal;
+              });
+
+              final unlockedAchievements = newVal
+                  ? widget.onAchievementCheck(it.itemId, widget.foundById)
+                  : <String>[];
+
+              if (newVal && unlockedAchievements.isNotEmpty) {
+                if (widget.playSfx != null) {
+                  widget.playSfx!(
+                    priority: SFX_ACHIEVEMENT,
+                    assetPath: 'sounds/achievement_done.mp3',
+                    volume: 1.0,
+                  );
+                }
+
+                ScaffoldMessenger.of(context).showSnackBar(
+                  SnackBar(
+                    content: Row(
+                      children: [
+                        const Icon(Icons.emoji_events, color: Colors.white),
+                        const SizedBox(width: 8),
+                        Expanded(child: Text(unlockedAchievements.join(' • '))),
+                      ],
+                    ),
+                    backgroundColor: Colors.pink,
+                    behavior: SnackBarBehavior.floating,
+                    duration: const Duration(seconds: 3),
+                  ),
+                );
+              } else if (newVal &&
                   widget.bonusItemIds.contains(it.itemId) &&
                   widget.playSfx != null) {
                 widget.playSfx!(
@@ -1928,11 +2104,6 @@ class _ItemScreenState extends State<ItemScreen> {
                   volume: 1.0,
                 );
               }
-
-              setState(() {
-                widget.foundById[it.itemId] = newVal;
-              });
-
               await widget.onToggle(it.itemId, newVal);
             },
           );
@@ -2056,6 +2227,33 @@ class TripSummaryScreen extends StatelessWidget {
     );
   }
 
+  TableRow _achievementRow(String label, bool completed, int found, int total) {
+    return TableRow(
+      children: [
+        Padding(
+          padding: const EdgeInsets.all(8),
+          child: Align(
+            alignment: Alignment.centerRight,
+            child: Text(
+              '$label (${found}/${total})',
+              style: const TextStyle(fontWeight: FontWeight.w500),
+            ),
+          ),
+        ),
+        Padding(
+          padding: const EdgeInsets.all(8),
+          child: Align(
+            alignment: Alignment.centerLeft,
+            child: Icon(
+              completed ? Icons.check : Icons.close,
+              color: completed ? Colors.green : Colors.red,
+            ),
+          ),
+        ),
+      ],
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -2160,6 +2358,11 @@ class TripSummaryScreen extends StatelessWidget {
                   '${trip.doubleScore} / ${trip.doubleMaxScore} '
                       '(${trip.doubleMaxScore == 0 ? "0" : ((trip.doubleScore / trip.doubleMaxScore) * 100).toStringAsFixed(1)}%)',
                 ),
+
+                _tableRow(
+                  'Achievements Completed',
+                  '${trip.completedAchievementIds.length} / ${achievementLabels.length}',
+                ),
               ],
             ),
             const SizedBox(height: 20),
@@ -2199,7 +2402,36 @@ class TripSummaryScreen extends StatelessWidget {
                 _tableRow('ID', trip.tripId),
               ],
             ),
+            const SizedBox(height: 20),
 
+            const Align(
+              alignment: Alignment.centerLeft,
+              child: Text(
+                '🏆 Achievements Discovered',
+                style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+              ),
+            ),
+
+            const SizedBox(height: 10),
+
+            Table(
+              border: TableBorder.all(color: Colors.grey.shade300, width: 1),
+              columnWidths: const {
+                0: IntrinsicColumnWidth(),
+                1: FlexColumnWidth(),
+              },
+              children: [
+                for (final entry
+                    in achievementLabels.entries.toList()
+                      ..sort((a, b) => a.value.compareTo(b.value)))
+                  _achievementRow(
+                    entry.value,
+                    trip.completedAchievementIds.contains(entry.key),
+                    trip.achievementFoundCounts[entry.key] ?? 0,
+                    trip.achievementTotals[entry.key] ?? 0,
+                  ),
+              ],
+            ),
             const SizedBox(height: 20),
 
             if (trip.perfectRun)
