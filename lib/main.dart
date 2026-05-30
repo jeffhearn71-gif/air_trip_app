@@ -65,6 +65,11 @@ class Trip {
   final int totalCategories;
   final int totalSubCategories;
 
+  final int doubleItemsFound;
+  final int totalDoubleItems;
+  final int doubleScore;
+  final int doubleMaxScore;
+
   final bool perfectRun;
 
   final DateTime startTime;
@@ -88,6 +93,10 @@ class Trip {
     required this.perfectRun,
     required this.startTime,
     required this.endTime,
+    required this.doubleItemsFound,
+    required this.totalDoubleItems,
+    required this.doubleScore,
+    required this.doubleMaxScore,
   });
 }
 
@@ -120,6 +129,7 @@ enum SortMode { az, progressDesc, remainingDesc, pointsRemainingDesc }
 const int SFX_SUB = 1;
 const int SFX_CATEGORY = 2;
 const int SFX_RANK = 3;
+const int SFX_DOUBLE = 4;
 const int SFX_WIN = 4;
 const int SFX_PERFECT = 5;
 const List<String> kRanks = [
@@ -281,6 +291,7 @@ class _CategoryScreenState extends State<CategoryScreen> {
   String? _currentStartLocation;
   String? _currentEndLocation;
   DateTime? _tripStartTime;
+  Set<String> _bonusItemIds = {};
 
   bool _gameCompletedShown = false;
   bool _perfectRunShown = false;
@@ -470,6 +481,38 @@ class _CategoryScreenState extends State<CategoryScreen> {
     return items.map((e) => e.subCategory).toSet().length;
   }
 
+  Set<String> _generateBonusItemIds() {
+    final Map<int, List<TripItem>> groupedByPoints = {};
+
+    // Group all items by their points value (1, 2, 3, 4, etc.)
+    for (final item in items) {
+      groupedByPoints.putIfAbsent(item.points, () => []);
+      groupedByPoints[item.points]!.add(item);
+    }
+
+    final Set<String> selectedIds = {};
+
+    // For each points group, select 10% rounded to nearest whole number
+    for (final entry in groupedByPoints.entries) {
+      final groupItems = List<TripItem>.from(entry.value);
+      final int groupSize = groupItems.length;
+      final int numberToSelect = (groupSize * 0.10).round();
+
+      if (numberToSelect <= 0) {
+        continue;
+      }
+
+      groupItems.shuffle();
+
+      final chosen = groupItems.take(numberToSelect);
+      for (final item in chosen) {
+        selectedIds.add(item.itemId);
+      }
+    }
+
+    return selectedIds;
+  }
+
   void _applySort(List<GroupStat> list) {
     switch (sortMode) {
       case SortMode.az:
@@ -498,9 +541,14 @@ class _CategoryScreenState extends State<CategoryScreen> {
     maxScore = 0;
 
     for (final it in items) {
+      final isBonus = _bonusItemIds.contains(it.itemId);
+      final itemMaxPoints = isBonus ? it.points * 2 : it.points;
+
       totals[it.category] = (totals[it.category] ?? 0) + 1;
-      maxScores[it.category] = (maxScores[it.category] ?? 0) + it.points;
-      maxScore += it.points;
+
+      maxScores[it.category] = (maxScores[it.category] ?? 0) + itemMaxPoints;
+
+      maxScore += itemMaxPoints;
 
       iconCounts.putIfAbsent(it.category, () => <String, int>{});
       final m = iconCounts[it.category]!;
@@ -509,8 +557,10 @@ class _CategoryScreenState extends State<CategoryScreen> {
 
       if (foundById[it.itemId] == true) {
         founds[it.category] = (founds[it.category] ?? 0) + 1;
-        scores[it.category] = (scores[it.category] ?? 0) + it.points;
-        totalScore += it.points;
+
+        scores[it.category] = (scores[it.category] ?? 0) + itemMaxPoints;
+
+        totalScore += itemMaxPoints;
       }
     }
 
@@ -784,6 +834,26 @@ class _CategoryScreenState extends State<CategoryScreen> {
       end: _currentEndLocation!,
     );
 
+    int doubleItemsFound = 0;
+    int totalDoubleItems = _bonusItemIds.length;
+
+    int doubleScore = 0;
+    int doubleMaxScore = 0;
+
+    for (final it in items) {
+      if (_bonusItemIds.contains(it.itemId)) {
+        final isFound = foundById[it.itemId] == true;
+        final itemValue = it.points * 2;
+
+        doubleMaxScore += itemValue;
+
+        if (isFound) {
+          doubleItemsFound++;
+          doubleScore += itemValue;
+        }
+      }
+    }
+
     final trip = Trip(
       tripId: tripId,
       tripName: _currentTripType!, // using “Type of Trip”
@@ -796,6 +866,10 @@ class _CategoryScreenState extends State<CategoryScreen> {
       maxItemsFound: items.length,
       subCategoriesCompleted: _getCompletedSubCategoryCount(),
       categoriesCompleted: categoryStats.where((c) => c.complete).length,
+      doubleItemsFound: doubleItemsFound,
+      totalDoubleItems: totalDoubleItems,
+      doubleScore: doubleScore,
+      doubleMaxScore: doubleMaxScore,
       totalCategories: _getTotalCategories(),
       totalSubCategories: _getTotalSubCategories(),
       finalRankIndex: _getRankIndex(),
@@ -925,6 +999,7 @@ class _CategoryScreenState extends State<CategoryScreen> {
                   _currentStartLocation = startController.text.trim();
                   _currentEndLocation = endController.text.trim();
                   _tripStartTime = DateTime.now();
+                  _bonusItemIds = _generateBonusItemIds();
                 });
 
                 Navigator.pop(context);
@@ -1186,6 +1261,7 @@ class _CategoryScreenState extends State<CategoryScreen> {
                             completedSubcategoriesShown:
                                 _completedSubcategoriesShownGlobal,
                             isTripActive: _tripStartTime != null,
+                            bonusItemIds: _bonusItemIds,
                           ),
                         ),
                       );
@@ -1337,6 +1413,7 @@ class SubCategoryScreen extends StatefulWidget {
   final bool hapticsEnabled;
   final bool soundEnabled;
   final bool isTripActive;
+  final Set<String> bonusItemIds;
   final Future<void> Function({
     required int priority,
     required String assetPath,
@@ -1357,6 +1434,7 @@ class SubCategoryScreen extends StatefulWidget {
     this.playSfx,
     required this.completedSubcategoriesShown,
     required this.isTripActive,
+    required this.bonusItemIds,
   });
 
   @override
@@ -1610,6 +1688,8 @@ class _SubCategoryScreenState extends State<SubCategoryScreen> {
                             foundById: widget.foundById,
                             onToggle: widget.onToggle,
                             isTripActive: widget.isTripActive,
+                            bonusItemIds: widget.bonusItemIds,
+                            playSfx: widget.playSfx,
                           ),
                         ),
                       );
@@ -1697,6 +1777,13 @@ class ItemScreen extends StatefulWidget {
   final Map<String, bool> foundById;
   final Future<void> Function(String, bool) onToggle;
   final bool isTripActive;
+  final Set<String> bonusItemIds;
+  final Future<void> Function({
+    required int priority,
+    required String assetPath,
+    double volume,
+  })?
+  playSfx;
 
   const ItemScreen({
     super.key,
@@ -1705,6 +1792,8 @@ class ItemScreen extends StatefulWidget {
     required this.foundById,
     required this.onToggle,
     required this.isTripActive,
+    required this.bonusItemIds,
+    required this.playSfx,
   });
 
   @override
@@ -1773,7 +1862,42 @@ class _ItemScreenState extends State<ItemScreen> {
           final checked = widget.foundById[it.itemId] == true;
 
           return CheckboxListTile(
-            title: Text('${it.name}  (+${it.points})'),
+            title: RichText(
+              text: TextSpan(
+                style: DefaultTextStyle.of(context).style,
+                children: [
+                  TextSpan(text: '${it.name}  (+${it.points})'),
+
+                  if (widget.bonusItemIds.contains(it.itemId))
+                    const TextSpan(text: '  '), // spacing
+
+                  if (widget.bonusItemIds.contains(it.itemId))
+                    WidgetSpan(
+                      alignment: PlaceholderAlignment.middle,
+                      child: Container(
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: 6,
+                          vertical: 2,
+                        ),
+                        decoration: BoxDecoration(
+                          color: Colors.amber.shade600,
+                          borderRadius: BorderRadius.circular(6),
+                          border: Border.all(color: Colors.black, width: 1),
+                        ),
+                        child: const Text(
+                          'DOUBLE',
+                          style: TextStyle(
+                            color: Colors.black,
+                            fontWeight: FontWeight.bold,
+                            fontSize: 11,
+                          ),
+                        ),
+                      ),
+                    ),
+                ],
+              ),
+            ),
+
             subtitle: it.subCategory.isEmpty ? null : Text(it.subCategory),
             secondary: Icon(
               resolveIcon(iconName: it.iconName, groupName: it.subCategory),
@@ -1784,12 +1908,26 @@ class _ItemScreenState extends State<ItemScreen> {
             onChanged: (v) async {
               if (!widget.isTripActive) {
                 ScaffoldMessenger.of(context).showSnackBar(
-                  const SnackBar(content: Text('Start a trip first')),
+                  SnackBar(
+                    content: const Text('Start a trip first'),
+                    duration: const Duration(milliseconds: 800),
+                  ),
                 );
+
                 return;
               }
 
               final newVal = v ?? false;
+
+              if (newVal &&
+                  widget.bonusItemIds.contains(it.itemId) &&
+                  widget.playSfx != null) {
+                widget.playSfx!(
+                  priority: SFX_DOUBLE,
+                  assetPath: 'sounds/double_done.mp3',
+                  volume: 1.0,
+                );
+              }
 
               setState(() {
                 widget.foundById[it.itemId] = newVal;
@@ -1938,6 +2076,15 @@ class TripSummaryScreen extends StatelessWidget {
             const SizedBox(height: 20),
 
             // --- Trip Identity ---
+            const Align(
+              alignment: Alignment.centerLeft,
+              child: Text(
+                '🎮 Game Statistics',
+                style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+              ),
+            ),
+            const SizedBox(height: 10),
+
             Table(
               border: TableBorder.all(color: Colors.grey.shade300, width: 1),
               columnWidths: const {
@@ -1945,12 +2092,6 @@ class TripSummaryScreen extends StatelessWidget {
                 1: FlexColumnWidth(),
               },
               children: [
-                _tableRow('Trip', trip.tripName),
-                _tableRow('ID', trip.tripId),
-                _tableRow(
-                  'Route',
-                  '${trip.startLocation} → ${trip.endLocation}',
-                ),
                 TableRow(
                   children: [
                     const Padding(
@@ -2009,13 +2150,53 @@ class TripSummaryScreen extends StatelessWidget {
                   '${trip.categoriesCompleted} / ${trip.totalCategories}',
                 ),
 
+                _tableRow(
+                  'Doubles Found',
+                  '${trip.doubleItemsFound} / ${trip.totalDoubleItems}',
+                ),
+
+                _tableRow(
+                  'Doubles Contribution',
+                  '${trip.doubleScore} / ${trip.doubleMaxScore} '
+                      '(${trip.doubleMaxScore == 0 ? "0" : ((trip.doubleScore / trip.doubleMaxScore) * 100).toStringAsFixed(1)}%)',
+                ),
+              ],
+            ),
+            const SizedBox(height: 20),
+
+            const Align(
+              alignment: Alignment.centerLeft,
+              child: Text(
+                '🚗 Travel Statistics',
+                style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+              ),
+            ),
+
+            const SizedBox(height: 10),
+
+            Table(
+              border: TableBorder.all(color: Colors.grey.shade300, width: 1),
+              columnWidths: const {
+                0: IntrinsicColumnWidth(),
+                1: FlexColumnWidth(),
+              },
+
+              children: [
+                _tableRow('Trip', trip.tripName),
+
+                _tableRow(
+                  'Route',
+                  '${trip.startLocation} → ${trip.endLocation}',
+                ),
+
                 _tableRow('Start', _formatTime(trip.startTime)),
                 _tableRow('End', _formatTime(trip.endTime)),
-
                 _tableRow(
                   'Duration',
                   _formatDuration(trip.startTime, trip.endTime),
                 ),
+
+                _tableRow('ID', trip.tripId),
               ],
             ),
 
