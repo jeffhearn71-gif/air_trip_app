@@ -62,6 +62,9 @@ class Trip {
   final int categoriesCompleted;
   final int finalRankIndex;
 
+  final int totalCategories;
+  final int totalSubCategories;
+
   final bool perfectRun;
 
   final DateTime startTime;
@@ -79,6 +82,8 @@ class Trip {
     required this.maxItemsFound,
     required this.subCategoriesCompleted,
     required this.categoriesCompleted,
+    required this.totalCategories,
+    required this.totalSubCategories,
     required this.finalRankIndex,
     required this.perfectRun,
     required this.startTime,
@@ -163,10 +168,13 @@ String _norm(String s) =>
     s.trim().toLowerCase().replaceAll('-', '_').replaceAll(' ', '_');
 
 Color _progressColor(double p) {
-  if (p >= 0.85) return Colors.green;
-  if (p >= 0.50) return Colors.orange;
-  if (p > 0.0) return Colors.redAccent;
-  return Colors.grey;
+  if (p == 0) return Colors.grey;
+  if (p < 0.20) return Color(0xFFB71C1C);
+  if (p < 0.40) return Colors.orange;
+  if (p < 0.60) return Colors.deepOrangeAccent;
+  if (p < 0.80) return Colors.yellow.shade700;
+  if (p < 1.0) return Colors.lightGreen;
+  return Color(0xFF1B5E20);
 }
 
 /// Weekdays + Saturday: >= 90.0%
@@ -429,6 +437,39 @@ class _CategoryScreenState extends State<CategoryScreen> {
     return index;
   }
 
+  int _getCompletedSubCategoryCount() {
+    final subCategoryMap = <String, List<TripItem>>{};
+
+    // Group items by subcategory
+    for (final item in items) {
+      subCategoryMap.putIfAbsent(item.subCategory, () => []);
+      subCategoryMap[item.subCategory]!.add(item);
+    }
+
+    int completed = 0;
+
+    // Count completed subcategories
+    for (final entry in subCategoryMap.entries) {
+      final allFound = entry.value.every(
+        (item) => foundById[item.itemId] == true,
+      );
+
+      if (allFound) {
+        completed++;
+      }
+    }
+
+    return completed;
+  }
+
+  int _getTotalCategories() {
+    return items.map((e) => e.category).toSet().length;
+  }
+
+  int _getTotalSubCategories() {
+    return items.map((e) => e.subCategory).toSet().length;
+  }
+
   void _applySort(List<GroupStat> list) {
     switch (sortMode) {
       case SortMode.az:
@@ -686,7 +727,7 @@ class _CategoryScreenState extends State<CategoryScreen> {
           ),
           content: Center(
             child: Text(
-              '⭐ You reached the winning target! ⭐',
+              '⭐ Winner winner chicken dinner! ⭐',
               textAlign: TextAlign.center,
               style: const TextStyle(
                 fontSize: 20,
@@ -753,8 +794,10 @@ class _CategoryScreenState extends State<CategoryScreen> {
       percent: percent,
       itemsFound: foundById.values.where((v) => v).length,
       maxItemsFound: items.length,
-      subCategoriesCompleted: 0,
+      subCategoriesCompleted: _getCompletedSubCategoryCount(),
       categoriesCompleted: categoryStats.where((c) => c.complete).length,
+      totalCategories: _getTotalCategories(),
+      totalSubCategories: _getTotalSubCategories(),
       finalRankIndex: _getRankIndex(),
       perfectRun: percent >= 100.0,
       startTime: _tripStartTime!,
@@ -922,7 +965,7 @@ class _CategoryScreenState extends State<CategoryScreen> {
               ),
               backgroundColor: Colors.blue,
               behavior: SnackBarBehavior.floating,
-              duration: const Duration(seconds: 2),
+              duration: const Duration(seconds: 1),
             ),
           );
         });
@@ -1472,7 +1515,7 @@ class _SubCategoryScreenState extends State<SubCategoryScreen> {
 
               backgroundColor: Colors.green,
               behavior: SnackBarBehavior.floating,
-              duration: const Duration(seconds: 2),
+              duration: const Duration(seconds: 1),
             ),
           );
         });
@@ -1879,21 +1922,17 @@ class TripSummaryScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(title: const Text('Trip Complete')),
-      body: Padding(
+      body: SingleChildScrollView(
         padding: const EdgeInsets.all(20),
         child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
+          crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
-            const Text(
-              '🚗 Trip Complete',
-              style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
-            ),
-
             const SizedBox(height: 20),
 
             Text(
-              '${trip.percent.round()}%',
-              style: const TextStyle(fontSize: 48, fontWeight: FontWeight.w900),
+              'Final Score: ${trip.percent.toStringAsFixed(1)}%',
+              textAlign: TextAlign.center,
+              style: const TextStyle(fontSize: 28, fontWeight: FontWeight.w900),
             ),
 
             const SizedBox(height: 20),
@@ -1916,11 +1955,21 @@ class TripSummaryScreen extends StatelessWidget {
                   children: [
                     const Padding(
                       padding: EdgeInsets.all(8),
-                      child: Align(
-                        alignment: Alignment.centerRight,
-                        child: Text(
-                          'Final Rank',
-                          style: TextStyle(fontWeight: FontWeight.w500),
+                      child: Center(
+                        child: Align(
+                          alignment: Alignment.centerRight,
+                          child: SizedBox(
+                            height: 36,
+                            child: Align(
+                              alignment: Alignment.centerRight,
+                              child: Text(
+                                'Final Rank',
+                                style: const TextStyle(
+                                  fontWeight: FontWeight.w500,
+                                ),
+                              ),
+                            ),
+                          ),
                         ),
                       ),
                     ),
@@ -1928,12 +1977,9 @@ class TripSummaryScreen extends StatelessWidget {
                       padding: const EdgeInsets.all(8),
                       child: Align(
                         alignment: Alignment.centerLeft,
-                        child: Text(
-                          kRanks[trip.finalRankIndex],
-                          style: TextStyle(
-                            fontWeight: FontWeight.bold,
-                            color: rankColor(trip.finalRankIndex),
-                          ),
+                        child: RankBadge(
+                          text: kRanks[trip.finalRankIndex],
+                          color: rankColor(trip.finalRankIndex),
                         ),
                       ),
                     ),
@@ -1952,11 +1998,16 @@ class TripSummaryScreen extends StatelessWidget {
                   'Items/min',
                   _formatRate(trip.itemsFound, trip.startTime, trip.endTime),
                 ),
+
                 _tableRow(
                   'Sub-Categories',
-                  '${trip.subCategoriesCompleted} / 44',
+                  '${trip.subCategoriesCompleted} / ${trip.totalSubCategories}',
                 ),
-                _tableRow('Categories', '${trip.categoriesCompleted} / 9'),
+
+                _tableRow(
+                  'Categories',
+                  '${trip.categoriesCompleted} / ${trip.totalCategories}',
+                ),
 
                 _tableRow('Start', _formatTime(trip.startTime)),
                 _tableRow('End', _formatTime(trip.endTime)),
@@ -1973,8 +2024,9 @@ class TripSummaryScreen extends StatelessWidget {
             if (trip.perfectRun)
               const Text(
                 '⭐ PERFECT RUN ⭐',
+                textAlign: TextAlign.center,
                 style: TextStyle(
-                  fontSize: 20,
+                  fontSize: 16,
                   fontWeight: FontWeight.bold,
                   color: Colors.amber,
                 ),
