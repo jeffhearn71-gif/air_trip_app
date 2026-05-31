@@ -394,6 +394,7 @@ class _CategoryScreenState extends State<CategoryScreen> {
   bool _gameCompletedShown = false;
   bool _perfectRunShown = false;
   int _lastRankIndex = -1;
+  Trip? _lastCompletedTrip;
 
   // Tracks the priority of the sound currently allowed to play
   int _activeSfxPriority = 0;
@@ -1082,6 +1083,8 @@ class _CategoryScreenState extends State<CategoryScreen> {
       endTime: endTime,
     );
 
+    _lastCompletedTrip = trip;
+
     // ✅ clear current trip after ending
     setState(() {
       _tripStartTime = null;
@@ -1258,6 +1261,7 @@ class _CategoryScreenState extends State<CategoryScreen> {
                   _currentStartLocation = startController.text.trim();
                   _currentEndLocation = endController.text.trim();
                   _tripStartTime = DateTime.now();
+                  _lastCompletedTrip = null;
 
                   // ✅ Reset all found items for new trip
                   for (final k in foundById.keys) {
@@ -1411,6 +1415,21 @@ class _CategoryScreenState extends State<CategoryScreen> {
       appBar: AppBar(
         title: const Text('Car Trip Game'),
         actions: [
+          if (_lastCompletedTrip != null)
+            IconButton(
+              tooltip: 'Last Summary',
+              icon: const Icon(Icons.receipt_long),
+              onPressed: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (_) =>
+                        TripSummaryScreen(trip: _lastCompletedTrip!),
+                  ),
+                );
+              },
+            ),
+
           TextButton.icon(
             icon: Icon(_tripStartTime == null ? Icons.play_arrow : Icons.stop),
             label: Text(_tripStartTime == null ? 'START' : 'END'),
@@ -2262,7 +2281,6 @@ class _ItemScreenState extends State<ItemScreen> {
               ),
             ),
 
-            subtitle: it.subCategory.isEmpty ? null : Text(it.subCategory),
             secondary: Icon(
               resolveIcon(iconName: it.iconName, groupName: it.subCategory),
               size: 36,
@@ -2738,28 +2756,28 @@ class TripSummaryScreen extends StatelessWidget {
                   '4-pointers',
                   '${trip.fourScore} / ${trip.fourMaxScore} '
                       '(${trip.fourMaxScore == 0 ? "0" : ((trip.fourScore / trip.fourMaxScore) * 100).toStringAsFixed(1)}%)'
-                      '${trip.fourMaxScore > 0 && trip.fourScore == trip.fourMaxScore ? " ✅ ${pointerTierLabels[4]}" : ""}',
+                      '${trip.fourMaxScore > 0 && trip.fourScore == trip.fourMaxScore ? "\n✅ ${pointerTierLabels[4]}" : ""}',
                 ),
 
                 _tableRow(
                   '3-pointers',
                   '${trip.threeScore} / ${trip.threeMaxScore} '
                       '(${trip.threeMaxScore == 0 ? "0" : ((trip.threeScore / trip.threeMaxScore) * 100).toStringAsFixed(1)}%)'
-                      '${trip.threeMaxScore > 0 && trip.threeScore == trip.threeMaxScore ? " ✅ ${pointerTierLabels[3]}" : ""}',
+                      '${trip.threeMaxScore > 0 && trip.threeScore == trip.threeMaxScore ? "\n✅ ${pointerTierLabels[3]}" : ""}',
                 ),
 
                 _tableRow(
                   '2-pointers',
                   '${trip.twoScore} / ${trip.twoMaxScore} '
                       '(${trip.twoMaxScore == 0 ? "0" : ((trip.twoScore / trip.twoMaxScore) * 100).toStringAsFixed(1)}%)'
-                      '${trip.twoMaxScore > 0 && trip.twoScore == trip.twoMaxScore ? " ✅ ${pointerTierLabels[2]}" : ""}',
+                      '${trip.twoMaxScore > 0 && trip.twoScore == trip.twoMaxScore ? "\n✅ ${pointerTierLabels[2]}" : ""}',
                 ),
 
                 _tableRow(
                   '1-pointers',
                   '${trip.oneScore} / ${trip.oneMaxScore} '
                       '(${trip.oneMaxScore == 0 ? "0" : ((trip.oneScore / trip.oneMaxScore) * 100).toStringAsFixed(1)}%)'
-                      '${trip.oneMaxScore > 0 && trip.oneScore == trip.oneMaxScore ? " ✅ ${pointerTierLabels[1]}" : ""}',
+                      '${trip.oneMaxScore > 0 && trip.oneScore == trip.oneMaxScore ? "\n✅ ${pointerTierLabels[1]}" : ""}',
                 ),
 
                 _tableRow(
@@ -2791,7 +2809,7 @@ class TripSummaryScreen extends StatelessWidget {
                 _tableRow('Trip Description', trip.tripName),
 
                 _tableRow(
-                  'Start-End Locations',
+                  'Route',
                   '${trip.startLocation} → ${trip.endLocation}',
                 ),
 
@@ -2802,7 +2820,7 @@ class TripSummaryScreen extends StatelessWidget {
                   _formatDuration(trip.startTime, trip.endTime),
                 ),
 
-                _tableRow('Unique Trip ID', trip.tripId),
+                _tableRow('ID', trip.tripId),
               ],
             ),
             const SizedBox(height: 20),
