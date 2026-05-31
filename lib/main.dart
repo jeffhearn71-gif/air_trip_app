@@ -85,7 +85,7 @@ class Trip {
   final int fourMaxScore;
 
   final List<String> completedAchievementIds;
-
+  final Set<String> newAchievementIds;
   final Map<String, int> achievementTotals;
   final Map<String, int> achievementFoundCounts;
 
@@ -130,6 +130,7 @@ class Trip {
     required this.fourMaxScore,
 
     required this.completedAchievementIds,
+    required this.newAchievementIds,
     required this.achievementTotals,
     required this.achievementFoundCounts,
   });
@@ -165,9 +166,10 @@ const int SFX_SUB = 1;
 const int SFX_CATEGORY = 2;
 const int SFX_RANK = 3;
 const int SFX_DOUBLE = 4;
-const int SFX_ACHIEVEMENT = 5;
-const int SFX_WIN = 6;
-const int SFX_PERFECT = 7;
+const int SFX_POINTER = 5;
+const int SFX_ACHIEVEMENT = 6;
+const int SFX_WIN = 7;
+const int SFX_PERFECT = 8;
 const List<String> kRanks = [
   'Noob',
   'Novice',
@@ -345,6 +347,7 @@ class CategoryScreen extends StatefulWidget {
 
 class _CategoryScreenState extends State<CategoryScreen> {
   static const prefsKey = 'found_map';
+  static const achievementsKey = 'all_time_achievements';
   static const csvPath = 'assets/Car Trip List App Latest Version.csv';
 
   List<TripItem> items = [];
@@ -380,8 +383,11 @@ class _CategoryScreenState extends State<CategoryScreen> {
   DateTime? _tripStartTime;
 
   Set<String> _bonusItemIds = {};
-
   Set<String> _completedAchievements = {};
+
+  Set<String> _allTimeAchievements = {};
+  Set<String> _sessionUnlockedAchievements = {};
+
   Set<int> _completedPointerTiers = {};
   Map<String, Set<String>> _achievementItemIds = {};
 
@@ -483,7 +489,10 @@ class _CategoryScreenState extends State<CategoryScreen> {
           }
         });
       }
-
+      final savedAchievements = prefs.getStringList(achievementsKey);
+      if (savedAchievements != null) {
+        _allTimeAchievements = savedAchievements.toSet();
+      }
       items = parsed;
       foundById = freshFound;
 
@@ -1062,6 +1071,7 @@ class _CategoryScreenState extends State<CategoryScreen> {
       fourScore: fourScore,
       fourMaxScore: fourMaxScore,
       completedAchievementIds: completedAchievementIds,
+      newAchievementIds: _sessionUnlockedAchievements.toSet(),
       achievementTotals: achievementTotals,
       achievementFoundCounts: achievementFoundCounts,
       totalCategories: _getTotalCategories(),
@@ -1148,6 +1158,58 @@ class _CategoryScreenState extends State<CategoryScreen> {
                   await prefs.setBool('sound_enabled', v);
                 },
               ),
+              const Divider(),
+
+              ListTile(
+                leading: const Icon(Icons.delete, color: Colors.red),
+                title: const Text('Reset Achievements'),
+                onTap: () async {
+                  final confirm = await showDialog<bool>(
+                    context: context,
+                    builder: (context) {
+                      return AlertDialog(
+                        title: const Text('Reset achievements?'),
+                        content: const Text(
+                          'This will permanently remove all recorded achievements. '
+                          'They will appear as NEW again when unlocked.\n\n'
+                          'Are you sure?',
+                        ),
+                        actions: [
+                          TextButton(
+                            onPressed: () => Navigator.pop(context, false),
+                            child: const Text('Cancel'),
+                          ),
+                          ElevatedButton(
+                            onPressed: () => Navigator.pop(context, true),
+                            child: const Text('Reset'),
+                          ),
+                        ],
+                      );
+                    },
+                  );
+
+                  if (confirm == true) {
+                    final prefs = await SharedPreferences.getInstance();
+
+                    // ✅ Clear stored achievements
+                    await prefs.remove(achievementsKey);
+
+                    // ✅ Reset in-memory state
+                    setState(() {
+                      _allTimeAchievements.clear();
+                    });
+
+                    Navigator.pop(context); // close settings
+
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      const SnackBar(
+                        content: Text('Achievements reset'),
+                        duration: Duration(milliseconds: 1000),
+                      ),
+                    );
+                  }
+                },
+              ),
             ],
           ),
         ),
@@ -1176,11 +1238,11 @@ class _CategoryScreenState extends State<CategoryScreen> {
               ),
               TextField(
                 controller: startController,
-                decoration: const InputDecoration(labelText: 'Start Time'),
+                decoration: const InputDecoration(labelText: 'Start Location'),
               ),
               TextField(
                 controller: endController,
-                decoration: const InputDecoration(labelText: 'End Time'),
+                decoration: const InputDecoration(labelText: 'End Location'),
               ),
             ],
           ),
@@ -1210,6 +1272,7 @@ class _CategoryScreenState extends State<CategoryScreen> {
                   _bonusItemIds = _generateBonusItemIds();
                   _recomputeCategoryStats();
                   _completedAchievements.clear();
+                  _sessionUnlockedAchievements.clear();
                   _completedPointerTiers.clear();
                   _gameCompletedShown = false;
                   _perfectRunShown = false;
@@ -1227,7 +1290,7 @@ class _CategoryScreenState extends State<CategoryScreen> {
   }
 
   void _checkAndCelebrateCompletedCategories() {
-    if (_isRestoringState) return;
+    if (_isRestoringState || _gameCompletedShown || _perfectRunShown) return;
     for (final stat in categoryStats) {
       if (stat.complete && !_completedCategoriesShown.contains(stat.name)) {
         _completedCategoriesShown.add(stat.name);
@@ -1282,6 +1345,18 @@ class _CategoryScreenState extends State<CategoryScreen> {
 
         final label = achievementLabels[achievementId] ?? achievementId;
         unlockedLabels.add(label);
+
+        // ✅ Track achievements unlocked in this run
+        _sessionUnlockedAchievements.add(achievementId);
+
+        // ✅ Persist all-time unlocks
+        if (!_allTimeAchievements.contains(achievementId)) {
+          _allTimeAchievements.add(achievementId);
+
+          SharedPreferences.getInstance().then((prefs) {
+            prefs.setStringList(achievementsKey, _allTimeAchievements.toList());
+          });
+        }
       }
     }
 
@@ -1537,6 +1612,8 @@ class _CategoryScreenState extends State<CategoryScreen> {
                             bonusItemIds: _bonusItemIds,
                             onAchievementCheck: _handleAchievementCheck,
                             onPointerTierCheck: _handlePointerTierCheck,
+                            isGameComplete:
+                                _gameCompletedShown || _perfectRunShown,
                           ),
                         ),
                       );
@@ -1689,6 +1766,7 @@ class SubCategoryScreen extends StatefulWidget {
   final bool soundEnabled;
   final bool isTripActive;
   final Set<String> bonusItemIds;
+  final bool isGameComplete;
   final List<String> Function(String, Map<String, bool>) onAchievementCheck;
   final List<int> Function(Map<String, bool>) onPointerTierCheck;
   final Future<void> Function({
@@ -1712,6 +1790,7 @@ class SubCategoryScreen extends StatefulWidget {
     required this.completedSubcategoriesShown,
     required this.isTripActive,
     required this.bonusItemIds,
+    required this.isGameComplete,
     required this.onAchievementCheck,
     required this.onPointerTierCheck,
   });
@@ -1839,6 +1918,7 @@ class _SubCategoryScreenState extends State<SubCategoryScreen> {
   }
 
   Future<void> _checkAndCelebrateCompletedSubcategories() async {
+    if (widget.isGameComplete) return;
     for (final stat in subStats) {
       if (stat.complete &&
           !widget.completedSubcategoriesShown.contains(stat.name)) {
@@ -2266,7 +2346,7 @@ class _ItemScreenState extends State<ItemScreen> {
                   }
 
                   widget.playSfx!(
-                    priority: SFX_DOUBLE,
+                    priority: SFX_POINTER,
                     assetPath: assetPath,
                     volume: 1.0,
                   );
@@ -2418,7 +2498,13 @@ class TripSummaryScreen extends StatelessWidget {
     );
   }
 
-  TableRow _achievementRow(String label, bool completed, int found, int total) {
+  TableRow _achievementRow(
+    String label,
+    bool completed,
+    int found,
+    int total,
+    bool isNew,
+  ) {
     return TableRow(
       children: [
         Padding(
@@ -2435,9 +2521,24 @@ class TripSummaryScreen extends StatelessWidget {
           padding: const EdgeInsets.all(8),
           child: Align(
             alignment: Alignment.centerLeft,
-            child: Icon(
-              completed ? Icons.check : Icons.close,
-              color: completed ? Colors.green : Colors.red,
+            child: Row(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Icon(
+                  completed ? Icons.check : Icons.close,
+                  color: completed ? Colors.green : Colors.red,
+                ),
+                if (isNew) ...[
+                  const SizedBox(width: 6),
+                  const Text(
+                    'NEW',
+                    style: TextStyle(
+                      fontWeight: FontWeight.bold,
+                      color: Colors.purple,
+                    ),
+                  ),
+                ],
+              ],
             ),
           ),
         ),
@@ -2632,29 +2733,35 @@ class TripSummaryScreen extends StatelessWidget {
                   '${trip.doubleScore} / ${trip.doubleMaxScore} '
                       '(${trip.doubleMaxScore == 0 ? "0" : ((trip.doubleScore / trip.doubleMaxScore) * 100).toStringAsFixed(1)}%)',
                 ),
+
                 _tableRow(
                   '4-pointers',
                   '${trip.fourScore} / ${trip.fourMaxScore} '
-                      '(${trip.fourMaxScore == 0 ? "0" : ((trip.fourScore / trip.fourMaxScore) * 100).toStringAsFixed(1)}%)',
+                      '(${trip.fourMaxScore == 0 ? "0" : ((trip.fourScore / trip.fourMaxScore) * 100).toStringAsFixed(1)}%)'
+                      '${trip.fourMaxScore > 0 && trip.fourScore == trip.fourMaxScore ? " ✅ ${pointerTierLabels[4]}" : ""}',
                 ),
 
                 _tableRow(
                   '3-pointers',
                   '${trip.threeScore} / ${trip.threeMaxScore} '
-                      '(${trip.threeMaxScore == 0 ? "0" : ((trip.threeScore / trip.threeMaxScore) * 100).toStringAsFixed(1)}%)',
+                      '(${trip.threeMaxScore == 0 ? "0" : ((trip.threeScore / trip.threeMaxScore) * 100).toStringAsFixed(1)}%)'
+                      '${trip.threeMaxScore > 0 && trip.threeScore == trip.threeMaxScore ? " ✅ ${pointerTierLabels[3]}" : ""}',
                 ),
 
                 _tableRow(
                   '2-pointers',
                   '${trip.twoScore} / ${trip.twoMaxScore} '
-                      '(${trip.twoMaxScore == 0 ? "0" : ((trip.twoScore / trip.twoMaxScore) * 100).toStringAsFixed(1)}%)',
+                      '(${trip.twoMaxScore == 0 ? "0" : ((trip.twoScore / trip.twoMaxScore) * 100).toStringAsFixed(1)}%)'
+                      '${trip.twoMaxScore > 0 && trip.twoScore == trip.twoMaxScore ? " ✅ ${pointerTierLabels[2]}" : ""}',
                 ),
 
                 _tableRow(
                   '1-pointers',
                   '${trip.oneScore} / ${trip.oneMaxScore} '
-                      '(${trip.oneMaxScore == 0 ? "0" : ((trip.oneScore / trip.oneMaxScore) * 100).toStringAsFixed(1)}%)',
+                      '(${trip.oneMaxScore == 0 ? "0" : ((trip.oneScore / trip.oneMaxScore) * 100).toStringAsFixed(1)}%)'
+                      '${trip.oneMaxScore > 0 && trip.oneScore == trip.oneMaxScore ? " ✅ ${pointerTierLabels[1]}" : ""}',
                 ),
+
                 _tableRow(
                   'Achievements Completed',
                   '${trip.completedAchievementIds.length} / ${achievementLabels.length}',
@@ -2725,6 +2832,7 @@ class TripSummaryScreen extends StatelessWidget {
                     trip.completedAchievementIds.contains(entry.key),
                     trip.achievementFoundCounts[entry.key] ?? 0,
                     trip.achievementTotals[entry.key] ?? 0,
+                    trip.newAchievementIds.contains(entry.key),
                   ),
               ],
             ),
