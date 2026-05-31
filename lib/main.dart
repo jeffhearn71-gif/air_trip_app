@@ -1,5 +1,5 @@
 import 'dart:convert';
-
+import 'dart:async';
 import 'package:csv/csv.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart' show rootBundle, HapticFeedback;
@@ -8,8 +8,16 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:audioplayers/audioplayers.dart';
 import 'package:material_symbols_icons/symbols.dart';
 import 'package:material_symbols_icons/symbols_map.dart';
+import 'package:firebase_core/firebase_core.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 
-void main() => runApp(const CarTripApp());
+import 'firebase_options.dart';
+
+void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
+  runApp(const CarTripApp());
+}
 
 class CarTripApp extends StatelessWidget {
   const CarTripApp({super.key});
@@ -134,6 +142,43 @@ class Trip {
     required this.achievementTotals,
     required this.achievementFoundCounts,
   });
+  Map<String, dynamic> toMap() {
+    return {
+      'tripId': tripId,
+      'tripName': tripName,
+      'startLocation': startLocation,
+      'endLocation': endLocation,
+      'score': score,
+      'maxScore': maxScore,
+      'percent': percent,
+      'itemsFound': itemsFound,
+      'maxItemsFound': maxItemsFound,
+      'subCategoriesCompleted': subCategoriesCompleted,
+      'categoriesCompleted': categoriesCompleted,
+      'finalRankIndex': finalRankIndex,
+      'totalCategories': totalCategories,
+      'totalSubCategories': totalSubCategories,
+      'doubleItemsFound': doubleItemsFound,
+      'totalDoubleItems': totalDoubleItems,
+      'doubleScore': doubleScore,
+      'doubleMaxScore': doubleMaxScore,
+      'oneScore': oneScore,
+      'oneMaxScore': oneMaxScore,
+      'twoScore': twoScore,
+      'twoMaxScore': twoMaxScore,
+      'threeScore': threeScore,
+      'threeMaxScore': threeMaxScore,
+      'fourScore': fourScore,
+      'fourMaxScore': fourMaxScore,
+      'completedAchievementIds': completedAchievementIds,
+      'newAchievementIds': newAchievementIds.toList(),
+      'achievementTotals': achievementTotals,
+      'achievementFoundCounts': achievementFoundCounts,
+      'perfectRun': perfectRun,
+      'startTime': startTime.toIso8601String(),
+      'endTime': endTime.toIso8601String(),
+    };
+  }
 }
 
 class GroupStat {
@@ -381,13 +426,12 @@ class _CategoryScreenState extends State<CategoryScreen> {
   String? _currentStartLocation;
   String? _currentEndLocation;
   DateTime? _tripStartTime;
-
+  String? _currentSessionId;
   Set<String> _bonusItemIds = {};
   Set<String> _completedAchievements = {};
-
   Set<String> _allTimeAchievements = {};
   Set<String> _sessionUnlockedAchievements = {};
-
+  Timer? _sessionPollingTimer;
   Set<int> _completedPointerTiers = {};
   Map<String, Set<String>> _achievementItemIds = {};
 
@@ -408,6 +452,7 @@ class _CategoryScreenState extends State<CategoryScreen> {
 
   @override
   void dispose() {
+    _sessionPollingTimer?.cancel();
     _sfxPlayer.dispose();
     super.dispose();
   }
@@ -511,6 +556,44 @@ class _CategoryScreenState extends State<CategoryScreen> {
         loading = false;
       });
     }
+  }
+
+  void _startSessionPolling() {
+    _sessionPollingTimer?.cancel();
+
+    _sessionPollingTimer = Timer.periodic(const Duration(milliseconds: 1400), (
+      _,
+    ) async {
+      if (_currentSessionId == null) return;
+
+      final doc = await FirebaseFirestore.instance
+          .collection('trip_sessions')
+          .doc(_currentSessionId)
+          .get();
+
+      if (!doc.exists) return;
+
+      final data = doc.data()!;
+      final remoteFoundItems = Map<String, dynamic>.from(
+        data['foundItems'] ?? {},
+      );
+
+      bool changed = false;
+
+      for (final key in remoteFoundItems.keys) {
+        final remoteValue = remoteFoundItems[key] == true;
+        if (foundById[key] != remoteValue) {
+          foundById[key] = remoteValue;
+          changed = true;
+        }
+      }
+
+      if (changed) {
+        setState(() {
+          _recomputeCategoryStats();
+        });
+      }
+    });
   }
 
   double _getTargetPercent() {
@@ -749,8 +832,82 @@ class _CategoryScreenState extends State<CategoryScreen> {
 
   Future<void> _toggleAndPersist(String id, bool value) async {
     foundById[id] = value;
+
+    // ✅ Save locally
     final prefs = await SharedPreferences.getInstance();
     await prefs.setString(prefsKey, jsonEncode(foundById));
+
+    // ✅ If in multiplayer session, sync to Firestore
+    if (_currentSessionId != null) {
+      await FirebaseFirestore.instance
+          .collection('trip_sessions')
+          .doc(_currentSessionId)
+          .update({
+            'foundItems': foundById,
+            'lastUpdated': DateTime.now().toIso8601String(),
+          });
+    }
+  }
+
+  Future<void> _saveTripToFirestore(Trip trip) async {
+    await FirebaseFirestore.instance
+        .collection('trips')
+        .doc(trip.tripId)
+        .set(trip.toMap());
+  }
+
+  Future<List<Trip>> _loadTripsFromFirestore() async {
+    final snapshot = await FirebaseFirestore.instance
+        .collection('trips')
+        .orderBy('startTime', descending: true)
+        .limit(10)
+        .get();
+
+    return snapshot.docs.map((doc) {
+      final data = doc.data();
+
+      return Trip(
+        tripId: data['tripId'],
+        tripName: data['tripName'],
+        startLocation: data['startLocation'],
+        endLocation: data['endLocation'],
+        score: data['score'],
+        maxScore: data['maxScore'],
+        percent: data['percent'],
+        itemsFound: data['itemsFound'],
+        maxItemsFound: data['maxItemsFound'],
+        subCategoriesCompleted: data['subCategoriesCompleted'],
+        categoriesCompleted: data['categoriesCompleted'],
+        totalCategories: data['totalCategories'],
+        totalSubCategories: data['totalSubCategories'],
+        finalRankIndex: data['finalRankIndex'],
+        perfectRun: data['perfectRun'],
+        startTime: DateTime.parse(data['startTime']),
+        endTime: DateTime.parse(data['endTime']),
+        doubleItemsFound: data['doubleItemsFound'],
+        totalDoubleItems: data['totalDoubleItems'],
+        doubleScore: data['doubleScore'],
+        doubleMaxScore: data['doubleMaxScore'],
+        oneScore: data['oneScore'],
+        oneMaxScore: data['oneMaxScore'],
+        twoScore: data['twoScore'],
+        twoMaxScore: data['twoMaxScore'],
+        threeScore: data['threeScore'],
+        threeMaxScore: data['threeMaxScore'],
+        fourScore: data['fourScore'],
+        fourMaxScore: data['fourMaxScore'],
+        completedAchievementIds: List<String>.from(
+          data['completedAchievementIds'] ?? [],
+        ),
+        newAchievementIds: Set<String>.from(data['newAchievementIds'] ?? []),
+        achievementTotals: Map<String, int>.from(
+          data['achievementTotals'] ?? {},
+        ),
+        achievementFoundCounts: Map<String, int>.from(
+          data['achievementFoundCounts'] ?? {},
+        ),
+      );
+    }).toList();
   }
 
   Future<void> _resetProgress() async {
@@ -1083,6 +1240,8 @@ class _CategoryScreenState extends State<CategoryScreen> {
       endTime: endTime,
     );
 
+    await _saveTripToFirestore(trip);
+
     _lastCompletedTrip = trip;
 
     // ✅ clear current trip after ending
@@ -1220,7 +1379,18 @@ class _CategoryScreenState extends State<CategoryScreen> {
     );
   }
 
+  String _generateSessionId() {
+    const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
+    final now = DateTime.now().millisecondsSinceEpoch;
+    String id = '';
+    for (int i = 0; i < 4; i++) {
+      id += chars[(now + i * 37) % chars.length];
+    }
+    return id;
+  }
+
   Future<void> _startTripDialog() async {
+    final parentContext = context;
     final typeController = TextEditingController();
     final startController = TextEditingController();
     final endController = TextEditingController();
@@ -1254,38 +1424,189 @@ class _CategoryScreenState extends State<CategoryScreen> {
               onPressed: () => Navigator.pop(context),
               child: const Text('Cancel'),
             ),
-            ElevatedButton(
-              onPressed: () {
-                setState(() {
-                  _currentTripType = typeController.text.trim();
-                  _currentStartLocation = startController.text.trim();
-                  _currentEndLocation = endController.text.trim();
-                  _tripStartTime = DateTime.now();
-                  _lastCompletedTrip = null;
+            Column(
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              children: [
+                ElevatedButton(
+                  onPressed: () async {
+                    final sessionId = _generateSessionId();
+                    final sessionBonusIds = _generateBonusItemIds();
+                    await FirebaseFirestore.instance
+                        .collection('trip_sessions')
+                        .doc(sessionId)
+                        .set({
+                          'tripName': typeController.text.trim(),
+                          'startLocation': startController.text.trim(),
+                          'endLocation': endController.text.trim(),
+                          'startTime': DateTime.now().toIso8601String(),
+                          'active': true,
+                          'foundItems': {},
+                          'bonusItemIds': sessionBonusIds.toList(),
+                        });
 
-                  // ✅ Reset all found items for new trip
-                  for (final k in foundById.keys) {
-                    foundById[k] = false;
-                  }
+                    setState(() {
+                      _currentTripType = typeController.text.trim();
+                      _currentStartLocation = startController.text.trim();
+                      _currentEndLocation = endController.text.trim();
+                      _tripStartTime = DateTime.now();
+                      _currentSessionId = sessionId;
+                      _startSessionPolling();
+                      _lastCompletedTrip = null;
 
-                  // ✅ Clear persistence as well
-                  SharedPreferences.getInstance().then((prefs) {
-                    prefs.setString(prefsKey, jsonEncode(foundById));
-                  });
+                      for (final k in foundById.keys) {
+                        foundById[k] = false;
+                      }
 
-                  _bonusItemIds = _generateBonusItemIds();
-                  _recomputeCategoryStats();
-                  _completedAchievements.clear();
-                  _sessionUnlockedAchievements.clear();
-                  _completedPointerTiers.clear();
-                  _gameCompletedShown = false;
-                  _perfectRunShown = false;
-                  _lastRankIndex = -1;
-                });
+                      SharedPreferences.getInstance().then((prefs) {
+                        prefs.setString(prefsKey, jsonEncode(foundById));
+                      });
 
-                Navigator.pop(context);
-              },
-              child: const Text('Start'),
+                      _bonusItemIds = sessionBonusIds;
+                      _recomputeCategoryStats();
+                    });
+
+                    Navigator.pop(context);
+
+                    Future.delayed(Duration.zero, () {
+                      showDialog(
+                        context: parentContext,
+                        builder: (dialogContext) => AlertDialog(
+                          title: const Text('Session Created'),
+                          content: Text(
+                            'Share this code with your teammate:\n\n$sessionId',
+                          ),
+                          actions: [
+                            ElevatedButton(
+                              onPressed: () => Navigator.pop(dialogContext),
+                              child: const Text('OK'),
+                            ),
+                          ],
+                        ),
+                      );
+                    });
+                  },
+                  child: const Text('Create Session'),
+                ),
+                const SizedBox(height: 10),
+                ElevatedButton(
+                  onPressed: () async {
+                    final controller = TextEditingController();
+
+                    final joinId = await showDialog<String>(
+                      context: context,
+                      builder: (dialogContext) => AlertDialog(
+                        title: const Text('Join Session'),
+                        content: TextField(
+                          controller: controller,
+                          decoration: const InputDecoration(
+                            labelText: 'Enter Session ID',
+                          ),
+                        ),
+                        actions: [
+                          TextButton(
+                            onPressed: () => Navigator.pop(dialogContext, null),
+                            child: const Text('Cancel'),
+                          ),
+                          ElevatedButton(
+                            onPressed: () =>
+                                Navigator.pop(dialogContext, controller.text),
+                            child: const Text('Join'),
+                          ),
+                        ],
+                      ),
+                    );
+
+                    if (joinId == null || joinId.trim().isEmpty) return;
+
+                    final normalizedJoinId = joinId.trim().toUpperCase();
+
+                    // Close the outer Start Trip dialog once, before async work.
+                    if (Navigator.of(context).canPop()) {
+                      Navigator.of(context).pop();
+                    }
+
+                    final sessionDoc = await FirebaseFirestore.instance
+                        .collection('trip_sessions')
+                        .doc(normalizedJoinId)
+                        .get();
+
+                    if (!sessionDoc.exists) {
+                      if (!mounted) return;
+                      ScaffoldMessenger.maybeOf(parentContext)?.showSnackBar(
+                        const SnackBar(
+                          content: Text('Session not found'),
+                          duration: Duration(milliseconds: 1200),
+                        ),
+                      );
+                      return;
+                    }
+
+                    final data = sessionDoc.data()!;
+
+                    if (data['active'] != true) {
+                      if (!mounted) return;
+                      ScaffoldMessenger.maybeOf(parentContext)?.showSnackBar(
+                        const SnackBar(
+                          content: Text('Session is no longer active'),
+                          duration: Duration(milliseconds: 1200),
+                        ),
+                      );
+                      return;
+                    }
+
+                    final remoteFoundItems = Map<String, dynamic>.from(
+                      data['foundItems'] ?? {},
+                    );
+
+                    final loadedFoundMap = <String, bool>{
+                      for (final key in foundById.keys) key: false,
+                    };
+
+                    for (final entry in remoteFoundItems.entries) {
+                      if (loadedFoundMap.containsKey(entry.key)) {
+                        loadedFoundMap[entry.key] = entry.value == true;
+                      }
+                    }
+
+                    final loadedBonusIds = Set<String>.from(
+                      data['bonusItemIds'] ?? [],
+                    );
+
+                    if (!mounted) return;
+
+                    setState(() {
+                      _currentSessionId = normalizedJoinId;
+                      _startSessionPolling();
+                      _currentTripType = data['tripName'] ?? '';
+                      _currentStartLocation = data['startLocation'] ?? '';
+                      _currentEndLocation = data['endLocation'] ?? '';
+                      _tripStartTime =
+                          DateTime.tryParse(data['startTime'] ?? '') ??
+                          DateTime.now();
+                      _lastCompletedTrip = null;
+
+                      foundById = loadedFoundMap;
+                      _bonusItemIds = loadedBonusIds;
+
+                      _recomputeCategoryStats();
+                    });
+
+                    final prefs = await SharedPreferences.getInstance();
+                    await prefs.setString(prefsKey, jsonEncode(foundById));
+
+                    if (!mounted) return;
+
+                    ScaffoldMessenger.maybeOf(parentContext)?.showSnackBar(
+                      SnackBar(
+                        content: Text('Joined Session $normalizedJoinId'),
+                        duration: const Duration(milliseconds: 1200),
+                      ),
+                    );
+                  },
+
+                  child: const Text('Join Session'),
+                ),
+              ],
             ),
           ],
         );
@@ -1439,6 +1760,37 @@ class _CategoryScreenState extends State<CategoryScreen> {
               } else {
                 _endTrip();
               }
+            },
+          ),
+
+          IconButton(
+            icon: const Icon(Icons.cloud_download),
+            tooltip: 'Load Trips',
+            onPressed: () async {
+              final trips = await _loadTripsFromFirestore();
+
+              if (trips.isNotEmpty) {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (_) => TripSummaryScreen(trip: trips.first),
+                  ),
+                );
+              }
+            },
+          ),
+
+          IconButton(
+            tooltip: 'Trip History',
+            icon: const Icon(Icons.history),
+            onPressed: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (_) =>
+                      TripHistoryScreen(loadTrips: _loadTripsFromFirestore),
+                ),
+              );
             },
           ),
 
@@ -2450,6 +2802,236 @@ class _PerfectRunContentState extends State<_PerfectRunContent>
             letterSpacing: 0.6,
           ),
         ),
+      ),
+    );
+  }
+}
+
+class TripHistoryScreen extends StatefulWidget {
+  final Future<List<Trip>> Function() loadTrips;
+
+  const TripHistoryScreen({super.key, required this.loadTrips});
+
+  @override
+  State<TripHistoryScreen> createState() => _TripHistoryScreenState();
+}
+
+class _TripHistoryScreenState extends State<TripHistoryScreen> {
+  late Future<List<Trip>> _tripsFuture;
+
+  @override
+  void initState() {
+    super.initState();
+    _tripsFuture = widget.loadTrips();
+  }
+
+  String _formatHistoryDate(DateTime dt) {
+    const months = [
+      'Jan',
+      'Feb',
+      'Mar',
+      'Apr',
+      'May',
+      'Jun',
+      'Jul',
+      'Aug',
+      'Sep',
+      'Oct',
+      'Nov',
+      'Dec',
+    ];
+
+    final day = dt.day.toString().padLeft(2, '0');
+    final month = months[dt.month - 1];
+    final year = dt.year.toString();
+
+    return '$day $month $year';
+  }
+
+  String _formatHistoryDuration(DateTime start, DateTime end) {
+    final diff = end.difference(start);
+    final minutes = diff.inMinutes;
+
+    if (minutes < 60) {
+      return '$minutes min';
+    }
+
+    final hours = minutes ~/ 60;
+    final remainingMinutes = minutes % 60;
+
+    if (remainingMinutes == 0) {
+      return '${hours}h';
+    }
+
+    return '${hours}h ${remainingMinutes}m';
+  }
+
+  Future<void> _confirmDeleteTrip(Trip trip) async {
+    final confirm = await showDialog<bool>(
+      context: context,
+      builder: (context) {
+        return AlertDialog(
+          title: const Text('Delete trip?'),
+          content: Text(
+            'Are you sure you want to delete "${trip.tripName}"?\n\n'
+            'This cannot be undone.',
+          ),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.pop(context, false),
+              child: const Text('Cancel'),
+            ),
+            ElevatedButton(
+              onPressed: () => Navigator.pop(context, true),
+              child: const Text('Delete'),
+            ),
+          ],
+        );
+      },
+    );
+
+    if (confirm == true) {
+      await FirebaseFirestore.instance
+          .collection('trips')
+          .doc(trip.tripId)
+          .delete();
+
+      setState(() {
+        _tripsFuture = widget.loadTrips();
+      });
+
+      if (!mounted) return;
+
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text('Trip deleted'),
+          duration: Duration(milliseconds: 1000),
+        ),
+      );
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(title: const Text('Trip History')),
+      body: FutureBuilder<List<Trip>>(
+        future: _tripsFuture,
+        builder: (context, snapshot) {
+          if (snapshot.connectionState != ConnectionState.done) {
+            return const Center(child: CircularProgressIndicator());
+          }
+
+          if (snapshot.hasError) {
+            return Center(
+              child: Padding(
+                padding: const EdgeInsets.all(16),
+                child: Text('Error loading trips:\n${snapshot.error}'),
+              ),
+            );
+          }
+
+          final trips = snapshot.data ?? [];
+
+          if (trips.isEmpty) {
+            return const Center(child: Text('No trips yet'));
+          }
+
+          if (trips.isEmpty) {
+            return const Center(child: Text('No trips yet'));
+          }
+
+          return ListView.builder(
+            itemCount: trips.length,
+            itemBuilder: (context, index) {
+              final trip = trips[index];
+
+              return InkWell(
+                onTap: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (_) => TripSummaryScreen(trip: trip),
+                    ),
+                  );
+                },
+                onLongPress: () async {
+                  await _confirmDeleteTrip(trip);
+                },
+                child: Container(
+                  width: double.infinity,
+                  padding: const EdgeInsets.fromLTRB(16, 14, 16, 14),
+                  decoration: const BoxDecoration(
+                    border: Border(
+                      bottom: BorderSide(color: Colors.black12, width: 1),
+                    ),
+                  ),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Row(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Expanded(
+                            child: Text(
+                              trip.tripName,
+                              style: const TextStyle(
+                                fontWeight: FontWeight.bold,
+                                fontSize: 16,
+                              ),
+                            ),
+                          ),
+                          const SizedBox(width: 12),
+                          Container(
+                            padding: const EdgeInsets.symmetric(
+                              horizontal: 10,
+                              vertical: 6,
+                            ),
+                            decoration: BoxDecoration(
+                              color: _progressColor(
+                                (trip.percent / 100).clamp(0.0, 1.0),
+                              ),
+                              borderRadius: BorderRadius.circular(20),
+                            ),
+                            child: Text(
+                              '${trip.percent.toStringAsFixed(0)}%',
+                              style: const TextStyle(
+                                color: Colors.white,
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
+                      const SizedBox(height: 6),
+                      Text(
+                        '${trip.startLocation} → ${trip.endLocation}',
+                        style: const TextStyle(fontSize: 14),
+                      ),
+                      const SizedBox(height: 4),
+                      Text(
+                        '${_formatHistoryDate(trip.startTime)} • ${_formatHistoryDuration(trip.startTime, trip.endTime)}',
+                        style: const TextStyle(
+                          fontSize: 13,
+                          color: Colors.black54,
+                        ),
+                      ),
+                      const SizedBox(height: 4),
+                      Text(
+                        '${kRanks[trip.finalRankIndex]} 🏅',
+                        style: TextStyle(
+                          fontSize: 13,
+                          fontWeight: FontWeight.w600,
+                          color: rankColor(trip.finalRankIndex),
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              );
+            },
+          );
+        },
       ),
     );
   }
