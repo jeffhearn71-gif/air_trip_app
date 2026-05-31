@@ -71,6 +71,19 @@ class Trip {
   final int totalDoubleItems;
   final int doubleScore;
   final int doubleMaxScore;
+
+  final int oneScore;
+  final int oneMaxScore;
+
+  final int twoScore;
+  final int twoMaxScore;
+
+  final int threeScore;
+  final int threeMaxScore;
+
+  final int fourScore;
+  final int fourMaxScore;
+
   final List<String> completedAchievementIds;
 
   final Map<String, int> achievementTotals;
@@ -103,6 +116,19 @@ class Trip {
     required this.totalDoubleItems,
     required this.doubleScore,
     required this.doubleMaxScore,
+
+    required this.oneScore,
+    required this.oneMaxScore,
+
+    required this.twoScore,
+    required this.twoMaxScore,
+
+    required this.threeScore,
+    required this.threeMaxScore,
+
+    required this.fourScore,
+    required this.fourMaxScore,
+
     required this.completedAchievementIds,
     required this.achievementTotals,
     required this.achievementFoundCounts,
@@ -206,7 +232,16 @@ const Map<String, String> achievementLabels = {
   'retail_therapy': 'Retail therapy!',
   'little_help': 'Every little helps!',
   'blues_twos': 'Blues and twos!',
+  'bread': 'Bread and butter!',
 };
+
+const Map<int, String> pointerTierLabels = {
+  1: 'One and done!',
+  2: 'Double trouble!',
+  3: 'Triple threat!',
+  4: 'Four-midable!',
+};
+
 String sortLabel(SortMode mode) {
   switch (mode) {
     case SortMode.az:
@@ -269,6 +304,11 @@ IconData resolveIcon({required String iconName, required String groupName}) {
   final iconKey = _norm(iconName);
   final groupKey = _norm(groupName);
 
+  // ✅ Force override for car category before map lookup
+  if (groupKey == 'car' || groupKey.contains('cars')) {
+    return Symbols.directions_car;
+  }
+
   final direct = materialSymbolsMap[iconKey];
   if (direct != null) return direct;
 
@@ -323,6 +363,7 @@ class _CategoryScreenState extends State<CategoryScreen> {
   int maxScore = 0;
 
   bool loading = true;
+  bool _isRestoringState = false;
   String? error;
 
   SortMode sortMode = SortMode.az;
@@ -341,6 +382,7 @@ class _CategoryScreenState extends State<CategoryScreen> {
   Set<String> _bonusItemIds = {};
 
   Set<String> _completedAchievements = {};
+  Set<int> _completedPointerTiers = {};
   Map<String, Set<String>> _achievementItemIds = {};
 
   bool _gameCompletedShown = false;
@@ -367,6 +409,7 @@ class _CategoryScreenState extends State<CategoryScreen> {
     setState(() {
       loading = true;
       error = null;
+      _isRestoringState = true;
     });
 
     try {
@@ -446,10 +489,12 @@ class _CategoryScreenState extends State<CategoryScreen> {
 
       _recomputeCategoryStats();
 
-      setState(() => loading = false);
+      setState(() {
+        loading = false;
+        _isRestoringState = false;
+      });
 
-      // If anything is already complete, celebrate once
-      _checkAndCelebrateCompletedCategories();
+      // ✅ Do NOT trigger celebration after restore
     } catch (e) {
       setState(() {
         error = e.toString();
@@ -717,6 +762,8 @@ class _CategoryScreenState extends State<CategoryScreen> {
       _gameCompletedShown = false;
       _perfectRunShown = false;
       _completedSubcategoriesShownGlobal.clear();
+      _completedAchievements.clear();
+      _completedPointerTiers.clear();
 
       _recomputeCategoryStats();
 
@@ -805,6 +852,7 @@ class _CategoryScreenState extends State<CategoryScreen> {
   }
 
   void _checkRankMilestone() {
+    if (_isRestoringState) return;
     final currentRank = _getRankIndex();
 
     if (_lastRankIndex == -1) {
@@ -826,6 +874,7 @@ class _CategoryScreenState extends State<CategoryScreen> {
   }
 
   void _checkGameCompletion() {
+    if (_isRestoringState) return;
     // If already won, do nothing
     if (_gameCompletedShown) return;
 
@@ -918,6 +967,18 @@ class _CategoryScreenState extends State<CategoryScreen> {
     int doubleScore = 0;
     int doubleMaxScore = 0;
 
+    int oneScore = 0;
+    int oneMaxScore = 0;
+
+    int twoScore = 0;
+    int twoMaxScore = 0;
+
+    int threeScore = 0;
+    int threeMaxScore = 0;
+
+    int fourScore = 0;
+    int fourMaxScore = 0;
+
     for (final it in items) {
       if (_bonusItemIds.contains(it.itemId)) {
         final isFound = foundById[it.itemId] == true;
@@ -929,6 +990,31 @@ class _CategoryScreenState extends State<CategoryScreen> {
           doubleItemsFound++;
           doubleScore += itemValue;
         }
+      }
+    }
+    for (final it in items) {
+      final isFound = foundById[it.itemId] == true;
+
+      switch (it.points) {
+        case 1:
+          oneMaxScore++;
+          if (isFound) oneScore++;
+          break;
+
+        case 2:
+          twoMaxScore++;
+          if (isFound) twoScore++;
+          break;
+
+        case 3:
+          threeMaxScore++;
+          if (isFound) threeScore++;
+          break;
+
+        case 4:
+          fourMaxScore++;
+          if (isFound) fourScore++;
+          break;
       }
     }
 
@@ -953,7 +1039,7 @@ class _CategoryScreenState extends State<CategoryScreen> {
 
     final trip = Trip(
       tripId: tripId,
-      tripName: _currentTripType!, // using “Type of Trip”
+      tripName: _currentTripType!, // using “Trip Description”
       startLocation: _currentStartLocation!,
       endLocation: _currentEndLocation!,
       score: totalScore,
@@ -967,6 +1053,14 @@ class _CategoryScreenState extends State<CategoryScreen> {
       totalDoubleItems: totalDoubleItems,
       doubleScore: doubleScore,
       doubleMaxScore: doubleMaxScore,
+      oneScore: oneScore,
+      oneMaxScore: oneMaxScore,
+      twoScore: twoScore,
+      twoMaxScore: twoMaxScore,
+      threeScore: threeScore,
+      threeMaxScore: threeMaxScore,
+      fourScore: fourScore,
+      fourMaxScore: fourMaxScore,
       completedAchievementIds: completedAchievementIds,
       achievementTotals: achievementTotals,
       achievementFoundCounts: achievementFoundCounts,
@@ -993,6 +1087,7 @@ class _CategoryScreenState extends State<CategoryScreen> {
   }
 
   void _checkPerfectRun() {
+    if (_isRestoringState) return;
     // Perfect Run = exactly 100% of points
     if (_perfectRunShown) return;
     if (maxScore <= 0) return;
@@ -1075,15 +1170,17 @@ class _CategoryScreenState extends State<CategoryScreen> {
             children: [
               TextField(
                 controller: typeController,
-                decoration: const InputDecoration(labelText: 'Type of Trip'),
+                decoration: const InputDecoration(
+                  labelText: 'Trip Description',
+                ),
               ),
               TextField(
                 controller: startController,
-                decoration: const InputDecoration(labelText: 'Location Start'),
+                decoration: const InputDecoration(labelText: 'Start Time'),
               ),
               TextField(
                 controller: endController,
-                decoration: const InputDecoration(labelText: 'Location End'),
+                decoration: const InputDecoration(labelText: 'End Time'),
               ),
             ],
           ),
@@ -1099,9 +1196,24 @@ class _CategoryScreenState extends State<CategoryScreen> {
                   _currentStartLocation = startController.text.trim();
                   _currentEndLocation = endController.text.trim();
                   _tripStartTime = DateTime.now();
+
+                  // ✅ Reset all found items for new trip
+                  for (final k in foundById.keys) {
+                    foundById[k] = false;
+                  }
+
+                  // ✅ Clear persistence as well
+                  SharedPreferences.getInstance().then((prefs) {
+                    prefs.setString(prefsKey, jsonEncode(foundById));
+                  });
+
                   _bonusItemIds = _generateBonusItemIds();
                   _recomputeCategoryStats();
                   _completedAchievements.clear();
+                  _completedPointerTiers.clear();
+                  _gameCompletedShown = false;
+                  _perfectRunShown = false;
+                  _lastRankIndex = -1;
                 });
 
                 Navigator.pop(context);
@@ -1115,6 +1227,7 @@ class _CategoryScreenState extends State<CategoryScreen> {
   }
 
   void _checkAndCelebrateCompletedCategories() {
+    if (_isRestoringState) return;
     for (final stat in categoryStats) {
       if (stat.complete && !_completedCategoriesShown.contains(stat.name)) {
         _completedCategoriesShown.add(stat.name);
@@ -1173,6 +1286,26 @@ class _CategoryScreenState extends State<CategoryScreen> {
     }
 
     return unlockedLabels;
+  }
+
+  List<int> _handlePointerTierCheck(Map<String, bool> foundById) {
+    final unlockedTiers = <int>[];
+
+    for (final tier in pointerTierLabels.keys) {
+      if (_completedPointerTiers.contains(tier)) continue;
+
+      final tierItems = items.where((it) => it.points == tier).toList();
+      if (tierItems.isEmpty) continue;
+
+      final allFound = tierItems.every((it) => foundById[it.itemId] == true);
+
+      if (allFound) {
+        _completedPointerTiers.add(tier);
+        unlockedTiers.add(tier);
+      }
+    }
+
+    return unlockedTiers;
   }
 
   @override
@@ -1403,6 +1536,7 @@ class _CategoryScreenState extends State<CategoryScreen> {
                             isTripActive: _tripStartTime != null,
                             bonusItemIds: _bonusItemIds,
                             onAchievementCheck: _handleAchievementCheck,
+                            onPointerTierCheck: _handlePointerTierCheck,
                           ),
                         ),
                       );
@@ -1556,6 +1690,7 @@ class SubCategoryScreen extends StatefulWidget {
   final bool isTripActive;
   final Set<String> bonusItemIds;
   final List<String> Function(String, Map<String, bool>) onAchievementCheck;
+  final List<int> Function(Map<String, bool>) onPointerTierCheck;
   final Future<void> Function({
     required int priority,
     required String assetPath,
@@ -1578,6 +1713,7 @@ class SubCategoryScreen extends StatefulWidget {
     required this.isTripActive,
     required this.bonusItemIds,
     required this.onAchievementCheck,
+    required this.onPointerTierCheck,
   });
 
   @override
@@ -1834,6 +1970,7 @@ class _SubCategoryScreenState extends State<SubCategoryScreen> {
                             bonusItemIds: widget.bonusItemIds,
                             playSfx: widget.playSfx,
                             onAchievementCheck: widget.onAchievementCheck,
+                            onPointerTierCheck: widget.onPointerTierCheck,
                           ),
                         ),
                       );
@@ -1929,6 +2066,7 @@ class ItemScreen extends StatefulWidget {
   })?
   playSfx;
   final List<String> Function(String, Map<String, bool>) onAchievementCheck;
+  final List<int> Function(Map<String, bool>) onPointerTierCheck;
   const ItemScreen({
     super.key,
     required this.title,
@@ -1939,6 +2077,7 @@ class ItemScreen extends StatefulWidget {
     required this.bonusItemIds,
     required this.playSfx,
     required this.onAchievementCheck,
+    required this.onPointerTierCheck,
   });
 
   @override
@@ -2055,7 +2194,7 @@ class _ItemScreenState extends State<ItemScreen> {
                 ScaffoldMessenger.of(context).showSnackBar(
                   SnackBar(
                     content: const Text('Start a trip first'),
-                    duration: const Duration(milliseconds: 800),
+                    duration: const Duration(milliseconds: 500),
                   ),
                 );
 
@@ -2071,6 +2210,10 @@ class _ItemScreenState extends State<ItemScreen> {
               final unlockedAchievements = newVal
                   ? widget.onAchievementCheck(it.itemId, widget.foundById)
                   : <String>[];
+
+              final unlockedPointerTiers = newVal
+                  ? widget.onPointerTierCheck(widget.foundById)
+                  : <int>[];
 
               if (newVal && unlockedAchievements.isNotEmpty) {
                 if (widget.playSfx != null) {
@@ -2093,6 +2236,54 @@ class _ItemScreenState extends State<ItemScreen> {
                     backgroundColor: Colors.pink,
                     behavior: SnackBarBehavior.floating,
                     duration: const Duration(seconds: 3),
+                  ),
+                );
+              } else if (newVal && unlockedPointerTiers.isNotEmpty) {
+                final pointerLabel =
+                    pointerTierLabels[unlockedPointerTiers.first] ??
+                    'Tier complete!';
+
+                if (widget.playSfx != null) {
+                  final tier = unlockedPointerTiers.first;
+
+                  String assetPath;
+
+                  switch (tier) {
+                    case 1:
+                      assetPath = 'sounds/one_pointer_done.mp3';
+                      break;
+                    case 2:
+                      assetPath = 'sounds/two_pointer_done.mp3';
+                      break;
+                    case 3:
+                      assetPath = 'sounds/three_pointer_done.mp3';
+                      break;
+                    case 4:
+                      assetPath = 'sounds/four_pointer_done.mp3';
+                      break;
+                    default:
+                      assetPath = 'sounds/one_pointer_done.mp3';
+                  }
+
+                  widget.playSfx!(
+                    priority: SFX_DOUBLE,
+                    assetPath: assetPath,
+                    volume: 1.0,
+                  );
+                }
+
+                ScaffoldMessenger.of(context).showSnackBar(
+                  SnackBar(
+                    content: Row(
+                      children: [
+                        const Icon(Icons.emoji_events, color: Colors.white),
+                        const SizedBox(width: 8),
+                        Expanded(child: Text(pointerLabel)),
+                      ],
+                    ),
+                    backgroundColor: Colors.purple,
+                    behavior: SnackBarBehavior.floating,
+                    duration: const Duration(milliseconds: 3000),
                   ),
                 );
               } else if (newVal &&
@@ -2264,21 +2455,104 @@ class TripSummaryScreen extends StatelessWidget {
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
             const SizedBox(height: 20),
+            Builder(
+              builder: (context) {
+                final isPerfect = trip.percent >= 100.0;
+                final isWinning =
+                    trip.percent >= winningThresholdPercent(DateTime.now());
+
+                if (isPerfect) {
+                  return const Column(
+                    children: [
+                      Text(
+                        '⭐ PERFECT RUN ⭐',
+                        textAlign: TextAlign.center,
+                        style: TextStyle(
+                          fontSize: 20,
+                          fontWeight: FontWeight.bold,
+                          color: Colors.amber,
+                        ),
+                      ),
+                      SizedBox(height: 10),
+                    ],
+                  );
+                }
+
+                if (isWinning) {
+                  return Column(
+                    children: [
+                      Text(
+                        '⭐ WINNING RUN ⭐',
+                        textAlign: TextAlign.center,
+                        style: TextStyle(
+                          fontSize: 20,
+                          fontWeight: FontWeight.bold,
+                          color: Colors.green.shade600,
+                        ),
+                      ),
+                      const SizedBox(height: 10),
+                    ],
+                  );
+                }
+
+                return const Column(
+                  children: [
+                    Text(
+                      'BETTER LUCK NEXT TIME',
+                      textAlign: TextAlign.center,
+                      style: TextStyle(
+                        fontSize: 18,
+                        fontWeight: FontWeight.bold,
+                        color: Colors.red,
+                      ),
+                    ),
+                    SizedBox(height: 10),
+                  ],
+                );
+              },
+            ),
+            Builder(
+              builder: (context) {
+                final isPerfect = trip.percent >= 100.0;
+                final isWinning =
+                    trip.percent >= winningThresholdPercent(DateTime.now());
+
+                Color color;
+
+                if (isPerfect) {
+                  color = Colors.amber;
+                } else if (isWinning) {
+                  color = Colors.green.shade600;
+                } else {
+                  color = Colors.red;
+                }
+
+                return Text(
+                  'Final Score: ${trip.percent.toStringAsFixed(1)}%',
+                  textAlign: TextAlign.center,
+                  style: TextStyle(
+                    fontSize: 28,
+                    fontWeight: FontWeight.w900,
+                    color: color,
+                  ),
+                );
+              },
+            ),
+            const SizedBox(height: 6),
 
             Text(
-              'Final Score: ${trip.percent.toStringAsFixed(1)}%',
+              'Target >= ${winningThresholdPercent(DateTime.now()).toStringAsFixed(1)}% (${dayName(DateTime.now())})',
               textAlign: TextAlign.center,
-              style: const TextStyle(fontSize: 28, fontWeight: FontWeight.w900),
+              style: const TextStyle(fontSize: 16, color: Colors.black54),
             ),
-
-            const SizedBox(height: 20),
+            const SizedBox(height: 10),
 
             // --- Trip Identity ---
             const Align(
               alignment: Alignment.centerLeft,
               child: Text(
                 '🎮 Game Statistics',
-                style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
               ),
             ),
             const SizedBox(height: 10),
@@ -2358,7 +2632,29 @@ class TripSummaryScreen extends StatelessWidget {
                   '${trip.doubleScore} / ${trip.doubleMaxScore} '
                       '(${trip.doubleMaxScore == 0 ? "0" : ((trip.doubleScore / trip.doubleMaxScore) * 100).toStringAsFixed(1)}%)',
                 ),
+                _tableRow(
+                  '4-pointers',
+                  '${trip.fourScore} / ${trip.fourMaxScore} '
+                      '(${trip.fourMaxScore == 0 ? "0" : ((trip.fourScore / trip.fourMaxScore) * 100).toStringAsFixed(1)}%)',
+                ),
 
+                _tableRow(
+                  '3-pointers',
+                  '${trip.threeScore} / ${trip.threeMaxScore} '
+                      '(${trip.threeMaxScore == 0 ? "0" : ((trip.threeScore / trip.threeMaxScore) * 100).toStringAsFixed(1)}%)',
+                ),
+
+                _tableRow(
+                  '2-pointers',
+                  '${trip.twoScore} / ${trip.twoMaxScore} '
+                      '(${trip.twoMaxScore == 0 ? "0" : ((trip.twoScore / trip.twoMaxScore) * 100).toStringAsFixed(1)}%)',
+                ),
+
+                _tableRow(
+                  '1-pointers',
+                  '${trip.oneScore} / ${trip.oneMaxScore} '
+                      '(${trip.oneMaxScore == 0 ? "0" : ((trip.oneScore / trip.oneMaxScore) * 100).toStringAsFixed(1)}%)',
+                ),
                 _tableRow(
                   'Achievements Completed',
                   '${trip.completedAchievementIds.length} / ${achievementLabels.length}',
@@ -2371,7 +2667,7 @@ class TripSummaryScreen extends StatelessWidget {
               alignment: Alignment.centerLeft,
               child: Text(
                 '🚗 Travel Statistics',
-                style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
               ),
             ),
 
@@ -2385,21 +2681,21 @@ class TripSummaryScreen extends StatelessWidget {
               },
 
               children: [
-                _tableRow('Trip', trip.tripName),
+                _tableRow('Trip Description', trip.tripName),
 
                 _tableRow(
-                  'Route',
+                  'Start-End Locations',
                   '${trip.startLocation} → ${trip.endLocation}',
                 ),
 
-                _tableRow('Start', _formatTime(trip.startTime)),
-                _tableRow('End', _formatTime(trip.endTime)),
+                _tableRow('Start Time', _formatTime(trip.startTime)),
+                _tableRow('End Time', _formatTime(trip.endTime)),
                 _tableRow(
                   'Duration',
                   _formatDuration(trip.startTime, trip.endTime),
                 ),
 
-                _tableRow('ID', trip.tripId),
+                _tableRow('Unique Trip ID', trip.tripId),
               ],
             ),
             const SizedBox(height: 20),
@@ -2408,7 +2704,7 @@ class TripSummaryScreen extends StatelessWidget {
               alignment: Alignment.centerLeft,
               child: Text(
                 '🏆 Achievements Discovered',
-                style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
               ),
             ),
 
@@ -2433,19 +2729,6 @@ class TripSummaryScreen extends StatelessWidget {
               ],
             ),
             const SizedBox(height: 20),
-
-            if (trip.perfectRun)
-              const Text(
-                '⭐ PERFECT RUN ⭐',
-                textAlign: TextAlign.center,
-                style: TextStyle(
-                  fontSize: 16,
-                  fontWeight: FontWeight.bold,
-                  color: Colors.amber,
-                ),
-              ),
-
-            const SizedBox(height: 30),
 
             ElevatedButton(
               onPressed: () {

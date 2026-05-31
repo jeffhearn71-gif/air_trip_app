@@ -12,13 +12,13 @@ Animals,Farmyard,Cow,2,FALSE,Animals_Farmyard_Cow,Animals_Farmyard_Cow,pets,farm
 Animals,Farmyard,Dog,1,FALSE,Animals_Farmyard_Dog,Animals_Farmyard_Dog,pets,farmer|animals,Me and the farmer!|Animals crackers!
 Animals,Farmyard,Horse,2,FALSE,Animals_Farmyard_Horse,Animals_Farmyard_Horse,pets,farmer|animals,Me and the farmer!|Animals crackers!
 Animals,Farmyard,Sheep,2,FALSE,Animals_Farmyard_Sheep,Animals_Farmyard_Sheep,pets,farmer|animals,Me and the farmer!|Animals crackers!
-Buildings,Construction,Crane,1,FALSE,Buildings_Construction_Crane,Buildings_Construction_Crane,construction,builder,Bob the builder!
+Buildings,Construction,Crane,2,FALSE,Buildings_Construction_Crane,Buildings_Construction_Crane,construction,builder,Bob the builder!
 Buildings,Construction,Scaffolding,1,FALSE,Buildings_Construction_Scaffolding,Buildings_Construction_Scaffolding,construction,builder,Bob the builder!
 Buildings,Houses,Door Black,1,FALSE,Buildings_Houses_Door Black,Buildings_Houses_Door Black,home,location|rainbow,Location location location!|Somewhere over the rainbow!
-Buildings,Houses,Door Blue,1,FALSE,Buildings_Houses_Door Blue,Buildings_Houses_Door Blue,home,location|rainbow,Location location location!|Somewhere over the rainbow!
-Buildings,Houses,Door Green,1,FALSE,Buildings_Houses_Door Green,Buildings_Houses_Door Green,home,location|rainbow,Location location location!|Somewhere over the rainbow!
+Buildings,Houses,Door Blue,2,FALSE,Buildings_Houses_Door Blue,Buildings_Houses_Door Blue,home,location|rainbow,Location location location!|Somewhere over the rainbow!
+Buildings,Houses,Door Green,2,FALSE,Buildings_Houses_Door Green,Buildings_Houses_Door Green,home,location|rainbow,Location location location!|Somewhere over the rainbow!
 Buildings,Houses,Door Other,1,FALSE,Buildings_Houses_Door Other,Buildings_Houses_Door Other,home,location|rainbow,Location location location!|Somewhere over the rainbow!
-Buildings,Houses,Door Red,1,FALSE,Buildings_Houses_Door Red,Buildings_Houses_Door Red,home,location|rainbow,Location location location!|Somewhere over the rainbow!
+Buildings,Houses,Door Red,2,FALSE,Buildings_Houses_Door Red,Buildings_Houses_Door Red,home,location|rainbow,Location location location!|Somewhere over the rainbow!
 Buildings,Houses,Door White,1,FALSE,Buildings_Houses_Door White,Buildings_Houses_Door White,home,location|rainbow,Location location location!|Somewhere over the rainbow!
 Buildings,Houses,Painted,1,FALSE,Buildings_Houses_Painted,Buildings_Houses_Painted,home,location|rainbow,Location location location!|Somewhere over the rainbow!
 Buildings,Places of Interest,Car Salesroom,1,FALSE,Buildings_Places of Interest_Car Salesroom,Buildings_Places of Interest_Salesroom,location_city,interest,Been there done that!
@@ -42,12 +42,12 @@ Buildings,Shops,McDonalds,1,FALSE,Buildings_Shops_McDonalds,Buildings_Shops_McDo
 Buildings,Shops,Off Licence/Corner Shop,2,FALSE,Buildings_Shops_Off Licence/Corner Shop,Buildings_Shops_Off Licence,storefront,shop_drop|pub,Shop 'til you drop!|Cheers!
 Buildings,Shops,Pet Shop/Grooming,2,FALSE,Buildings_Shops_Pet Shop/Grooming,Buildings_Shops_Pet Shop,storefront,shop_drop,Shop 'til you drop!
 Buildings,Shops,Pharmacy,2,FALSE,Buildings_Shops_Pharmacy,Buildings_Shops_Pharmacy,storefront,shop_drop,Shop 'til you drop!
-Buildings,Shops,Pizza,1,FALSE,Buildings_Shops_Pizza,Buildings_Shops_Pizza,storefront,shop_drop,Shop 'til you drop!
+Buildings,Shops,Pizza,2,FALSE,Buildings_Shops_Pizza,Buildings_Shops_Pizza,storefront,shop_drop,Shop 'til you drop!
 Buildings,Shops,Vape/Person Vaping,2,FALSE,Buildings_Shops_Vape/Person Vaping,Buildings_Shops_Vape,storefront,shop_drop,Shop 'til you drop!
 Car,Colours,Brown,1,FALSE,Car_Colours_Brown,Car_Colours_Brown,palette,rainbow,Somewhere over the rainbow!
 Car,Colours,Green,1,FALSE,Car_Colours_Green,Car_Colours_Green,palette,rainbow,Somewhere over the rainbow!
 Car,Colours,Orange,2,FALSE,Car_Colours_Orange,Car_Colours_Orange,palette,rainbow,Somewhere over the rainbow!
-Car,Colours,Pink,3,FALSE,Car_Colours_Pink,Car_Colours_Pink,palette,rainbow,Somewhere over the rainbow!
+Car,Colours,Pink,4,FALSE,Car_Colours_Pink,Car_Colours_Pink,palette,rainbow,Somewhere over the rainbow!
 Car,Colours,Purple,3,FALSE,Car_Colours_Purple,Car_Colours_Purple,palette,rainbow,Somewhere over the rainbow!
 Car,Colours,Two-toned,1,FALSE,Car_Colours_Two-toned,Car_Colours_Two-toned,palette,rainbow,Somewhere over the rainbow!
 Car,Colours,Yellow,1,FALSE,Car_Colours_Yellow,Car_Colours_Yellow,palette,rainbow,Somewhere over the rainbow!
@@ -98,18 +98,18 @@ Car,Models,Toyota,1,FALSE,Car_Models_Toyota,Car_Models_Toyota,car_tag,top_gear,T
 Car,Models,Vauxhall,1,FALSE,Car_Models_Vauxhall,Car_Models_Vauxhall,car_tag,top_gear,Top Gear!
 Car,Models,Volkswagen,1,FALSE,Car_Models_Volkswagen,Car_Models_Volkswagen,car_tag,top_gear,Top Gear!
 Car,Models,Volvo,1,FALSE,Car_Models_Volvo,Car_Models_Volvo,car_tag,top_gear,Top Gear!
-Car,Number Plates,Alternative,3,FALSE,Car_Number Plates_Alternative,Car_Number Plates_Alternative,confirmation_number,plate,Put it on a plate!
+Car,Number Plates,Alternative,4,FALSE,Car_Number Plates_Alternative,Car_Number Plates_Alternative,confirmation_number,plate,Put it on a plate!
 Car,Number Plates,European,2,FALSE,Car_Number Plates_European,Car_Number Plates_European,confirmation_number,plate,Put it on a plate!
 Car,Number Plates,Personalised,2,FALSE,Car_Number Plates_Personalised,Car_Number Plates_Personalised,confirmation_number,plate,Put it on a plate!
 Car,Stickers,Baby On Board,2,FALSE,Car_Stickers_Baby On Board,Car_Stickers_Baby,branding_watermark,learning,Learning the hard way!
 Car,Stickers,GB,3,FALSE,Car_Stickers_GB,Car_Stickers_GB,branding_watermark,learning|rule,Learning the hard way!|Rule Britannia!
 Car,Stickers,Learner,2,FALSE,Car_Stickers_Learner,Car_Stickers_Learner,branding_watermark,learning,Learning the hard way!
 Car,Stickers,Passed,3,FALSE,Car_Stickers_Passed,Car_Stickers_Passed,branding_watermark,learning,Learning the hard way!
-Car,Stickers,UK,2,FALSE,Car_Stickers_UK,Car_Stickers_UK,branding_watermark,learning,Learning the hard way!
+Car,Stickers,UK,1,FALSE,Car_Stickers_UK,Car_Stickers_UK,branding_watermark,learning,Learning the hard way!
 Misc - Items,Bins,Biffa/Large Bin,2,FALSE,Misc - Items_Bins_Biffa/Large Bin,Misc - Items_Bins_Biffa,recycling,bin,It's bin a long time coming!
 Misc - Items,Bins,Dog poo bin,2,FALSE,Misc - Items_Bins_Dog poo bin,Misc - Items_Bins_Dog poo,recycling,bin,It's bin a long time coming!
-Misc - Items,Bins,Litter bin,1,FALSE,Misc - Items_Bins_Litter bin,Misc - Items_Bins_Litter,recycling,bin,It's bin a long time coming!
-Misc - Items,Bins,Recycling Box Other,2,FALSE,Misc - Items_Bins_Recycling Box Other,Misc - Items_Bins_Recycling,recycling,bin,It's bin a long time coming!
+Misc - Items,Bins,Litter bin,2,FALSE,Misc - Items_Bins_Litter bin,Misc - Items_Bins_Litter,recycling,bin,It's bin a long time coming!
+Misc - Items,Bins,Recycling Box Other,1,FALSE,Misc - Items_Bins_Recycling Box Other,Misc - Items_Bins_Recycling,recycling,bin,It's bin a long time coming!
 Misc - Items,Bins,Skip,1,FALSE,Misc - Items_Bins_Skip,Misc - Items_Bins_Skip,recycling,bin|builder,It's bin a long time coming!|Bob the builder!
 Misc - Items,Bins,Wheelie Black/Grey,1,FALSE,Misc - Items_Bins_Wheelie Black/Grey,Misc - Items_Bins_Wheelie Black,recycling,bin|rainbow,It's bin a long time coming!|Somewhere over the rainbow!
 Misc - Items,Bins,Wheelie Brown,1,FALSE,Misc - Items_Bins_Wheelie Brown,Misc - Items_Bins_Wheelie Brown,recycling,bin|rainbow,It's bin a long time coming!|Somewhere over the rainbow!
@@ -125,11 +125,11 @@ Misc - Items,Objects,Detatched Tyre,1,FALSE,Misc - Items_Objects_Detatched Tyre,
 Misc - Items,Objects,Door or Window Open,2,FALSE,Misc - Items_Objects_Door or Window Open,Misc - Items_Objects_Door_Window Open,category,location|object,Location location location!|Object of desire!
 Misc - Items,Objects,Graffiti,1,FALSE,Misc - Items_Objects_Graffiti,Misc - Items_Objects_Graffiti,category,object,Object of desire!
 Misc - Items,Objects,Ladder,1,FALSE,Misc - Items_Objects_Ladder,Misc - Items_Objects_Ladder,category,object,Object of desire!
-Misc - Items,Objects,Lifesaving Ring,3,FALSE,Misc - Items_Objects_Lifesaving Ring,Misc - Items_Objects_Lifesaving Ring,category,object,Object of desire!
+Misc - Items,Objects,Lifesaving Ring,4,FALSE,Misc - Items_Objects_Lifesaving Ring,Misc - Items_Objects_Lifesaving Ring,category,object,Object of desire!
 Misc - Items,Objects,Mirror Convex,3,FALSE,Misc - Items_Objects_Mirror Convex,Misc - Items_Objects_Mirror Convex,category,object,Object of desire!
-Misc - Items,Objects,Portable toilet/Portaloo,2,FALSE,Misc - Items_Objects_Portable toilet/Portaloo,Misc - Items_Objects_Portaloo,category,object|builder,Object of desire!|Bob the builder!
+Misc - Items,Objects,Portable toilet/Portaloo,3,FALSE,Misc - Items_Objects_Portable toilet/Portaloo,Misc - Items_Objects_Portaloo,category,object|builder,Object of desire!|Bob the builder!
 Misc - Items,Objects,Post box,1,FALSE,Misc - Items_Objects_Post box,Misc - Items_Objects_Post box,category,object,Object of desire!
-Misc - Items,Objects,Salt/Grit Container,1,FALSE,Misc - Items_Objects_Salt/Grit Container,Misc - Items_Objects_Salt Container,category,bin|object,It's bin a long time coming!|Object of desire!
+Misc - Items,Objects,Salt/Grit Container,2,FALSE,Misc - Items_Objects_Salt/Grit Container,Misc - Items_Objects_Salt Container,category,bin|object,It's bin a long time coming!|Object of desire!
 Misc - Items,Objects,Speed camera,1,FALSE,Misc - Items_Objects_Speed camera,Misc - Items_Objects_Speed camera,category,speed_freak|object,Speed freak!Object of desire!
 Misc - Items,Objects,Telephone box,2,FALSE,Misc - Items_Objects_Telephone box,Misc - Items_Objects_Telephone box,category,object,Object of desire!
 Misc - Items,Objects,Washing/Clothes Hung Up,1,FALSE,Misc - Items_Objects_Washing/Clothes Hung Up,Misc - Items_Objects_Washing,category,location|object,Location location location!Object of desire!
@@ -146,7 +146,7 @@ Parks & Nature,Hay Bales,Covered,3,FALSE,Parks & Nature_Hay Bales_Covered,Parks 
 Parks & Nature,Hay Bales,Uncovered,3,FALSE,Parks & Nature_Hay Bales_Uncovered,Parks & Nature_Hay Bales_Uncovered,wheat,farmer|naturel,Me and the farmer!|Au naturel!
 Parks & Nature,The Outdoors,Expanse of water,1,FALSE,Parks & Nature_The Outdoors_Expanse of water,Parks & Nature_The Outdoors_Expanse of water,park,naturel,Au naturel!
 Parks & Nature,The Outdoors,Flowers,1,FALSE,Parks & Nature_The Outdoors_Flowers,Parks & Nature_The Outdoors_Flowers,park,naturel,Au naturel!
-Parks & Nature,The Outdoors,Mistletoe,1,FALSE,Parks & Nature_The Outdoors_Mistletoe,Parks & Nature_The Outdoors_Mistletoe,park,naturel,Au naturel!
+Parks & Nature,The Outdoors,Mistletoe,2,FALSE,Parks & Nature_The Outdoors_Mistletoe,Parks & Nature_The Outdoors_Mistletoe,park,naturel,Au naturel!
 Parks & Nature,The Outdoors,Plastic bag in tree,1,FALSE,Parks & Nature_The Outdoors_Plastic bag in tree,Parks & Nature_The Outdoors_Plastic bage,park,naturel,Au naturel!
 Parks & Nature,Playground,Ball,3,FALSE,Parks & Nature_Playground_Ball,Parks & Nature_Playground_Ball,child_care,naturel,Au naturel!
 Parks & Nature,Playground,Equipment,2,FALSE,Parks & Nature_Playground_Equipment,Parks & Nature_Playground_Equipment,child_care,naturel,Au naturel!
@@ -154,7 +154,7 @@ Parks & Nature,Playground,Football Posts,2,FALSE,Parks & Nature_Playground_Footb
 Road,Floor Markings,Bus Lane/Stop,1,FALSE,Road_Floor Markings_Bus Lane/Stop,Road_Floor Markings_Bus Lane/Stop,road,bus_coach|middle_road,Bus-ted!|Middle of the road!
 Road,Floor Markings,Double Yellow Lines,1,FALSE,Road_Floor Markings_Double Yellow Lines,Road_Floo Markingsr_Double Yellow Lines,road,rainbow|middle_road,Somewhere over the rainbow!|Middle of the road!
 Road,Floor Markings,Keep Clear/No Entry,1,FALSE,Road_Floor Markings_Keep Clear/No Entry,Road_Floo Markingsr_Keep Clear_No Entry,road,middle_road,Middle of the road!
-Road,Floor Markings,Road kill,1,FALSE,Road_Floor Markings_Road kill,Road_Floor Markings_Road kill,road,middle_road|park_mate,Middle of the road!|You can't park there mate!
+Road,Floor Markings,Road kill,2,FALSE,Road_Floor Markings_Road kill,Road_Floor Markings_Road kill,road,middle_road|park_mate,Middle of the road!|You can't park there mate!
 Road,Floor Markings,Rumble Strip/Speed Bump,1,FALSE,Road_Floor Markings_Rumble Strip/Speed Bump,Road_Floor Markings_Speed Bump,road,speed_freak|middle_road,Speed freak!|Middle of the road!
 Road,Floor Markings,Slow,1,FALSE,Road_Floor Markings_Slow,Road_Floor Markings_Slow,road,middle_road,Middle of the road!
 Road,Floor Markings,Speed Limit (Any),1,FALSE,Road_Floor Markings_Speed Limit (Any),Road_Floor Markings_Speed Limit (Any),road,speed_freak|middle_road,Speed freak!|Middle of the road!
@@ -185,7 +185,7 @@ Signs,Highway Code,Speed 50,1,FALSE,Signs_Highway Code_Speed 50,Signs_Highway Co
 Signs,Highway Code,Speed 60,3,FALSE,Signs_Highway Code_Speed 60,Signs_Highway Code_Speed 60,speed,speed_freak|highway,Speed freak!|Highway robbery!
 Signs,Highway Code,Average Speed Check,2,FALSE,Signs_Highway Code_Average Speed Check,Signs_Highway Code_Average Speed Check,speed,speed_freak|highway,Speed freak!|Highway robbery!
 Signs,Highway Code,National Speed Limit,1,FALSE,Signs_Highway Code_National Speed Limit,Signs_Highway Code_National Speed Limit,speed,speed_freak|highway,Speed freak!|Highway robbery!
-Signs,Highway Code,Reduce Speed Now,1,FALSE,Signs_Highway Code_Reduce Speed Now,Signs_Highway Code_Reduce Speed Now,speed,highway,Highway robbery!
+Signs,Highway Code,Reduce Speed Now,2,FALSE,Signs_Highway Code_Reduce Speed Now,Signs_Highway Code_Reduce Speed Now,speed,highway,Highway robbery!
 Signs,Highway Code,Aeroplane/Airport,1,FALSE,Signs_Highway Code_Aeroplane/Airport,Signs_Highway Code_Aeroplane or Airport,report,flying|highway,Air today gone tomorrow!|Highway robbery!
 Signs,Highway Code,Animal,2,FALSE,Signs_Highway Code_Animal,Signs_Highway Code_Animal,report,highway|animals,Highway robbery!|Animals crackers!
 Signs,Highway Code,Bend to Left/Right,1,FALSE,Signs_Highway Code_Bend to Left/Right,Signs_Highway Code_Bend to Left or Right,report,highway,Highway robbery!
@@ -198,7 +198,7 @@ Signs,Highway Code,Junction on Bend Ahead,1,FALSE,Signs_Highway Code_Junction on
 Signs,Highway Code,Men At Work,1,FALSE,Signs_Highway Code_Men At Work,Signs_Highway Code_Men At Work,report,highway|builder,Highway robbery!|Bob the builder!
 Signs,Highway Code,Queues Likely,1,FALSE,Signs_Highway Code_Queues Likely,Signs_Highway Code_Queues Likely,report,highway,Highway robbery!
 Signs,Highway Code,Roundabout,1,FALSE,Signs_Highway Code_Roundabout,Signs_Highway Code_Roundabout,report,highway,Highway robbery!
-Signs,Highway Code,Sandbag,1,FALSE,Signs_Highway Code_Sandbag,Signs_Highway Code_Sandbag,report,cone_head|highway,Cone head!|Highway robbery!
+Signs,Highway Code,Sandbag weight,1,FALSE,Signs_Highway Code_Sandbag weight,Signs_Highway Code_Sandbag,report,cone_head|highway,Cone head!|Highway robbery!
 Signs,Highway Code,School,1,FALSE,Signs_Highway Code_School,Signs_Highway Code_School,report,highway,Highway robbery!
 Signs,Highway Code,Slippery Road,1,FALSE,Signs_Highway Code_Slippery Road,Signs_Highway Code_Slippery Road,report,highway,Highway robbery!
 Signs,Highway Code,Traffic Merging,1,FALSE,Signs_Highway Code_Traffic Merging,Signs_Highway Code_Traffic Merging,report,highway,Highway robbery!
@@ -216,11 +216,11 @@ Signs,Highway Code,Countdown Markers,1,FALSE,Signs_Highway Code_Countdown Marker
 Signs,Highway Code,Hospital (Blue),2,FALSE,Signs_Highway Code_Hospital (Blue),Signs_Highway Code_Hospital Blue,info,highway|rainbow,Highway robbery!|Somewhere over the rainbow!
 Signs,Highway Code,Hospital (Red),2,FALSE,Signs_Highway Code_Hospital (Red),Signs_Highway Code_Hospital Red,info,highway|rainbow,Highway robbery!|Somewhere over the rainbow!
 Signs,Highway Code,No Through Road,1,FALSE,Signs_Highway Code_No Through Road,Signs_Highway Code_No Through Road,info,highway,Highway robbery!
-Signs,Highway Code,Railway,1,FALSE,Signs_Highway Code_Railway,Signs_Highway Code_Railway,info,highway,Highway robbery!
+Signs,Highway Code,Railway,2,FALSE,Signs_Highway Code_Railway,Signs_Highway Code_Railway,info,highway,Highway robbery!
 Signs,Highway Code,SOS,1,FALSE,Signs_Highway Code_SOS,Signs_Highway Code_SOS,info,highway|park_mate,Highway robbery!|You can't park there mate!
 Signs,Highway Code,Speed Camera,1,FALSE,Signs_Highway Code_Speed Camera,Signs_Highway Code_Speed Camera,info,speed_freak|highway,Speed freak!|Highway robbery!
-Signs,Highway Code,Welcome to…,2,FALSE,Signs_Highway Code_Welcome to…,Signs_Highway Code_Welcome to…,info,highway,Highway robbery!
-Signs,Highway Code,Please Drive Carefully,1,FALSE,Signs_Highway Code_Please Drive Carefully,Signs_Highway Code_Please Drive Carefully,info,highway,Highway robbery!
+Signs,Highway Code,Welcome to…,3,FALSE,Signs_Highway Code_Welcome to…,Signs_Highway Code_Welcome to…,info,highway,Highway robbery!
+Signs,Highway Code,Please Drive Carefully,2,FALSE,Signs_Highway Code_Please Drive Carefully,Signs_Highway Code_Please Drive Carefully,info,highway,Highway robbery!
 Signs,Highway Code,Tourism Sign - No Writing,1,FALSE,Signs_Highway Code_Tourism Sign - No Writing,Signs_Highway Code_Tourism Sign - No Writing,info,highway|rainbow,Highway robbery!|Somewhere over the rainbow!
 Signs,Highway Code,Tourism Sign - With Writing,1,FALSE,Signs_Highway Code_Tourism Sign - With Writing,Signs_Highway Code_Tourism Sign - With Writing,info,highway|rainbow,Highway robbery!|Somewhere over the rainbow!
 Signs,Orange Diversion Routes,Circle - Solid,1,FALSE,Signs_Orange Diversion Routes_Circle - Solid,Signs_Orange Diversion Routes_Circle - Solid,category,orange_black|rainbow,Orange is the new black!|Somewhere over the rainbow!
@@ -242,21 +242,21 @@ Van,Delivery,DHL,1,FALSE,Van_Delivery_DHL,Van_Delivery_DHL,local_shipping,stand_
 Van,Delivery,DPD Blue (Local),2,FALSE,Van_Delivery_DPD Blue (Local),Van_Delivery_DPD Blue (Local),local_shipping,stand_deliver|rainbow,Stand and deliver!|Somewhere over the rainbow!
 Van,Delivery,DPD Red (National),1,FALSE,Van_Delivery_DPD Red (National),Van_Delivery_DPD Red (National),local_shipping,stand_deliver|rainbow,Stand and deliver!|Somewhere over the rainbow!
 Van,Delivery,Evri/Hermes,1,FALSE,Van_Delivery_Evri/Hermes,Van_Delivery_Evri/Hermes,local_shipping,stand_deliver,Stand and deliver!
-Van,Delivery,FedEx/UPS,3,FALSE,Van_Delivery_FedEx/UPS,Van_Delivery_FedEx/UPS,local_shipping,stand_deliver,Stand and deliver!
+Van,Delivery,FedEx/UPS,4,FALSE,Van_Delivery_FedEx/UPS,Van_Delivery_FedEx/UPS,local_shipping,stand_deliver,Stand and deliver!
 Van,Delivery,Gist,1,FALSE,Van_Delivery_Gist,Van_Delivery_Gist,local_shipping,stand_deliver,Stand and deliver!
-Van,Delivery,Parcel Force,1,FALSE,Van_Delivery_Parcel Force,Van_Delivery_Parcel Force,local_shipping,stand_deliver,Stand and deliver!
+Van,Delivery,Parcel Force,2,FALSE,Van_Delivery_Parcel Force,Van_Delivery_Parcel Force,local_shipping,stand_deliver,Stand and deliver!
 Van,Delivery,Royal Mail,1,FALSE,Van_Delivery_Royal Mail,Van_Delivery_Royal Mail,local_shipping,stand_deliver,Stand and deliver!
 Van,Delivery,Yodel,1,FALSE,Van_Delivery_Yodel,Van_Delivery_Yodel,local_shipping,stand_deliver,Stand and deliver!
 Van,External Signs,Blind Spot Take Care,2,FALSE,Van_External Signs_Blind Spot Take Care,Van_External Signs_Blind Spot Take Care,directions_car,,
 Van,External Signs,Flammable Sign,1,FALSE,Van_External Signs_Flammable Sign,Van_External Signs_Flammable Sign,directions_car,fuel,Fuel the imagination!
-Van,External Signs,Poppy,,,,,,poppy,Lest we forget!
+Van,External Signs,Poppy,2,FALSE,Van_External Signs_Poppy,Van_External Signs_Poppy,directions_car,poppy,Lest we forget!
 Van,External Signs,Union Jack on truck,1,FALSE,Van_External Signs_Union Jack on truck,Van_External Signs_Union Jack,directions_car,rule,Rule Britannia!
 Van,Haulage & Logistics,A2B Online,1,FALSE,Van_Haulage & Logistics_A2B Online,Van_Haulage & Logistics_A2B Online,local_shipping,long_haul,In it for the long haul!
 Van,Haulage & Logistics,AA,1,FALSE,Van_Haulage & Logistics_AA,Van_Haulage & Logistics_AA,auto_towing,long_haul|park_mate,In it for the long haul!|You can't park there mate!
-Van,Haulage & Logistics,Best (Food Logistics),1,FALSE,Van_Haulage & Logistics_Best (Food Logistics),Van_Haulage & Logistics_Best,local_shipping,long_haul,In it for the long haul!
+Van,Haulage & Logistics,Best,1,FALSE,Van_Haulage & Logistics_Best,Van_Haulage & Logistics_Best,local_shipping,long_haul,In it for the long haul!
 Van,Haulage & Logistics,Bodyless,2,FALSE,Van_Haulage & Logistics_Bodyless,Van_Haulage & Logistics_Bodyless,local_shipping,long_haul,In it for the long haul!
 Van,Haulage & Logistics,Boughey,1,FALSE,Van_Haulage & Logistics_Boughey,Van_Haulage & Logistics_Boughey,local_shipping,long_haul,In it for the long haul!
-Van,Haulage & Logistics,Brakes (Food Supplier),1,FALSE,Van_Haulage & Logistics_Brakes (Food Supplier),Van_Haulage & Logistics_Brakes,local_shipping,long_haul,In it for the long haul!
+Van,Haulage & Logistics,Brakes,1,FALSE,Van_Haulage & Logistics_Brakes,Van_Haulage & Logistics_Brakes,local_shipping,long_haul,In it for the long haul!
 Van,Haulage & Logistics,Culina: Culina,1,FALSE,Van_Haulage & Logistics_Culina: Culina,Van_Haulage & Logistics_Culina: Culina,local_shipping,long_haul,In it for the long haul!
 Van,Haulage & Logistics,Culina: Fowler Welch,1,FALSE,Van_Haulage & Logistics_Culina: Fowler Welch,Van_Haulage & Logistics_Culina: Fowler Welch,local_shipping,long_haul,In it for the long haul!
 Van,Haulage & Logistics,Culina: Great Bear,1,FALSE,Van_Haulage & Logistics_Culina: Great Bear,Van_Haulage & Logistics_Culina: Great Bear,local_shipping,long_haul,In it for the long haul!
@@ -265,7 +265,7 @@ Van,Haulage & Logistics,Culina: Warrens,1,FALSE,Van_Haulage & Logistics_Culina: 
 Van,Haulage & Logistics,DFDS,1,FALSE,Van_Haulage & Logistics_DFDS,Van_Haulage & Logistics_DFDS,local_shipping,long_haul,In it for the long haul!
 Van,Haulage & Logistics,Discordia,2,FALSE,Van_Haulage & Logistics_Discordia,Van_Haulage & Logistics_Discordia,local_shipping,long_haul,In it for the long haul!
 Van,Haulage & Logistics,Eddie Stobart (Original),1,FALSE,Van_Haulage & Logistics_Eddie Stobart (Original),Van_Haulage & Logistics_Eddie Stobart (Original),local_shipping,long_haul,In it for the long haul!
-Van,Haulage & Logistics,Ellerman/YANG MING,2,FALSE,Van_Haulage & Logistics_Ellerman/YANG MING,Van_Haulage & Logistics_Ellerman/YANG MING,local_shipping,long_haul,In it for the long haul!
+Van,Haulage & Logistics,Ellerman,3,FALSE,Van_Haulage & Logistics_Ellerman,Van_Haulage & Logistics_Ellerman,local_shipping,long_haul,In it for the long haul!
 Van,Haulage & Logistics,Evergreen,2,FALSE,Van_Haulage & Logistics_Evergreen,Van_Haulage & Logistics_Evergreen,local_shipping,long_haul,In it for the long haul!
 Van,Haulage & Logistics,FreshLinc Haulage,1,FALSE,Van_Haulage & Logistics_FreshLinc Haulage,Van_Haulage & Logistics_FreshLinc Haulage,local_shipping,long_haul,In it for the long haul!
 Van,Haulage & Logistics,Gregory,1,FALSE,Van_Haulage & Logistics_Gregory,Van_Haulage & Logistics_Gregory,local_shipping,long_haul,In it for the long haul!
@@ -273,14 +273,14 @@ Van,Haulage & Logistics,GXO Logistics,1,FALSE,Van_Haulage & Logistics_GXO Logist
 Van,Haulage & Logistics,H.Z. Logistics,1,FALSE,Van_Haulage & Logistics_H.Z. Logistics,Van_Haulage & Logistics_H.Z. Logistics,local_shipping,long_haul,In it for the long haul!
 Van,Haulage & Logistics,Hapag-Lloyd (Orange/Blue),1,FALSE,Van_Haulage & Logistics_Hapag-Lloyd (Orange/Blue),Van_Haulage & Logistics_Hapag-Lloyd (Orange/Blue),local_shipping,long_haul,In it for the long haul!
 Van,Haulage & Logistics,Hapag-Lloyd (White/Blue),1,FALSE,Van_Haulage & Logistics_Hapag-Lloyd (White/Blue),Van_Haulage & Logistics_Hapag-Lloyd (White/Blue),local_shipping,long_haul,In it for the long haul!
-Van,Haulage & Logistics,Heidelberg Materials,3,FALSE,Van_Haulage & Logistics_Heidelberg Materials,Van_Haulage & Logistics_Heidelberg Materials,local_shipping,long_haul,In it for the long haul!
+Van,Haulage & Logistics,Heidelberg Materials,4,FALSE,Van_Haulage & Logistics_Heidelberg Materials,Van_Haulage & Logistics_Heidelberg Materials,local_shipping,long_haul,In it for the long haul!
 Van,Haulage & Logistics,Lenham Storage,1,FALSE,Van_Haulage & Logistics_Lenham Storage,Van_Haulage & Logistics_Lenham Storage,local_shipping,long_haul,In it for the long haul!
 Van,Haulage & Logistics,MAERSK,1,FALSE,Van_Haulage & Logistics_MAERSK,Van_Haulage & Logistics_MAERSK,local_shipping,long_haul,In it for the long haul!
 Van,Haulage & Logistics,Maritime,1,FALSE,Van_Haulage & Logistics_Maritime,Van_Haulage & Logistics_Maritime,local_shipping,long_haul,In it for the long haul!
 Van,Haulage & Logistics,Moran Logistics,1,FALSE,Van_Haulage & Logistics_Moran Logistics,Van_Haulage & Logistics_Moran Logistics,local_shipping,long_haul,In it for the long haul!
 Van,Haulage & Logistics,MSC,1,FALSE,Van_Haulage & Logistics_MSC,Van_Haulage & Logistics_MSC,local_shipping,long_haul,In it for the long haul!
 Van,Haulage & Logistics,Nicholls Transport,1,FALSE,Van_Haulage & Logistics_Nicholls Transport,Van_Haulage & Logistics_Nicholls Transport,local_shipping,long_haul,In it for the long haul!
-Van,Haulage & Logistics,Owens,1,FALSE,Van_Haulage & Logistics_Owens,Van_Haulage & Logistics_Owens,local_shipping,long_haul,In it for the long haul!
+Van,Haulage & Logistics,Owens,2,FALSE,Van_Haulage & Logistics_Owens,Van_Haulage & Logistics_Owens,local_shipping,long_haul,In it for the long haul!
 Van,Haulage & Logistics,Petrol Tanker,1,FALSE,Van_Haulage & Logistics_Petrol Tanker,Van_Haulage & Logistics_Petrol Tanker,local_shipping,long_haul|fuel,In it for the long haul!|Fuel the imagination!
 Van,Haulage & Logistics,Power (Electric/Gas),1,FALSE,Van_Haulage & Logistics_Power (Electric/Gas),Van_Haulage & Logistics_Electric/Gas,local_shipping,long_haul,In it for the long haul!
 Van,Haulage & Logistics,PrimaFrio,1,FALSE,Van_Haulage & Logistics_PrimaFrio,Van_Haulage & Logistics_PrimaFrio,local_shipping,long_haul,In it for the long haul!
@@ -292,13 +292,14 @@ Van,Haulage & Logistics,SITRA,1,FALSE,Van_Haulage & Logistics_SITRA,Van_Haulage 
 Van,Haulage & Logistics,Turners Transport,1,FALSE,Van_Haulage & Logistics_Turners Transport,Van_Haulage & Logistics_Turners Transport,local_shipping,long_haul,In it for the long haul!
 Van,Haulage & Logistics,Waberer’s,1,FALSE,Van_Haulage & Logistics_Waberer’s,Van_Haulage & Logistics_Waberer’s,local_shipping,long_haul,In it for the long haul!
 Van,Haulage & Logistics,Water Company,1,FALSE,Van_Haulage & Logistics_Water Company,Van_Haulage & Logistics_Water,local_shipping,long_haul,In it for the long haul!
-Van,Haulage & Logistics,Weaver,1,FALSE,Van_Haulage & Logistics_Weaver,Van_Haulage & Logistics_Weaver,local_shipping,long_haul,In it for the long haul!
+Van,Haulage & Logistics,Weaver,2,FALSE,Van_Haulage & Logistics_Weaver,Van_Haulage & Logistics_Weaver,local_shipping,long_haul,In it for the long haul!
 Van,Haulage & Logistics,Whistl,1,FALSE,Van_Haulage & Logistics_Whistl,Van_Haulage & Logistics_Whistl,local_shipping,long_haul,In it for the long haul!
 Van,Haulage & Logistics,XPO Logistics,1,FALSE,Van_Haulage & Logistics_XPO Logistics,Van_Haulage & Logistics_XPO Logistics,local_shipping,long_haul,In it for the long haul!
+Van,Haulage & Logistics,YANG MING,3,FALSE,Van_Haulage & Logistics_YANG MING,Van_Haulage & Logistics_YANG,local_shipping,long_haul,In it for the long haul!
 Van,Makes,DAF,1,FALSE,Van_Makes_DAF,Van_Makes_DAF,badge,vans_man,A vans man!
 Van,Makes,IVECO,1,FALSE,Van_Makes_IVECO,Van_Makes_IVECO,badge,vans_man,A vans man!
 Van,Makes,KRONE,1,FALSE,Van_Makes_KRONE,Van_Makes_KRONE,badge,vans_man,A vans man!
-Van,Makes,LAWRENCE DAVID,1,FALSE,Van_Makes_LAWRENCE DAVID,Van_Makes_LAWRENCE DAVID,badge,vans_man,A vans man!
+Van,Makes,LAWRENCE DAVID,2,FALSE,Van_Makes_LAWRENCE DAVID,Van_Makes_LAWRENCE DAVID,badge,vans_man,A vans man!
 Van,Makes,MAN,1,FALSE,Van_Makes_MAN,Van_Makes_MAN,badge,vans_man,A vans man!
 Van,Makes,MERCEDES-BENZ,1,FALSE,Van_Makes_MERCEDES-BENZ,Van_Makes_MERCEDES-BENZ,badge,vans_man,A vans man!
 Van,Makes,SCANIA,1,FALSE,Van_Makes_SCANIA,Van_Makes_SCANIA,badge,vans_man,A vans man!
@@ -316,17 +317,17 @@ Van,Retail,Enterprise,1,FALSE,Van_Retail_Enterprise,Van_Retail_Enterprise,shoppi
 Van,Retail,Fast Food Truck,1,FALSE,Van_Retail_Fast Food Truck,Van_Retail_Fast Food Truck,shopping_bag,retail_therapy,Retail therapy!
 Van,Retail,Greggs,1,FALSE,Van_Retail_Greggs,Van_Retail_Greggs,shopping_bag,retail_therapy,Retail therapy!
 Van,Retail,Home Bargains,1,FALSE,Van_Retail_Home Bargains,Van_Retail_Home Bargains,shopping_bag,retail_therapy,Retail therapy!
-Van,Retail,Hovis,1,FALSE,Van_Retail_Hovis,Van_Retail_Hovis,shopping_bag,retail_therapy,Retail therapy!
+Van,Retail,Hovis,1,FALSE,Van_Retail_Hovis,Van_Retail_Hovis,shopping_bag,retail_therapy|bread,Retail therapy!|Bringing home the bread!
 Van,Retail,John Lewis,1,FALSE,Van_Retail_John Lewis,Van_Retail_John Lewis,shopping_bag,retail_therapy,Retail therapy!
-Van,Retail,Kingsmill,1,FALSE,Van_Retail_Kingsmill,Van_Retail_Kingsmill,shopping_bag,retail_therapy,Retail therapy!
+Van,Retail,Kingsmill,1,FALSE,Van_Retail_Kingsmill,Van_Retail_Kingsmill,shopping_bag,retail_therapy|bread,Retail therapy!|Bringing home the bread!
 Van,Retail,Menzies,1,FALSE,Van_Retail_Menzies,Van_Retail_Menzies,shopping_bag,retail_therapy,Retail therapy!
 Van,Retail,Müller,1,FALSE,Van_Retail_Müller,Van_Retail_Müller,shopping_bag,retail_therapy,Retail therapy!
 Van,Retail,Next,1,FALSE,Van_Retail_Next,Van_Retail_Next,shopping_bag,retail_therapy,Retail therapy!
-Van,Retail,Oakland,3,FALSE,Van_Retail_Oakland,Van_Retail_Oakland,shopping_bag,retail_therapy,Retail therapy!
+Van,Retail,Oakland,2,FALSE,Van_Retail_Oakland,Van_Retail_Oakland,shopping_bag,retail_therapy,Retail therapy!
 Van,Retail,Poundland,1,FALSE,Van_Retail_Poundland,Van_Retail_Poundland,shopping_bag,retail_therapy,Retail therapy!
 Van,Retail,Samworth Brothers,1,FALSE,Van_Retail_Samworth Brothers,Van_Retail_Samworth Brothers,shopping_bag,retail_therapy,Retail therapy!
-Van,Retail,TK Maxx,1,FALSE,Van_Retail_TK Maxx,Van_Retail_TK Maxx,shopping_bag,retail_therapy,Retail therapy!
-Van,Retail,Warburtons,1,FALSE,Van_Retail_Warburtons,Van_Retail_Warburtons,shopping_bag,retail_therapy,Retail therapy!
+Van,Retail,TK Maxx,2,FALSE,Van_Retail_TK Maxx,Van_Retail_TK Maxx,shopping_bag,retail_therapy,Retail therapy!
+Van,Retail,Warburtons,1,FALSE,Van_Retail_Warburtons,Van_Retail_Warburtons,shopping_bag,retail_therapy|bread,Retail therapy!|Bringing home the bread!
 Van,Supermarkets,Aldi,1,FALSE,Van_Supermarkets_Aldi,Van_Supermarkets_Aldi,shopping_cart,little_help,Every little helps!
 Van,Supermarkets,ASDA,1,FALSE,Van_Supermarkets_ASDA,Van_Supermarkets_ASDA,shopping_cart,little_help,Every little helps!
 Van,Supermarkets,Co-Op,2,FALSE,Van_Supermarkets_Co-Op,Van_Supermarkets_Co-Op,shopping_cart,little_help,Every little helps!
@@ -343,7 +344,7 @@ Vehicle - Other,Bus & Coaches,National Express,1,FALSE,Vehicle - Other_Bus & Coa
 Vehicle - Other,Bus & Coaches,Coach (Other),1,FALSE,Vehicle - Other_Bus & Coaches_Coach (Other),Vehicle - Other_Bus & Coaches_Coach (Other),airport_shuttle,bus_coach,Bus-ted!
 Vehicle - Other,Bus & Coaches,Double Decker Bus,1,FALSE,Vehicle - Other_Bus & Coaches_Double Decker Bus,Vehicle - Other_Bus & Coaches_Double Decker Bus,airport_shuttle,bus_coach,Bus-ted!
 Vehicle - Other,Bus & Coaches,Single Decker Bus,1,FALSE,Vehicle - Other_Bus & Coaches_Single Decker Bus,Vehicle - Other_Bus & Coaches_Single Decker Bus,airport_shuttle,bus_coach,Bus-ted!
-Vehicle - Other,Car Transporters,Empty,1,FALSE,Vehicle - Other_Car Transporters_Empty,Vehicle - Other_Car Transporters_Empty,traffic_jam,,
+Vehicle - Other,Car Transporters,Empty,2,FALSE,Vehicle - Other_Car Transporters_Empty,Vehicle - Other_Car Transporters_Empty,traffic_jam,,
 Vehicle - Other,Car Transporters,Full,1,FALSE,Vehicle - Other_Car Transporters_Full,Vehicle - Other_Car Transporters_Full,traffic_jam,,
 Vehicle - Other,Car Transporters,Single,1,FALSE,Vehicle - Other_Car Transporters_Single,Vehicle - Other_Car Transporters_Single,traffic_jam,park_mate,You can't park there mate!
 Vehicle - Other,Cyclists,Cyclist with a helmet,1,FALSE,Vehicle - Other_Cyclists_Cyclist with a helmet,Vehicle - Other_Cyclists_Cyclist helmet,pedal_bike,bike,On yer bike!
@@ -363,12 +364,12 @@ Vehicle - Other,Misc,Construction Vehicle,1,FALSE,Vehicle - Other_Misc_Construct
 Vehicle - Other,Misc,Farm vehicle,1,FALSE,Vehicle - Other_Misc_Farm vehicle,Vehicle - Other_Misc_Farm vehicle,commute,farmer,Me and the farmer!
 Vehicle - Other,Misc,Horse Box/Transporter,1,FALSE,Vehicle - Other_Misc_Horse Box/Transporter,Vehicle - Other_Misc_Horse Box,commute,animals,Animals crackers!
 Vehicle - Other,Misc,Motorhome,1,FALSE,Vehicle - Other_Misc_Motorhome,Vehicle - Other_Misc_Motorhome,commute,,
-Vehicle - Other,Misc,Pram,2,FALSE,Vehicle - Other_Misc_Pram,Vehicle - Other_Misc_Pram,commute,,
+Vehicle - Other,Misc,Pram,3,FALSE,Vehicle - Other_Misc_Pram,Vehicle - Other_Misc_Pram,commute,,
 Vehicle - Other,Misc,Taxi (regular),1,FALSE,Vehicle - Other_Misc_Taxi (regular),Vehicle - Other_Misc_Taxi (regular),commute,,
 Vehicle - Other,Misc,Taxi (sign on top),1,FALSE,Vehicle - Other_Misc_Taxi (sign on top),Vehicle - Other_Misc_Taxi (sign on top),commute,,
-Vehicle - Other,Misc,Train,3,FALSE,Vehicle - Other_Misc_Train,Vehicle - Other_Misc_Train,commute,,
+Vehicle - Other,Misc,Train,4,FALSE,Vehicle - Other_Misc_Train,Vehicle - Other_Misc_Train,commute,,
 Vehicle - Other,Misc,Train Track,2,FALSE,Vehicle - Other_Misc_Train Track,Vehicle - Other_Misc_Train Track,commute,,
-Vehicle - Other,Misc,Wheelchair,2,FALSE,Vehicle - Other_Misc_Wheelchair,Vehicle - Other_Misc_Wheelchair,commute,,
+Vehicle - Other,Misc,Wheelchair,3,FALSE,Vehicle - Other_Misc_Wheelchair,Vehicle - Other_Misc_Wheelchair,commute,,
 Vehicle - Other,Motorcycles,Bike: Black,1,FALSE,Vehicle - Other_Motorcycles_Bike: Black,Vehicle - Other_Motorcycles_Bike: Black,two_wheeler,bike|rainbow,On yer bike!|Somewhere over the rainbow!
 Vehicle - Other,Motorcycles,Bike: Blue,2,FALSE,Vehicle - Other_Motorcycles_Bike: Blue,Vehicle - Other_Motorcycles_Bike: Blue,two_wheeler,bike|rainbow,On yer bike!|Somewhere over the rainbow!
 Vehicle - Other,Motorcycles,Bike: Other,2,FALSE,Vehicle - Other_Motorcycles_Bike: Other,Vehicle - Other_Motorcycles_Bike: Other,two_wheeler,bike|rainbow,On yer bike!|Somewhere over the rainbow!
