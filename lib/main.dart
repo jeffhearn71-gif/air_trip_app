@@ -25,7 +25,7 @@ class CarTripApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: 'Car Trip Game',
+      title: 'Car Trip',
       theme: ThemeData(
         primarySwatch: Colors.blue,
         visualDensity: VisualDensity.adaptivePlatformDensity,
@@ -175,8 +175,8 @@ class Trip {
       'achievementTotals': achievementTotals,
       'achievementFoundCounts': achievementFoundCounts,
       'perfectRun': perfectRun,
-      'startTime': startTime.toIso8601String(),
-      'endTime': endTime.toIso8601String(),
+      'startTime': Timestamp.fromDate(startTime),
+      'endTime': Timestamp.fromDate(endTime),
     };
   }
 }
@@ -574,6 +574,27 @@ class _CategoryScreenState extends State<CategoryScreen> {
       if (!doc.exists) return;
 
       final data = doc.data()!;
+
+      // ✅ Stop if session ended remotely
+      if (data['active'] != true) {
+        _sessionPollingTimer?.cancel();
+
+        if (!mounted) return;
+
+        setState(() {
+          _currentSessionId = null;
+        });
+
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Text('Session ended'),
+            duration: Duration(milliseconds: 1200),
+          ),
+        );
+
+        return;
+      }
+
       final remoteFoundItems = Map<String, dynamic>.from(
         data['foundItems'] ?? {},
       );
@@ -632,7 +653,7 @@ class _CategoryScreenState extends State<CategoryScreen> {
     final startClean = clean(start);
     final endClean = clean(end);
 
-    return '${datePart}_${startClean}_${endClean}';
+    return '${datePart}_${startClean}_${endClean}_${DateTime.now().millisecondsSinceEpoch}';
   }
 
   int _getRankIndex() {
@@ -882,8 +903,12 @@ class _CategoryScreenState extends State<CategoryScreen> {
         totalSubCategories: data['totalSubCategories'],
         finalRankIndex: data['finalRankIndex'],
         perfectRun: data['perfectRun'],
-        startTime: DateTime.parse(data['startTime']),
-        endTime: DateTime.parse(data['endTime']),
+        startTime: data['startTime'] is Timestamp
+            ? (data['startTime'] as Timestamp).toDate()
+            : DateTime.parse(data['startTime'] as String),
+        endTime: data['endTime'] is Timestamp
+            ? (data['endTime'] as Timestamp).toDate()
+            : DateTime.parse(data['endTime'] as String),
         doubleItemsFound: data['doubleItemsFound'],
         totalDoubleItems: data['totalDoubleItems'],
         doubleScore: data['doubleScore'],
@@ -910,7 +935,21 @@ class _CategoryScreenState extends State<CategoryScreen> {
     }).toList();
   }
 
+  void _resetRunStateForNewTrip() {
+    _completedCategoriesShown.clear();
+    _completedSubcategoriesShownGlobal.clear();
+    _completedAchievements.clear();
+    _sessionUnlockedAchievements.clear();
+    _completedPointerTiers.clear();
+    _achievementItemIds.clear();
+    _gameCompletedShown = false;
+    _perfectRunShown = false;
+    _lastRankIndex = -1;
+  }
+
   Future<void> _resetProgress() async {
+    _sessionPollingTimer?.cancel();
+    _currentSessionId = null;
     _previousFoundById = Map.from(foundById);
     _previousCompletedCategoriesShown = Set.from(_completedCategoriesShown);
     _previousCompletedSubcategoriesShownGlobal = Set.from(
@@ -919,6 +958,8 @@ class _CategoryScreenState extends State<CategoryScreen> {
 
     final prefs = await SharedPreferences.getInstance();
     await prefs.remove(prefsKey);
+
+    if (!mounted) return;
 
     setState(() {
       for (final k in foundById.keys.toList()) {
@@ -948,6 +989,8 @@ class _CategoryScreenState extends State<CategoryScreen> {
             if (_previousFoundById == null) return;
 
             final prefs = await SharedPreferences.getInstance();
+
+            if (!mounted) return;
 
             setState(() {
               foundById = Map.from(_previousFoundById!);
@@ -1088,23 +1131,24 @@ class _CategoryScreenState extends State<CategoryScreen> {
   void _endTrip() async {
     final confirm = await showDialog<bool>(
       context: context,
-      builder: (context) {
+      builder: (dialogContext) {
         return AlertDialog(
           title: const Text('End Trip?'),
           content: const Text('Are you sure you want to end the trip?'),
           actions: [
             TextButton(
-              onPressed: () => Navigator.pop(context, false),
+              onPressed: () => Navigator.pop(dialogContext, false),
               child: const Text('No'),
             ),
             ElevatedButton(
-              onPressed: () => Navigator.pop(context, true),
+              onPressed: () => Navigator.pop(dialogContext, true),
               child: const Text('Yes'),
             ),
           ],
         );
       },
     );
+    if (!mounted) return;
 
     if (confirm != true) return;
     // ✅ Check if trip was started
@@ -1242,7 +1286,29 @@ class _CategoryScreenState extends State<CategoryScreen> {
 
     await _saveTripToFirestore(trip);
 
+    if (!mounted) return;
+
     _lastCompletedTrip = trip;
+    // ✅ END Firestore session properly
+
+    if (_currentSessionId != null) {
+      try {
+        await FirebaseFirestore.instance
+            .collection('trip_sessions')
+            .doc(_currentSessionId)
+            .update({
+              'active': false,
+              'endedAt': DateTime.now().toIso8601String(),
+            });
+
+        if (!mounted) return;
+      } catch (e) {
+        // optional: silent fail or log later
+      }
+    }
+
+    // ✅ stop polling
+    _sessionPollingTimer?.cancel();
 
     // ✅ clear current trip after ending
     setState(() {
@@ -1250,6 +1316,7 @@ class _CategoryScreenState extends State<CategoryScreen> {
       _currentTripType = null;
       _currentStartLocation = null;
       _currentEndLocation = null;
+      _currentSessionId = null;
     });
 
     Navigator.push(
@@ -1293,7 +1360,7 @@ class _CategoryScreenState extends State<CategoryScreen> {
     await showDialog(
       context: context,
       builder: (_) => StatefulBuilder(
-        builder: (context, setDialogState) => AlertDialog(
+        builder: (settingsDialogContext, setDialogState) => AlertDialog(
           title: const Text('Feedback settings'),
           content: Column(
             mainAxisSize: MainAxisSize.min,
@@ -1328,7 +1395,7 @@ class _CategoryScreenState extends State<CategoryScreen> {
                 onTap: () async {
                   final confirm = await showDialog<bool>(
                     context: context,
-                    builder: (context) {
+                    builder: (confirmDialogContext) {
                       return AlertDialog(
                         title: const Text('Reset achievements?'),
                         content: const Text(
@@ -1338,11 +1405,13 @@ class _CategoryScreenState extends State<CategoryScreen> {
                         ),
                         actions: [
                           TextButton(
-                            onPressed: () => Navigator.pop(context, false),
+                            onPressed: () =>
+                                Navigator.pop(confirmDialogContext, false),
                             child: const Text('Cancel'),
                           ),
                           ElevatedButton(
-                            onPressed: () => Navigator.pop(context, true),
+                            onPressed: () =>
+                                Navigator.pop(confirmDialogContext, true),
                             child: const Text('Reset'),
                           ),
                         ],
@@ -1356,12 +1425,14 @@ class _CategoryScreenState extends State<CategoryScreen> {
                     // ✅ Clear stored achievements
                     await prefs.remove(achievementsKey);
 
+                    if (!mounted) return;
+
                     // ✅ Reset in-memory state
                     setState(() {
                       _allTimeAchievements.clear();
                     });
 
-                    Navigator.pop(context); // close settings
+                    Navigator.pop(settingsDialogContext); // close settings
 
                     ScaffoldMessenger.of(context).showSnackBar(
                       const SnackBar(
@@ -1397,7 +1468,7 @@ class _CategoryScreenState extends State<CategoryScreen> {
 
     await showDialog(
       context: context,
-      builder: (context) {
+      builder: (dialogContext) {
         return AlertDialog(
           title: const Text('Start Trip'),
           content: Column(
@@ -1421,7 +1492,7 @@ class _CategoryScreenState extends State<CategoryScreen> {
           ),
           actions: [
             TextButton(
-              onPressed: () => Navigator.pop(context),
+              onPressed: () => Navigator.pop(dialogContext),
               child: const Text('Cancel'),
             ),
             Column(
@@ -1443,15 +1514,15 @@ class _CategoryScreenState extends State<CategoryScreen> {
                           'foundItems': {},
                           'bonusItemIds': sessionBonusIds.toList(),
                         });
-
+                    if (!mounted) return;
                     setState(() {
                       _currentTripType = typeController.text.trim();
                       _currentStartLocation = startController.text.trim();
                       _currentEndLocation = endController.text.trim();
                       _tripStartTime = DateTime.now();
                       _currentSessionId = sessionId;
-                      _startSessionPolling();
                       _lastCompletedTrip = null;
+                      _resetRunStateForNewTrip();
 
                       for (final k in foundById.keys) {
                         foundById[k] = false;
@@ -1463,9 +1534,10 @@ class _CategoryScreenState extends State<CategoryScreen> {
 
                       _bonusItemIds = sessionBonusIds;
                       _recomputeCategoryStats();
+                      _startSessionPolling();
                     });
 
-                    Navigator.pop(context);
+                    Navigator.pop(parentContext);
 
                     Future.delayed(Duration.zero, () {
                       showDialog(
@@ -1516,13 +1588,16 @@ class _CategoryScreenState extends State<CategoryScreen> {
                       ),
                     );
 
+                    if (!mounted) return;
+
                     if (joinId == null || joinId.trim().isEmpty) return;
 
                     final normalizedJoinId = joinId.trim().toUpperCase();
 
                     // Close the outer Start Trip dialog once, before async work.
-                    if (Navigator.of(context).canPop()) {
-                      Navigator.of(context).pop();
+
+                    if (Navigator.of(parentContext).canPop()) {
+                      Navigator.of(parentContext).pop();
                     }
 
                     final sessionDoc = await FirebaseFirestore.instance
@@ -1576,7 +1651,6 @@ class _CategoryScreenState extends State<CategoryScreen> {
 
                     setState(() {
                       _currentSessionId = normalizedJoinId;
-                      _startSessionPolling();
                       _currentTripType = data['tripName'] ?? '';
                       _currentStartLocation = data['startLocation'] ?? '';
                       _currentEndLocation = data['endLocation'] ?? '';
@@ -1584,11 +1658,13 @@ class _CategoryScreenState extends State<CategoryScreen> {
                           DateTime.tryParse(data['startTime'] ?? '') ??
                           DateTime.now();
                       _lastCompletedTrip = null;
+                      _resetRunStateForNewTrip();
 
                       foundById = loadedFoundMap;
                       _bonusItemIds = loadedBonusIds;
 
                       _recomputeCategoryStats();
+                      _startSessionPolling();
                     });
 
                     final prefs = await SharedPreferences.getInstance();
@@ -1715,7 +1791,7 @@ class _CategoryScreenState extends State<CategoryScreen> {
 
     if (error != null) {
       return Scaffold(
-        appBar: AppBar(title: const Text('Car Trip Game')),
+        appBar: AppBar(title: const Text('Car Trip')),
         body: Center(
           child: Padding(
             padding: const EdgeInsets.all(16),
@@ -1734,7 +1810,7 @@ class _CategoryScreenState extends State<CategoryScreen> {
 
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Car Trip Game'),
+        title: const Text('Car Trip'),
         actions: [
           if (_lastCompletedTrip != null)
             IconButton(
@@ -1762,47 +1838,81 @@ class _CategoryScreenState extends State<CategoryScreen> {
               }
             },
           ),
+          PopupMenuButton<String>(
+            tooltip: 'More',
+            onSelected: (value) async {
+              switch (value) {
+                case 'load':
+                  final trips = await _loadTripsFromFirestore();
+                  if (!mounted) return;
+                  if (trips.isNotEmpty) {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (_) => TripSummaryScreen(trip: trips.first),
+                      ),
+                    );
+                  }
+                  break;
 
-          IconButton(
-            icon: const Icon(Icons.cloud_download),
-            tooltip: 'Load Trips',
-            onPressed: () async {
-              final trips = await _loadTripsFromFirestore();
+                case 'history':
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (_) =>
+                          TripHistoryScreen(loadTrips: _loadTripsFromFirestore),
+                    ),
+                  );
+                  break;
 
-              if (trips.isNotEmpty) {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                    builder: (_) => TripSummaryScreen(trip: trips.first),
-                  ),
-                );
+                case 'settings':
+                  _openSettings();
+                  break;
+
+                case 'reset':
+                  _resetProgress();
+                  break;
               }
             },
-          ),
-
-          IconButton(
-            tooltip: 'Trip History',
-            icon: const Icon(Icons.history),
-            onPressed: () {
-              Navigator.push(
-                context,
-                MaterialPageRoute(
-                  builder: (_) =>
-                      TripHistoryScreen(loadTrips: _loadTripsFromFirestore),
+            itemBuilder: (context) => [
+              const PopupMenuItem(value: 'load', child: Text('Last Trip')),
+              const PopupMenuItem(
+                value: 'history',
+                child: Text('Trip History'),
+              ),
+              const PopupMenuItem(value: 'settings', child: Text('Settings')),
+              const PopupMenuItem(
+                value: 'reset',
+                child: Text('Reset progress'),
+              ),
+            ],
+            child: Padding(
+              padding: const EdgeInsets.only(right: 8),
+              child: Container(
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 10,
+                  vertical: 6,
                 ),
-              );
-            },
-          ),
-
-          IconButton(
-            tooltip: 'Settings',
-            icon: const Icon(Icons.settings),
-            onPressed: _openSettings,
-          ),
-          IconButton(
-            tooltip: 'Reset progress',
-            icon: const Icon(Icons.refresh),
-            onPressed: _resetProgress,
+                decoration: BoxDecoration(
+                  color: Colors.black.withValues(alpha: 0.1),
+                  borderRadius: BorderRadius.circular(8),
+                ),
+                child: Row(
+                  mainAxisSize: MainAxisSize.min,
+                  children: const [
+                    Icon(Icons.menu, size: 18),
+                    SizedBox(width: 4),
+                    Text(
+                      'MENU',
+                      style: TextStyle(
+                        fontWeight: FontWeight.bold,
+                        fontSize: 13,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ),
           ),
         ],
       ),
@@ -2869,7 +2979,7 @@ class _TripHistoryScreenState extends State<TripHistoryScreen> {
   Future<void> _confirmDeleteTrip(Trip trip) async {
     final confirm = await showDialog<bool>(
       context: context,
-      builder: (context) {
+      builder: (dialogContext) {
         return AlertDialog(
           title: const Text('Delete trip?'),
           content: Text(
@@ -2878,11 +2988,11 @@ class _TripHistoryScreenState extends State<TripHistoryScreen> {
           ),
           actions: [
             TextButton(
-              onPressed: () => Navigator.pop(context, false),
+              onPressed: () => Navigator.pop(dialogContext, false),
               child: const Text('Cancel'),
             ),
             ElevatedButton(
-              onPressed: () => Navigator.pop(context, true),
+              onPressed: () => Navigator.pop(dialogContext, true),
               child: const Text('Delete'),
             ),
           ],
