@@ -246,6 +246,7 @@ const List<String> kRanks = [
   '💥 7: Mad-Lit',
   '🔥 8: Fire',
   '🦁 9: Apex',
+  '🐐 10: GOAT',
 ];
 
 Color rankColor(int idx) {
@@ -260,6 +261,7 @@ Color rankColor(int idx) {
     Color(0xFF5E35B1),
     Color(0xFF2C3E50),
     Color(0xFF000000),
+    Color(0xFFD4AF37),
   ];
   return colors[idx.clamp(0, colors.length - 1)];
 }
@@ -683,8 +685,10 @@ class _CategoryScreenState extends State<CategoryScreen> {
   int _getRankIndex() {
     final progress = _getProgressPercent();
 
-    if (progress >= 100.0) return 9; // ✅ GOAT index
-    return (progress ~/ 10).clamp(0, 9);
+    if (progress >= 95.0) return 10; // GOAT
+    if (progress >= 90.0) return 9; // Apex
+
+    return (progress ~/ 10).clamp(0, 8);
   }
 
   int _getCompletedSubCategoryCount() {
@@ -952,7 +956,7 @@ class _CategoryScreenState extends State<CategoryScreen> {
         endLocation: data['endLocation'],
         score: data['score'],
         maxScore: data['maxScore'],
-        percent: data['percent'],
+        percent: (data['percent'] as num).toDouble(),
         itemsFound: data['itemsFound'],
         maxItemsFound: data['maxItemsFound'],
         subCategoriesCompleted: data['subCategoriesCompleted'],
@@ -2281,7 +2285,7 @@ class _CategoryScreenState extends State<CategoryScreen> {
                                 ),
                               ),
                               Text(
-                                'Target >= ${_getTargetPercent().toStringAsFixed(1)}% (${_getDayName()})',
+                                '>= ${_getTargetPercent().toStringAsFixed(1)}% (${_getDayName()})',
                                 style: const TextStyle(
                                   fontSize: 16,
                                   color: Colors.black54,
@@ -3944,19 +3948,15 @@ class RankListScreen extends StatelessWidget {
         itemBuilder: (context, index) {
           final label = kRanks[index];
 
-          final percentText = index == 9
-              ? '90.0 - 99.9%'
-              : '${(index * 10).toStringAsFixed(1)} - ${(((index + 1) * 10) - 0.1).toStringAsFixed(1)}%';
+          String percentText;
 
-          // ✅ Special case for GOAT (100%)
           if (index == 9) {
-            return Column(
-              children: [
-                _rankRow(percentText, label, index),
-                const Divider(),
-                _rankRow('100.0%', '🐐 10: GOAT', 9),
-              ],
-            );
+            percentText = '90.0 - 94.9%'; // Apex
+          } else if (index == 10) {
+            percentText = '95.0 - 100.0%'; // GOAT
+          } else {
+            percentText =
+                '${(index * 10).toStringAsFixed(1)} - ${(((index + 1) * 10) - 0.1).toStringAsFixed(1)}%';
           }
 
           return _rankRow(percentText, label, index);
