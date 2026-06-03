@@ -945,7 +945,10 @@ class _CategoryScreenState extends State<CategoryScreen> {
   }
 
   Future<List<Trip>> _loadTripsFromFirestore() async {
+    await Future.delayed(const Duration(milliseconds: 200));
+
     final snapshot = await FirebaseFirestore.instance.collection('trips').get();
+
     final trips = snapshot.docs.map((doc) {
       final data = doc.data();
 
