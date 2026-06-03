@@ -2,6 +2,7 @@ import 'dart:convert';
 import 'dart:async';
 import 'package:csv/csv.dart';
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 import 'package:flutter/services.dart' show rootBundle, HapticFeedback;
 
 import 'package:shared_preferences/shared_preferences.dart';
@@ -80,6 +81,11 @@ class Trip {
   final int doubleScore;
   final int doubleMaxScore;
 
+  final int tripleItemsFound;
+  final int totalTripleItems;
+  final int tripleScore;
+  final int tripleMaxScore;
+
   final int oneScore;
   final int oneMaxScore;
 
@@ -124,6 +130,10 @@ class Trip {
     required this.totalDoubleItems,
     required this.doubleScore,
     required this.doubleMaxScore,
+    required this.tripleItemsFound,
+    required this.totalTripleItems,
+    required this.tripleScore,
+    required this.tripleMaxScore,
 
     required this.oneScore,
     required this.oneMaxScore,
@@ -162,6 +172,10 @@ class Trip {
       'totalDoubleItems': totalDoubleItems,
       'doubleScore': doubleScore,
       'doubleMaxScore': doubleMaxScore,
+      'tripleItemsFound': tripleItemsFound,
+      'totalTripleItems': totalTripleItems,
+      'tripleScore': tripleScore,
+      'tripleMaxScore': tripleMaxScore,
       'oneScore': oneScore,
       'oneMaxScore': oneMaxScore,
       'twoScore': twoScore,
@@ -204,7 +218,13 @@ class GroupStat {
   bool get complete => total != 0 && found == total;
 }
 
-enum SortMode { az, progressDesc, remainingDesc, pointsRemainingDesc }
+enum SortMode {
+  az,
+  leastItemsLeft,
+  mostItemsLeft,
+  leastPointsLeft,
+  mostPointsLeft,
+}
 
 // Sound priorities (higher number = more important)
 const int SFX_SUB = 1;
@@ -216,16 +236,16 @@ const int SFX_ACHIEVEMENT = 6;
 const int SFX_WIN = 7;
 const int SFX_PERFECT = 8;
 const List<String> kRanks = [
-  'Noob',
-  'Novice',
-  'Rookie',
-  'Amateur',
-  'Mid',
-  'Decent',
-  'Master',
-  'Expert',
-  'Legendary',
-  'God-Like',
+  '😞 1: Noob',
+  '👎 2: Inept',
+  '😴 3: Cringe',
+  '😑 4: Mega-Mid',
+  '😐 5: Mid',
+  '👍 6: Decent',
+  '✨ 7: Slay',
+  '💥 8: Mad-Lit',
+  '🔥 9: Fire',
+  '🐐 10: GOAT',
 ];
 
 Color rankColor(int idx) {
@@ -293,12 +313,14 @@ String sortLabel(SortMode mode) {
   switch (mode) {
     case SortMode.az:
       return 'A-Z';
-    case SortMode.progressDesc:
-      return 'Almost complete';
-    case SortMode.remainingDesc:
-      return 'Most left';
-    case SortMode.pointsRemainingDesc:
-      return 'Most points left';
+    case SortMode.leastItemsLeft:
+      return 'Fewest Items Left';
+    case SortMode.mostItemsLeft:
+      return 'Most Items Left';
+    case SortMode.leastPointsLeft:
+      return 'Fewest Points Left';
+    case SortMode.mostPointsLeft:
+      return 'Most Points Left';
   }
 }
 
@@ -428,6 +450,7 @@ class _CategoryScreenState extends State<CategoryScreen> {
   DateTime? _tripStartTime;
   String? _currentSessionId;
   Set<String> _bonusItemIds = {};
+  Set<String> _tripleItemIds = {};
   Set<String> _completedAchievements = {};
   Set<String> _allTimeAchievements = {};
   Set<String> _sessionUnlockedAchievements = {};
@@ -622,7 +645,7 @@ class _CategoryScreenState extends State<CategoryScreen> {
   }
 
   String _getDayName() {
-    const days = ['Mon.', 'Tue.', 'Wed.', 'Thu.', 'Fri.', 'Sat.', 'Sun.'];
+    const days = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'];
     return days[DateTime.now().weekday - 1];
   }
 
@@ -658,15 +681,9 @@ class _CategoryScreenState extends State<CategoryScreen> {
 
   int _getRankIndex() {
     final progress = _getProgressPercent();
-    final target = _getTargetPercent();
 
-    final stepSize = target / 10;
-
-    int index = (progress / stepSize).floor();
-
-    if (index >= 9) index = 9;
-
-    return index;
+    if (progress >= 100.0) return 9; // ✅ GOAT index
+    return (progress ~/ 10).clamp(0, 9);
   }
 
   int _getCompletedSubCategoryCount() {
@@ -713,7 +730,6 @@ class _CategoryScreenState extends State<CategoryScreen> {
   Set<String> _generateBonusItemIds() {
     final Map<int, List<TripItem>> groupedByPoints = {};
 
-    // Group all items by their points value (1, 2, 3, 4, etc.)
     for (final item in items) {
       groupedByPoints.putIfAbsent(item.points, () => []);
       groupedByPoints[item.points]!.add(item);
@@ -721,11 +737,47 @@ class _CategoryScreenState extends State<CategoryScreen> {
 
     final Set<String> selectedIds = {};
 
-    // For each points group, select 10% rounded to nearest whole number
     for (final entry in groupedByPoints.entries) {
       final groupItems = List<TripItem>.from(entry.value);
       final int groupSize = groupItems.length;
-      final int numberToSelect = (groupSize * 0.10).round();
+
+      // ✅ DOUBLE is now 9%, still rounded like before
+      final int numberToSelect = (groupSize * 0.09).round();
+
+      if (numberToSelect <= 0) {
+        continue;
+      }
+
+      groupItems.shuffle();
+
+      final chosen = groupItems.take(numberToSelect);
+      for (final item in chosen) {
+        selectedIds.add(item.itemId);
+      }
+    }
+
+    return selectedIds;
+  }
+
+  Set<String> _generateTripleItemIds(Set<String> excludedIds) {
+    final Map<int, List<TripItem>> groupedByPoints = {};
+
+    for (final item in items) {
+      // ✅ No item can be both DOUBLE and TRIPLE
+      if (excludedIds.contains(item.itemId)) continue;
+
+      groupedByPoints.putIfAbsent(item.points, () => []);
+      groupedByPoints[item.points]!.add(item);
+    }
+
+    final Set<String> selectedIds = {};
+
+    for (final entry in groupedByPoints.entries) {
+      final groupItems = List<TripItem>.from(entry.value);
+      final int groupSize = groupItems.length;
+
+      // ✅ TRIPLE is 3%, and small groups can naturally become 0
+      final int numberToSelect = (groupSize * 0.03).floor();
 
       if (numberToSelect <= 0) {
         continue;
@@ -747,13 +799,16 @@ class _CategoryScreenState extends State<CategoryScreen> {
       case SortMode.az:
         list.sort((a, b) => a.name.compareTo(b.name));
         break;
-      case SortMode.progressDesc:
-        list.sort((a, b) => b.progress.compareTo(a.progress));
+      case SortMode.leastItemsLeft:
+        list.sort((a, b) => a.remainingCount.compareTo(b.remainingCount));
         break;
-      case SortMode.remainingDesc:
+      case SortMode.mostItemsLeft:
         list.sort((a, b) => b.remainingCount.compareTo(a.remainingCount));
         break;
-      case SortMode.pointsRemainingDesc:
+      case SortMode.leastPointsLeft:
+        list.sort((a, b) => a.scoreRemaining.compareTo(b.scoreRemaining));
+        break;
+      case SortMode.mostPointsLeft:
         list.sort((a, b) => b.scoreRemaining.compareTo(a.scoreRemaining));
         break;
     }
@@ -780,9 +835,16 @@ class _CategoryScreenState extends State<CategoryScreen> {
     }
 
     // ✅ MAIN LOOP — THIS IS THE IMPORTANT PART
+
     for (final it in items) {
-      final isBonus = _bonusItemIds.contains(it.itemId);
-      final itemMaxPoints = isBonus ? it.points * 2 : it.points;
+      final isTriple = _tripleItemIds.contains(it.itemId);
+      final isDouble = _bonusItemIds.contains(it.itemId);
+
+      final itemMaxPoints = isTriple
+          ? it.points * 3
+          : isDouble
+          ? it.points * 2
+          : it.points;
 
       totals[it.category] = (totals[it.category] ?? 0) + 1;
       maxScores[it.category] = (maxScores[it.category] ?? 0) + itemMaxPoints;
@@ -878,14 +940,20 @@ class _CategoryScreenState extends State<CategoryScreen> {
   }
 
   Future<List<Trip>> _loadTripsFromFirestore() async {
-    final snapshot = await FirebaseFirestore.instance
-        .collection('trips')
-        .orderBy('startTime', descending: true)
-        .limit(10)
-        .get();
+    QuerySnapshot snapshot;
+
+    try {
+      snapshot = await FirebaseFirestore.instance
+          .collection('trips')
+          .orderBy('startTime', descending: true)
+          .limit(25)
+          .get();
+    } catch (e) {
+      snapshot = await FirebaseFirestore.instance.collection('trips').get();
+    }
 
     return snapshot.docs.map((doc) {
-      final data = doc.data();
+      final data = doc.data()! as Map<String, dynamic>;
 
       return Trip(
         tripId: data['tripId'],
@@ -913,6 +981,11 @@ class _CategoryScreenState extends State<CategoryScreen> {
         totalDoubleItems: data['totalDoubleItems'],
         doubleScore: data['doubleScore'],
         doubleMaxScore: data['doubleMaxScore'],
+        tripleItemsFound: data['tripleItemsFound'] ?? 0,
+        totalTripleItems: data['totalTripleItems'] ?? 0,
+        tripleScore: data['tripleScore'] ?? 0,
+        tripleMaxScore: data['tripleMaxScore'] ?? 0,
+
         oneScore: data['oneScore'],
         oneMaxScore: data['oneMaxScore'],
         twoScore: data['twoScore'],
@@ -932,7 +1005,7 @@ class _CategoryScreenState extends State<CategoryScreen> {
           data['achievementFoundCounts'] ?? {},
         ),
       );
-    }).toList();
+    }).toList()..sort((a, b) => b.startTime.compareTo(a.startTime));
   }
 
   void _resetRunStateForNewTrip() {
@@ -1178,6 +1251,12 @@ class _CategoryScreenState extends State<CategoryScreen> {
     int doubleScore = 0;
     int doubleMaxScore = 0;
 
+    int tripleItemsFound = 0;
+    int totalTripleItems = _tripleItemIds.length;
+
+    int tripleScore = 0;
+    int tripleMaxScore = 0;
+
     int oneScore = 0;
     int oneMaxScore = 0;
 
@@ -1191,8 +1270,21 @@ class _CategoryScreenState extends State<CategoryScreen> {
     int fourMaxScore = 0;
 
     for (final it in items) {
-      if (_bonusItemIds.contains(it.itemId)) {
-        final isFound = foundById[it.itemId] == true;
+      final isFound = foundById[it.itemId] == true;
+
+      // ✅ TRIPLE FIRST (3x)
+      if (_tripleItemIds.contains(it.itemId)) {
+        final itemValue = it.points * 3;
+
+        tripleMaxScore += itemValue;
+
+        if (isFound) {
+          tripleItemsFound++;
+          tripleScore += itemValue;
+        }
+      }
+      // ✅ DOUBLE SECOND (2x)
+      else if (_bonusItemIds.contains(it.itemId)) {
         final itemValue = it.points * 2;
 
         doubleMaxScore += itemValue;
@@ -1203,6 +1295,7 @@ class _CategoryScreenState extends State<CategoryScreen> {
         }
       }
     }
+
     for (final it in items) {
       final isFound = foundById[it.itemId] == true;
 
@@ -1264,6 +1357,11 @@ class _CategoryScreenState extends State<CategoryScreen> {
       totalDoubleItems: totalDoubleItems,
       doubleScore: doubleScore,
       doubleMaxScore: doubleMaxScore,
+      tripleItemsFound: tripleItemsFound,
+      totalTripleItems: totalTripleItems,
+      tripleScore: tripleScore,
+      tripleMaxScore: tripleMaxScore,
+
       oneScore: oneScore,
       oneMaxScore: oneMaxScore,
       twoScore: twoScore,
@@ -1361,7 +1459,7 @@ class _CategoryScreenState extends State<CategoryScreen> {
       context: context,
       builder: (_) => StatefulBuilder(
         builder: (settingsDialogContext, setDialogState) => AlertDialog(
-          title: const Text('Feedback settings'),
+          title: const Text('Feedback Settings'),
           content: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
@@ -1502,6 +1600,10 @@ class _CategoryScreenState extends State<CategoryScreen> {
                   onPressed: () async {
                     final sessionId = _generateSessionId();
                     final sessionBonusIds = _generateBonusItemIds();
+                    final sessionTripleIds = _generateTripleItemIds(
+                      sessionBonusIds,
+                    );
+
                     await FirebaseFirestore.instance
                         .collection('trip_sessions')
                         .doc(sessionId)
@@ -1513,6 +1615,7 @@ class _CategoryScreenState extends State<CategoryScreen> {
                           'active': true,
                           'foundItems': {},
                           'bonusItemIds': sessionBonusIds.toList(),
+                          'tripleItemIds': sessionTripleIds.toList(),
                         });
                     if (!mounted) return;
                     setState(() {
@@ -1533,6 +1636,7 @@ class _CategoryScreenState extends State<CategoryScreen> {
                       });
 
                       _bonusItemIds = sessionBonusIds;
+                      _tripleItemIds = sessionTripleIds;
                       _recomputeCategoryStats();
                       _startSessionPolling();
                     });
@@ -1647,6 +1751,10 @@ class _CategoryScreenState extends State<CategoryScreen> {
                       data['bonusItemIds'] ?? [],
                     );
 
+                    final loadedTripleIds = Set<String>.from(
+                      data['tripleItemIds'] ?? [],
+                    );
+
                     if (!mounted) return;
 
                     setState(() {
@@ -1661,7 +1769,12 @@ class _CategoryScreenState extends State<CategoryScreen> {
                       _resetRunStateForNewTrip();
 
                       foundById = loadedFoundMap;
+
                       _bonusItemIds = loadedBonusIds;
+                      _tripleItemIds = loadedTripleIds;
+                      _tripleItemIds = data['tripleItemIds'] != null
+                          ? Set<String>.from(data['tripleItemIds'])
+                          : {};
 
                       _recomputeCategoryStats();
                       _startSessionPolling();
@@ -1810,7 +1923,11 @@ class _CategoryScreenState extends State<CategoryScreen> {
 
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Car Trip'),
+        title: const Text(
+          'Car Trip',
+          style: TextStyle(fontWeight: FontWeight.bold),
+        ),
+
         actions: [
           if (_lastCompletedTrip != null)
             IconButton(
@@ -1865,6 +1982,13 @@ class _CategoryScreenState extends State<CategoryScreen> {
                   );
                   break;
 
+                case 'ranks':
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(builder: (_) => RankListScreen()),
+                  );
+                  break;
+
                 case 'settings':
                   _openSettings();
                   break;
@@ -1872,18 +1996,80 @@ class _CategoryScreenState extends State<CategoryScreen> {
                 case 'reset':
                   _resetProgress();
                   break;
+
+                case 'achievements':
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (_) => AchievementsScreen(
+                        achievementItemIds: _achievementItemIds,
+                        foundById: foundById,
+                      ),
+                    ),
+                  );
+                  break;
               }
             },
             itemBuilder: (context) => [
-              const PopupMenuItem(value: 'load', child: Text('Last Trip')),
+              const PopupMenuItem(
+                value: 'load',
+                child: Row(
+                  children: [
+                    Text('📄', style: TextStyle(fontSize: 18)),
+                    SizedBox(width: 6),
+                    Text('Last Trip Data'),
+                  ],
+                ),
+              ),
               const PopupMenuItem(
                 value: 'history',
-                child: Text('Trip History'),
+                child: Row(
+                  children: [
+                    Text('🗄️', style: TextStyle(fontSize: 18)),
+                    SizedBox(width: 6),
+                    Text('Trip Archives'),
+                  ],
+                ),
               ),
-              const PopupMenuItem(value: 'settings', child: Text('Settings')),
+              const PopupMenuItem(
+                value: 'ranks',
+                child: Row(
+                  children: [
+                    Text('🏆', style: TextStyle(fontSize: 18)),
+                    SizedBox(width: 6),
+                    Text('Rank List'),
+                  ],
+                ),
+              ),
+              const PopupMenuItem(
+                value: 'achievements',
+                child: Row(
+                  children: [
+                    Text('🎯', style: TextStyle(fontSize: 18)),
+                    SizedBox(width: 6),
+                    Text('Achievements'),
+                  ],
+                ),
+              ),
+              const PopupMenuItem(
+                value: 'settings',
+                child: Row(
+                  children: [
+                    Text('⚙️', style: TextStyle(fontSize: 18)),
+                    SizedBox(width: 6),
+                    Text('Settings'),
+                  ],
+                ),
+              ),
               const PopupMenuItem(
                 value: 'reset',
-                child: Text('Reset progress'),
+                child: Row(
+                  children: [
+                    Text('🔁', style: TextStyle(fontSize: 18)),
+                    SizedBox(width: 6),
+                    Text('Reset Progress'),
+                  ],
+                ),
               ),
             ],
             child: Padding(
@@ -1938,13 +2124,14 @@ class _CategoryScreenState extends State<CategoryScreen> {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Row(
+                  crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Expanded(
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           Text(
-                            'Total Score: $totalScore / $maxScore  (${percentTotal.toStringAsFixed(1)}%)',
+                            'Total Score: $totalScore/$maxScore (${percentTotal.toStringAsFixed(1)}%)',
                             style: const TextStyle(
                               fontWeight: FontWeight.bold,
                               fontSize: 16,
@@ -1961,24 +2148,36 @@ class _CategoryScreenState extends State<CategoryScreen> {
                         ],
                       ),
                     ),
-                    DropdownButtonHideUnderline(
-                      child: DropdownButton<SortMode>(
-                        value: sortMode,
-                        onChanged: (m) {
-                          if (m == null) return;
-                          setState(() {
-                            sortMode = m;
-                            _recomputeCategoryStats();
-                          });
-                        },
-                        items: SortMode.values
-                            .map(
-                              (m) => DropdownMenuItem(
-                                value: m,
-                                child: Text(sortLabel(m)),
-                              ),
-                            )
-                            .toList(),
+                    const SizedBox(width: 8),
+                    Container(
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 6,
+                        vertical: 2,
+                      ),
+                      decoration: BoxDecoration(
+                        color: Colors.black.withValues(alpha: 0.08),
+                        borderRadius: BorderRadius.circular(6),
+                      ),
+                      child: DropdownButtonHideUnderline(
+                        child: DropdownButton<SortMode>(
+                          dropdownColor: Colors.white,
+                          value: sortMode,
+                          onChanged: (m) {
+                            if (m == null) return;
+                            setState(() {
+                              sortMode = m;
+                              _recomputeCategoryStats();
+                            });
+                          },
+                          items: SortMode.values
+                              .map(
+                                (m) => DropdownMenuItem(
+                                  value: m,
+                                  child: Text(sortLabel(m)),
+                                ),
+                              )
+                              .toList(),
+                        ),
                       ),
                     ),
                   ],
@@ -1996,55 +2195,63 @@ class _CategoryScreenState extends State<CategoryScreen> {
                   ),
                 ),
                 const SizedBox(height: 10),
-                if (isWinning)
-                  Row(
-                    children: [
-                      const Icon(Icons.check_circle, color: Colors.green),
-                      const SizedBox(width: 8),
-                      Expanded(
-                        child: Text(
-                          'You Won! ${dayName(DateTime.now())} target met (≥ ${threshold.toStringAsFixed(1)}%).',
-                          style: const TextStyle(fontWeight: FontWeight.bold),
+
+                Column(
+                  children: [
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Text(
+                          'Achievements: ${_getCompletedAchievementCount()} / ${_getTotalAchievementCount()}',
+                          style: const TextStyle(
+                            fontWeight: FontWeight.bold,
+                            fontSize: 16,
+                          ),
                         ),
-                      ),
-                    ],
-                  )
-                else
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      Text(
-                        'Achievements: ${_getCompletedAchievementCount()} / ${_getTotalAchievementCount()}',
-                        style: const TextStyle(
-                          fontWeight: FontWeight.bold,
-                          fontSize: 16,
+                        AnimatedSwitcher(
+                          duration: const Duration(milliseconds: 1200),
+                          switchInCurve: Curves.easeInOutBack,
+                          switchOutCurve: Curves.easeIn,
+                          transitionBuilder: (child, animation) {
+                            final scale = Tween<double>(
+                              begin: 0.40,
+                              end: 1.1,
+                            ).animate(animation);
+                            return ScaleTransition(
+                              scale: scale,
+                              child: FadeTransition(
+                                opacity: animation,
+                                child: child,
+                              ),
+                            );
+                          },
+                          child: RankBadge(
+                            key: ValueKey<int>(currentRankIndex),
+                            text: 'Rank: ${kRanks[currentRankIndex]}',
+                            color: rankColor(currentRankIndex),
+                          ),
                         ),
-                      ),
-                      AnimatedSwitcher(
-                        duration: const Duration(milliseconds: 1200),
-                        switchInCurve: Curves.easeInOutBack,
-                        switchOutCurve: Curves.easeIn,
-                        transitionBuilder: (child, animation) {
-                          final scale = Tween<double>(
-                            begin: 0.40,
-                            end: 1.1,
-                          ).animate(animation);
-                          return ScaleTransition(
-                            scale: scale,
-                            child: FadeTransition(
-                              opacity: animation,
-                              child: child,
+                      ],
+                    ),
+
+                    if (isWinning)
+                      Padding(
+                        padding: const EdgeInsets.only(top: 4),
+                        child: Row(
+                          children: [
+                            const Icon(Icons.check_circle, color: Colors.green),
+                            const SizedBox(width: 8),
+                            Expanded(
+                              child: Text(
+                                'You Won! ${dayName(DateTime.now())} target met (≥ ${threshold.toStringAsFixed(1)}%).',
+                                overflow: TextOverflow.ellipsis,
+                              ),
                             ),
-                          );
-                        },
-                        child: RankBadge(
-                          key: ValueKey<int>(currentRankIndex),
-                          text: 'Rank: ${kRanks[currentRankIndex]}',
-                          color: rankColor(currentRankIndex),
+                          ],
                         ),
                       ),
-                    ],
-                  ),
+                  ],
+                ),
               ],
             ),
           ),
@@ -2091,6 +2298,7 @@ class _CategoryScreenState extends State<CategoryScreen> {
                                 _completedSubcategoriesShownGlobal,
                             isTripActive: _tripStartTime != null,
                             bonusItemIds: _bonusItemIds,
+                            tripleItemIds: _tripleItemIds,
                             onAchievementCheck: _handleAchievementCheck,
                             onPointerTierCheck: _handlePointerTierCheck,
                             isGameComplete:
@@ -2247,6 +2455,7 @@ class SubCategoryScreen extends StatefulWidget {
   final bool soundEnabled;
   final bool isTripActive;
   final Set<String> bonusItemIds;
+  final Set<String> tripleItemIds;
   final bool isGameComplete;
   final List<String> Function(String, Map<String, bool>) onAchievementCheck;
   final List<int> Function(Map<String, bool>) onPointerTierCheck;
@@ -2271,6 +2480,7 @@ class SubCategoryScreen extends StatefulWidget {
     required this.completedSubcategoriesShown,
     required this.isTripActive,
     required this.bonusItemIds,
+    required this.tripleItemIds,
     required this.isGameComplete,
     required this.onAchievementCheck,
     required this.onPointerTierCheck,
@@ -2319,25 +2529,22 @@ class _SubCategoryScreenState extends State<SubCategoryScreen> {
     switch (sortMode) {
       case SortMode.az:
         list.sort((a, b) {
-          // 1. Unfinished before completed
           if (a.complete != b.complete) {
             return a.complete ? 1 : -1;
           }
-
-          // 2. Alphabetical within each group
           return a.name.compareTo(b.name);
         });
         break;
-
-      case SortMode.progressDesc:
-        list.sort((a, b) => b.progress.compareTo(a.progress));
+      case SortMode.leastItemsLeft:
+        list.sort((a, b) => a.remainingCount.compareTo(b.remainingCount));
         break;
-
-      case SortMode.remainingDesc:
+      case SortMode.mostItemsLeft:
         list.sort((a, b) => b.remainingCount.compareTo(a.remainingCount));
         break;
-
-      case SortMode.pointsRemainingDesc:
+      case SortMode.leastPointsLeft:
+        list.sort((a, b) => a.scoreRemaining.compareTo(b.scoreRemaining));
+        break;
+      case SortMode.mostPointsLeft:
         list.sort((a, b) => b.scoreRemaining.compareTo(a.scoreRemaining));
         break;
     }
@@ -2450,6 +2657,7 @@ class _SubCategoryScreenState extends State<SubCategoryScreen> {
     return Scaffold(
       appBar: AppBar(
         title: Text(widget.category),
+        centerTitle: false,
         actions: [
           DropdownButtonHideUnderline(
             child: DropdownButton<SortMode>(
@@ -2479,7 +2687,7 @@ class _SubCategoryScreenState extends State<SubCategoryScreen> {
             padding: const EdgeInsets.fromLTRB(16, 12, 16, 12),
             color: Colors.blue.withValues(alpha: 0.06),
             child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              mainAxisAlignment: MainAxisAlignment.start,
               children: [
                 const Text(
                   'Category Score',
@@ -2523,12 +2731,13 @@ class _SubCategoryScreenState extends State<SubCategoryScreen> {
                         context,
                         MaterialPageRoute(
                           builder: (_) => ItemScreen(
-                            title: '${widget.category} • ${stat.name}',
+                            title: stat.name,
                             items: filtered,
                             foundById: widget.foundById,
                             onToggle: widget.onToggle,
                             isTripActive: widget.isTripActive,
                             bonusItemIds: widget.bonusItemIds,
+                            tripleItemIds: widget.tripleItemIds,
                             playSfx: widget.playSfx,
                             onAchievementCheck: widget.onAchievementCheck,
                             onPointerTierCheck: widget.onPointerTierCheck,
@@ -2620,6 +2829,8 @@ class ItemScreen extends StatefulWidget {
   final Future<void> Function(String, bool) onToggle;
   final bool isTripActive;
   final Set<String> bonusItemIds;
+  final Set<String> tripleItemIds;
+
   final Future<void> Function({
     required int priority,
     required String assetPath,
@@ -2636,6 +2847,7 @@ class ItemScreen extends StatefulWidget {
     required this.onToggle,
     required this.isTripActive,
     required this.bonusItemIds,
+    required this.tripleItemIds,
     required this.playSfx,
     required this.onAchievementCheck,
     required this.onPointerTierCheck,
@@ -2680,6 +2892,7 @@ class _ItemScreenState extends State<ItemScreen> {
     return Scaffold(
       appBar: AppBar(
         title: Text(widget.title),
+        centerTitle: false,
         actions: [
           Row(
             children: [
@@ -2713,10 +2926,39 @@ class _ItemScreenState extends State<ItemScreen> {
                 children: [
                   TextSpan(text: '${it.name}  (+${it.points})'),
 
-                  if (widget.bonusItemIds.contains(it.itemId))
-                    const TextSpan(text: '  '), // spacing
+                  if (widget.tripleItemIds.contains(it.itemId))
+                    const TextSpan(text: '  '),
 
-                  if (widget.bonusItemIds.contains(it.itemId))
+                  if (widget.tripleItemIds.contains(it.itemId))
+                    WidgetSpan(
+                      alignment: PlaceholderAlignment.middle,
+                      child: Container(
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: 6,
+                          vertical: 2,
+                        ),
+                        decoration: BoxDecoration(
+                          color: Colors.purple.shade600,
+                          borderRadius: BorderRadius.circular(6),
+                          border: Border.all(color: Colors.black, width: 1),
+                        ),
+                        child: const Text(
+                          'TRIPLE',
+                          style: TextStyle(
+                            color: Colors.white,
+                            fontWeight: FontWeight.bold,
+                            fontSize: 11,
+                          ),
+                        ),
+                      ),
+                    ),
+
+                  if (!widget.tripleItemIds.contains(it.itemId) &&
+                      widget.bonusItemIds.contains(it.itemId))
+                    const TextSpan(text: '  '),
+
+                  if (!widget.tripleItemIds.contains(it.itemId) &&
+                      widget.bonusItemIds.contains(it.itemId))
                     WidgetSpan(
                       alignment: PlaceholderAlignment.middle,
                       child: Container(
@@ -2775,7 +3017,26 @@ class _ItemScreenState extends State<ItemScreen> {
                   ? widget.onPointerTierCheck(widget.foundById)
                   : <int>[];
 
+              if (newVal &&
+                  widget.tripleItemIds.contains(it.itemId) &&
+                  widget.playSfx != null) {
+                widget.playSfx!(
+                  priority: SFX_DOUBLE,
+                  assetPath: 'sounds/triple_done.mp3',
+                  volume: 1.0,
+                );
+              } else if (newVal &&
+                  widget.bonusItemIds.contains(it.itemId) &&
+                  widget.playSfx != null) {
+                widget.playSfx!(
+                  priority: SFX_DOUBLE,
+                  assetPath: 'sounds/double_done.mp3',
+                  volume: 1.0,
+                );
+              }
+
               if (newVal && unlockedAchievements.isNotEmpty) {
+                // ✅ PLAY achievement sound
                 if (widget.playSfx != null) {
                   widget.playSfx!(
                     priority: SFX_ACHIEVEMENT,
@@ -2802,12 +3063,9 @@ class _ItemScreenState extends State<ItemScreen> {
                 final pointerLabel =
                     pointerTierLabels[unlockedPointerTiers.first] ??
                     'Tier complete!';
-
                 if (widget.playSfx != null) {
                   final tier = unlockedPointerTiers.first;
-
                   String assetPath;
-
                   switch (tier) {
                     case 1:
                       assetPath = 'sounds/one_pointer_done.mp3';
@@ -2824,14 +3082,12 @@ class _ItemScreenState extends State<ItemScreen> {
                     default:
                       assetPath = 'sounds/one_pointer_done.mp3';
                   }
-
                   widget.playSfx!(
                     priority: SFX_POINTER,
                     assetPath: assetPath,
                     volume: 1.0,
                   );
                 }
-
                 ScaffoldMessenger.of(context).showSnackBar(
                   SnackBar(
                     content: Row(
@@ -2846,15 +3102,8 @@ class _ItemScreenState extends State<ItemScreen> {
                     duration: const Duration(milliseconds: 3000),
                   ),
                 );
-              } else if (newVal &&
-                  widget.bonusItemIds.contains(it.itemId) &&
-                  widget.playSfx != null) {
-                widget.playSfx!(
-                  priority: SFX_DOUBLE,
-                  assetPath: 'sounds/double_done.mp3',
-                  volume: 1.0,
-                );
               }
+
               await widget.onToggle(it.itemId, newVal);
             },
           );
@@ -3024,7 +3273,7 @@ class _TripHistoryScreenState extends State<TripHistoryScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: const Text('Trip History')),
+      appBar: AppBar(title: const Text('Trip Archives')),
       body: FutureBuilder<List<Trip>>(
         future: _tripsFuture,
         builder: (context, snapshot) {
@@ -3128,7 +3377,7 @@ class _TripHistoryScreenState extends State<TripHistoryScreen> {
                       ),
                       const SizedBox(height: 4),
                       Text(
-                        '${kRanks[trip.finalRankIndex]} 🏅',
+                        kRanks[trip.finalRankIndex],
                         style: TextStyle(
                           fontSize: 13,
                           fontWeight: FontWeight.w600,
@@ -3505,6 +3754,10 @@ class TripSummaryScreen extends StatelessWidget {
                   '${trip.startLocation} → ${trip.endLocation}',
                 ),
 
+                _tableRow(
+                  'Date',
+                  DateFormat('EEE d MMM yyyy').format(trip.startTime),
+                ),
                 _tableRow('Start Time', _formatTime(trip.startTime)),
                 _tableRow('End Time', _formatTime(trip.endTime)),
                 _tableRow(
@@ -3556,6 +3809,122 @@ class TripSummaryScreen extends StatelessWidget {
             ),
           ],
         ),
+      ),
+    );
+  }
+}
+
+class RankListScreen extends StatelessWidget {
+  const RankListScreen({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(title: const Text('Rank List')),
+      body: ListView.builder(
+        padding: const EdgeInsets.all(12),
+        itemCount: kRanks.length,
+        itemBuilder: (context, index) {
+          final label = kRanks[index];
+
+          final percentText = index == 9
+              ? '90.0 - 99.9%'
+              : '${(index * 10).toStringAsFixed(1)} - ${(((index + 1) * 10) - 0.1).toStringAsFixed(1)}%';
+
+          // ✅ Special case for GOAT (100%)
+          if (index == 9) {
+            return Column(
+              children: [
+                _rankRow(percentText, label),
+                const Divider(),
+                _rankRow('100.0%', '🐐 10: GOAT'),
+              ],
+            );
+          }
+
+          return _rankRow(percentText, label);
+        },
+      ),
+    );
+  }
+
+  Widget _rankRow(String range, String label) {
+    return Padding(
+      padding: const EdgeInsets.symmetric(vertical: 8),
+      child: Row(
+        children: [
+          SizedBox(
+            width: 90,
+            child: Text(
+              range,
+              style: const TextStyle(fontWeight: FontWeight.w600),
+            ),
+          ),
+          Expanded(child: Text(label, style: const TextStyle(fontSize: 16))),
+        ],
+      ),
+    );
+  }
+}
+
+class AchievementsScreen extends StatelessWidget {
+  final Map<String, Set<String>> achievementItemIds;
+  final Map<String, bool> foundById;
+
+  const AchievementsScreen({
+    super.key,
+    required this.achievementItemIds,
+    required this.foundById,
+  });
+
+  int _countFound(Set<String> ids, Map<String, bool> foundMap) {
+    int count = 0;
+    for (final id in ids) {
+      if (foundMap[id] == true) count++;
+    }
+    return count;
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final achievementIds = achievementItemIds.keys.toList()
+      ..sort((a, b) {
+        final labelA = achievementLabels[a] ?? a;
+        final labelB = achievementLabels[b] ?? b;
+        return labelA.compareTo(labelB);
+      });
+
+    return Scaffold(
+      appBar: AppBar(title: const Text('Achievements')),
+      body: ListView.builder(
+        padding: const EdgeInsets.all(12),
+        itemCount: achievementIds.length,
+        itemBuilder: (context, index) {
+          final id = achievementIds[index];
+          final label = achievementLabels[id] ?? id;
+          final items = achievementItemIds[id]!;
+
+          final total = items.length;
+          final found = _countFound(items, foundById);
+          final isComplete = found == total;
+
+          return Card(
+            margin: const EdgeInsets.symmetric(vertical: 6),
+            child: ListTile(
+              title: Text(
+                '$label ($found/$total)',
+                style: TextStyle(
+                  fontSize: 16,
+                  fontWeight: isComplete ? FontWeight.bold : FontWeight.normal,
+                  color: isComplete ? Colors.green.shade700 : null,
+                ),
+              ),
+              trailing: isComplete
+                  ? const Icon(Icons.check_circle, color: Colors.green)
+                  : null,
+            ),
+          );
+        },
       ),
     );
   }
