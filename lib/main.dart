@@ -236,16 +236,16 @@ const int SFX_ACHIEVEMENT = 6;
 const int SFX_WIN = 7;
 const int SFX_PERFECT = 8;
 const List<String> kRanks = [
-  '😞 1: Noob',
-  '👎 2: Inept',
-  '😴 3: Cringe',
-  '😑 4: Mega-Mid',
-  '😐 5: Mid',
-  '👍 6: Decent',
-  '✨ 7: Slay',
-  '💥 8: Mad-Lit',
-  '🔥 9: Fire',
-  '🐐 10: GOAT',
+  '😞 0: Noob',
+  '👎 1: Inept',
+  '😴 2: Cringe',
+  '😐 3: Mega-Mid',
+  '👌 4: Mid',
+  '👍 5: Decent',
+  '✨ 6: Slay',
+  '💥 7: Mad-Lit',
+  '🔥 8: Fire',
+  '🦁 9: Apex',
 ];
 
 Color rankColor(int idx) {
@@ -425,7 +425,8 @@ class _CategoryScreenState extends State<CategoryScreen> {
 
   Map<String, bool>? _previousFoundById;
   Set<String>? _previousCompletedCategoriesShown;
-
+  Set<String>? _previousCompletedAchievements;
+  Set<int>? _previousCompletedPointerTiers;
   List<GroupStat> categoryStats = [];
 
   int totalScore = 0;
@@ -940,21 +941,10 @@ class _CategoryScreenState extends State<CategoryScreen> {
   }
 
   Future<List<Trip>> _loadTripsFromFirestore() async {
-    QuerySnapshot snapshot;
-
-    try {
-      snapshot = await FirebaseFirestore.instance
-          .collection('trips')
-          .orderBy('startTime', descending: true)
-          .limit(25)
-          .get();
-    } catch (e) {
-      snapshot = await FirebaseFirestore.instance.collection('trips').get();
-    }
+    final snapshot = await FirebaseFirestore.instance.collection('trips').get();
 
     return snapshot.docs.map((doc) {
-      final data = doc.data()! as Map<String, dynamic>;
-
+      final data = doc.data();
       return Trip(
         tripId: data['tripId'],
         tripName: data['tripName'],
@@ -1028,6 +1018,8 @@ class _CategoryScreenState extends State<CategoryScreen> {
     _previousCompletedSubcategoriesShownGlobal = Set.from(
       _completedSubcategoriesShownGlobal,
     );
+    _previousCompletedAchievements = Set.from(_completedAchievements);
+    _previousCompletedPointerTiers = Set.from(_completedPointerTiers);
 
     final prefs = await SharedPreferences.getInstance();
     await prefs.remove(prefsKey);
@@ -1072,6 +1064,13 @@ class _CategoryScreenState extends State<CategoryScreen> {
               );
               _completedSubcategoriesShownGlobal = Set.from(
                 _previousCompletedSubcategoriesShownGlobal ?? {},
+              );
+
+              _completedAchievements = Set.from(
+                _previousCompletedAchievements ?? {},
+              );
+              _completedPointerTiers = Set.from(
+                _previousCompletedPointerTiers ?? {},
               );
 
               _recomputeCategoryStats();
@@ -1856,15 +1855,12 @@ class _CategoryScreenState extends State<CategoryScreen> {
 
       if (allFound && !_completedAchievements.contains(achievementId)) {
         _completedAchievements.add(achievementId);
-
         final label = achievementLabels[achievementId] ?? achievementId;
         unlockedLabels.add(label);
 
-        // ✅ Track achievements unlocked in this run
-        _sessionUnlockedAchievements.add(achievementId);
-
-        // ✅ Persist all-time unlocks
+        // ✅ Only mark as NEW if this is the first ever unlock
         if (!_allTimeAchievements.contains(achievementId)) {
+          _sessionUnlockedAchievements.add(achievementId);
           _allTimeAchievements.add(achievementId);
 
           SharedPreferences.getInstance().then((prefs) {
@@ -2008,6 +2004,40 @@ class _CategoryScreenState extends State<CategoryScreen> {
                     ),
                   );
                   break;
+                case 'sort_az':
+                  setState(() {
+                    sortMode = SortMode.az;
+                    _recomputeCategoryStats();
+                  });
+                  break;
+
+                case 'sort_least_items':
+                  setState(() {
+                    sortMode = SortMode.leastItemsLeft;
+                    _recomputeCategoryStats();
+                  });
+                  break;
+
+                case 'sort_most_items':
+                  setState(() {
+                    sortMode = SortMode.mostItemsLeft;
+                    _recomputeCategoryStats();
+                  });
+                  break;
+
+                case 'sort_least_points':
+                  setState(() {
+                    sortMode = SortMode.leastPointsLeft;
+                    _recomputeCategoryStats();
+                  });
+                  break;
+
+                case 'sort_most_points':
+                  setState(() {
+                    sortMode = SortMode.mostPointsLeft;
+                    _recomputeCategoryStats();
+                  });
+                  break;
               }
             },
             itemBuilder: (context) => [
@@ -2015,7 +2045,12 @@ class _CategoryScreenState extends State<CategoryScreen> {
                 value: 'load',
                 child: Row(
                   children: [
-                    Text('📄', style: TextStyle(fontSize: 18)),
+                    SizedBox(
+                      width: 24,
+                      child: Center(
+                        child: Text('📄', style: TextStyle(fontSize: 18)),
+                      ),
+                    ),
                     SizedBox(width: 6),
                     Text('Last Trip Data'),
                   ],
@@ -2025,7 +2060,12 @@ class _CategoryScreenState extends State<CategoryScreen> {
                 value: 'history',
                 child: Row(
                   children: [
-                    Text('🗄️', style: TextStyle(fontSize: 18)),
+                    SizedBox(
+                      width: 24,
+                      child: Center(
+                        child: Text('🗄️', style: TextStyle(fontSize: 18)),
+                      ),
+                    ),
                     SizedBox(width: 6),
                     Text('Trip Archives'),
                   ],
@@ -2035,7 +2075,12 @@ class _CategoryScreenState extends State<CategoryScreen> {
                 value: 'ranks',
                 child: Row(
                   children: [
-                    Text('🏆', style: TextStyle(fontSize: 18)),
+                    SizedBox(
+                      width: 24,
+                      child: Center(
+                        child: Text('🏆', style: TextStyle(fontSize: 18)),
+                      ),
+                    ),
                     SizedBox(width: 6),
                     Text('Rank List'),
                   ],
@@ -2045,7 +2090,12 @@ class _CategoryScreenState extends State<CategoryScreen> {
                 value: 'achievements',
                 child: Row(
                   children: [
-                    Text('🎯', style: TextStyle(fontSize: 18)),
+                    SizedBox(
+                      width: 24,
+                      child: Center(
+                        child: Text('🎯', style: TextStyle(fontSize: 18)),
+                      ),
+                    ),
                     SizedBox(width: 6),
                     Text('Achievements'),
                   ],
@@ -2055,23 +2105,113 @@ class _CategoryScreenState extends State<CategoryScreen> {
                 value: 'settings',
                 child: Row(
                   children: [
-                    Text('⚙️', style: TextStyle(fontSize: 18)),
+                    SizedBox(
+                      width: 24,
+                      child: Center(
+                        child: Text('⚙️', style: TextStyle(fontSize: 18)),
+                      ),
+                    ),
                     SizedBox(width: 6),
                     Text('Settings'),
                   ],
                 ),
               ),
+
+              // ✅ Sort options (now aligned too)
+              const PopupMenuItem(
+                value: 'sort_az',
+                child: Row(
+                  children: [
+                    SizedBox(
+                      width: 24,
+                      child: Center(
+                        child: Text('🅰️', style: TextStyle(fontSize: 18)),
+                      ),
+                    ),
+                    SizedBox(width: 6),
+                    Text('Sort: A-Z'),
+                  ],
+                ),
+              ),
+              const PopupMenuItem(
+                value: 'sort_least_items',
+                child: Row(
+                  children: [
+                    SizedBox(
+                      width: 24,
+                      child: Center(
+                        child: Text('🔽', style: TextStyle(fontSize: 18)),
+                      ),
+                    ),
+                    SizedBox(width: 6),
+                    Text('Sort: Least Items'),
+                  ],
+                ),
+              ),
+              const PopupMenuItem(
+                value: 'sort_most_items',
+                child: Row(
+                  children: [
+                    SizedBox(
+                      width: 24,
+                      child: Center(
+                        child: Text('🔼', style: TextStyle(fontSize: 18)),
+                      ),
+                    ),
+                    SizedBox(width: 6),
+                    Text('Sort: Most Items'),
+                  ],
+                ),
+              ),
+              const PopupMenuItem(
+                value: 'sort_least_points',
+                child: Row(
+                  children: [
+                    SizedBox(
+                      width: 24,
+                      child: Center(
+                        child: Text('📉', style: TextStyle(fontSize: 18)),
+                      ),
+                    ),
+                    SizedBox(width: 6),
+                    Text('Sort: Least Points'),
+                  ],
+                ),
+              ),
+              const PopupMenuItem(
+                value: 'sort_most_points',
+                child: Row(
+                  children: [
+                    SizedBox(
+                      width: 24,
+                      child: Center(
+                        child: Text('📈', style: TextStyle(fontSize: 18)),
+                      ),
+                    ),
+                    SizedBox(width: 6),
+                    Text('Sort: Most Points'),
+                  ],
+                ),
+              ),
+
+              // ✅ Reset (already correct, just kept consistent)
               const PopupMenuItem(
                 value: 'reset',
                 child: Row(
                   children: [
-                    Text('🔁', style: TextStyle(fontSize: 18)),
+                    SizedBox(
+                      width: 24,
+                      child: Center(
+                        child: Text('🔄', style: TextStyle(fontSize: 18)),
+                      ),
+                    ),
                     SizedBox(width: 6),
-                    Text('Reset Progress'),
+                    Text('FULL RESET'),
                   ],
                 ),
               ),
             ],
+
             child: Padding(
               padding: const EdgeInsets.only(right: 8),
               child: Container(
@@ -2130,56 +2270,29 @@ class _CategoryScreenState extends State<CategoryScreen> {
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          Text(
-                            'Total Score: $totalScore/$maxScore (${percentTotal.toStringAsFixed(1)}%)',
-                            style: const TextStyle(
-                              fontWeight: FontWeight.bold,
-                              fontSize: 16,
-                            ),
-                          ),
-                          const SizedBox(height: 2),
-                          Text(
-                            'Target >= ${_getTargetPercent().toStringAsFixed(1)}% (${_getDayName()})',
-                            style: const TextStyle(
-                              fontSize: 16,
-                              color: Colors.black54,
-                            ),
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: [
+                              Text(
+                                'Score: $totalScore/$maxScore (${percentTotal.toStringAsFixed(1)}%)',
+                                style: const TextStyle(
+                                  fontWeight: FontWeight.bold,
+                                  fontSize: 16,
+                                ),
+                              ),
+                              Text(
+                                'Target >= ${_getTargetPercent().toStringAsFixed(1)}% (${_getDayName()})',
+                                style: const TextStyle(
+                                  fontSize: 16,
+                                  color: Colors.black54,
+                                ),
+                              ),
+                            ],
                           ),
                         ],
                       ),
                     ),
                     const SizedBox(width: 8),
-                    Container(
-                      padding: const EdgeInsets.symmetric(
-                        horizontal: 6,
-                        vertical: 2,
-                      ),
-                      decoration: BoxDecoration(
-                        color: Colors.black.withValues(alpha: 0.08),
-                        borderRadius: BorderRadius.circular(6),
-                      ),
-                      child: DropdownButtonHideUnderline(
-                        child: DropdownButton<SortMode>(
-                          dropdownColor: Colors.white,
-                          value: sortMode,
-                          onChanged: (m) {
-                            if (m == null) return;
-                            setState(() {
-                              sortMode = m;
-                              _recomputeCategoryStats();
-                            });
-                          },
-                          items: SortMode.values
-                              .map(
-                                (m) => DropdownMenuItem(
-                                  value: m,
-                                  child: Text(sortLabel(m)),
-                                ),
-                              )
-                              .toList(),
-                        ),
-                      ),
-                    ),
                   ],
                 ),
                 const SizedBox(height: 8),
@@ -2202,7 +2315,7 @@ class _CategoryScreenState extends State<CategoryScreen> {
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
                         Text(
-                          'Achievements: ${_getCompletedAchievementCount()} / ${_getTotalAchievementCount()}',
+                          'Achieved: ${_getCompletedAchievementCount()} / ${_getTotalAchievementCount()}',
                           style: const TextStyle(
                             fontWeight: FontWeight.bold,
                             fontSize: 16,
@@ -2359,7 +2472,7 @@ class _CategoryScreenState extends State<CategoryScreen> {
                                   '${stat.found}/${stat.total} • $percent% • $remaining left',
                                 ),
                                 Text(
-                                  'Score: ${stat.score}/${stat.maxScore}',
+                                  'Total Score: ${stat.score}/${stat.maxScore}',
                                   style: const TextStyle(color: Colors.black54),
                                 ),
                               ],
@@ -2416,7 +2529,7 @@ class RankBadge extends StatelessWidget {
               child: Text(
                 text,
                 style: const TextStyle(
-                  fontSize: 16,
+                  fontSize: 14,
                   fontWeight: FontWeight.bold,
                 ),
               ),
@@ -3336,7 +3449,7 @@ class _TripHistoryScreenState extends State<TripHistoryScreen> {
                               trip.tripName,
                               style: const TextStyle(
                                 fontWeight: FontWeight.bold,
-                                fontSize: 16,
+                                fontSize: 24,
                               ),
                             ),
                           ),
@@ -3365,23 +3478,27 @@ class _TripHistoryScreenState extends State<TripHistoryScreen> {
                       const SizedBox(height: 6),
                       Text(
                         '${trip.startLocation} → ${trip.endLocation}',
-                        style: const TextStyle(fontSize: 14),
+                        style: const TextStyle(fontSize: 20),
                       ),
                       const SizedBox(height: 4),
                       Text(
                         '${_formatHistoryDate(trip.startTime)} • ${_formatHistoryDuration(trip.startTime, trip.endTime)}',
                         style: const TextStyle(
-                          fontSize: 13,
+                          fontSize: 18,
                           color: Colors.black54,
                         ),
                       ),
                       const SizedBox(height: 4),
-                      Text(
-                        kRanks[trip.finalRankIndex],
-                        style: TextStyle(
-                          fontSize: 13,
-                          fontWeight: FontWeight.w600,
-                          color: rankColor(trip.finalRankIndex),
+
+                      Align(
+                        alignment: Alignment.centerRight,
+                        child: Text(
+                          kRanks[trip.finalRankIndex],
+                          style: TextStyle(
+                            fontSize: 24,
+                            fontWeight: FontWeight.w600,
+                            color: rankColor(trip.finalRankIndex),
+                          ),
                         ),
                       ),
                     ],
@@ -3601,7 +3718,7 @@ class TripSummaryScreen extends StatelessWidget {
             const SizedBox(height: 6),
 
             Text(
-              'Target >= ${winningThresholdPercent(DateTime.now()).toStringAsFixed(1)}% (${dayName(DateTime.now())})',
+              'Target to Win >= ${winningThresholdPercent(DateTime.now()).toStringAsFixed(1)}% (${dayName(DateTime.now())})',
               textAlign: TextAlign.center,
               style: const TextStyle(fontSize: 16, color: Colors.black54),
             ),
@@ -3816,13 +3933,13 @@ class TripSummaryScreen extends StatelessWidget {
 
 class RankListScreen extends StatelessWidget {
   const RankListScreen({super.key});
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: const Text('Rank List')),
+      appBar: AppBar(centerTitle: true, title: const Text('Rank List')),
+
       body: ListView.builder(
-        padding: const EdgeInsets.all(12),
+        padding: const EdgeInsets.all(10),
         itemCount: kRanks.length,
         itemBuilder: (context, index) {
           final label = kRanks[index];
@@ -3835,33 +3952,54 @@ class RankListScreen extends StatelessWidget {
           if (index == 9) {
             return Column(
               children: [
-                _rankRow(percentText, label),
+                _rankRow(percentText, label, index),
                 const Divider(),
-                _rankRow('100.0%', '🐐 10: GOAT'),
+                _rankRow('100.0%', '🐐 10: GOAT', 9),
               ],
             );
           }
 
-          return _rankRow(percentText, label);
+          return _rankRow(percentText, label, index);
         },
       ),
     );
   }
 
-  Widget _rankRow(String range, String label) {
-    return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 8),
-      child: Row(
-        children: [
-          SizedBox(
-            width: 90,
-            child: Text(
-              range,
-              style: const TextStyle(fontWeight: FontWeight.w600),
+  Widget _rankRow(String range, String label, int index) {
+    final color = rankColor(index);
+
+    return Card(
+      margin: const EdgeInsets.symmetric(vertical: 4, horizontal: 4),
+      elevation: 2,
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+      child: Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 14),
+        child: Row(
+          children: [
+            // ✅ LEFT SIDE (Rank)
+            Expanded(
+              child: Text(
+                label,
+                style: TextStyle(
+                  fontSize: 21,
+                  fontWeight: FontWeight.w600,
+                  color: color, // ✅ added
+                ),
+              ),
             ),
-          ),
-          Expanded(child: Text(label, style: const TextStyle(fontSize: 16))),
-        ],
+
+            // ✅ RIGHT SIDE (Percentage)
+            Text(
+              range,
+              textAlign: TextAlign.right,
+              style: TextStyle(
+                fontSize: 21,
+                fontWeight: FontWeight.w600,
+                color: color, // ✅ added
+              ),
+            ),
+          ],
+        ),
       ),
     );
   }
@@ -3895,7 +4033,7 @@ class AchievementsScreen extends StatelessWidget {
       });
 
     return Scaffold(
-      appBar: AppBar(title: const Text('Achievements')),
+      appBar: AppBar(centerTitle: true, title: const Text('Achievements')),
       body: ListView.builder(
         padding: const EdgeInsets.all(12),
         itemCount: achievementIds.length,
@@ -3909,12 +4047,17 @@ class AchievementsScreen extends StatelessWidget {
           final isComplete = found == total;
 
           return Card(
-            margin: const EdgeInsets.symmetric(vertical: 6),
+            margin: const EdgeInsets.symmetric(vertical: 6, horizontal: 0),
             child: ListTile(
+              dense: true,
+              contentPadding: const EdgeInsets.symmetric(
+                horizontal: 14,
+                vertical: 2, // 🔽 smaller → tighter rows
+              ),
               title: Text(
                 '$label ($found/$total)',
                 style: TextStyle(
-                  fontSize: 16,
+                  fontSize: 14,
                   fontWeight: isComplete ? FontWeight.bold : FontWeight.normal,
                   color: isComplete ? Colors.green.shade700 : null,
                 ),
