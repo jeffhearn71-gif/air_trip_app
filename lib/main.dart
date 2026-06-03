@@ -946,48 +946,58 @@ class _CategoryScreenState extends State<CategoryScreen> {
 
   Future<List<Trip>> _loadTripsFromFirestore() async {
     final snapshot = await FirebaseFirestore.instance.collection('trips').get();
-
-    return snapshot.docs.map((doc) {
+    final trips = snapshot.docs.map((doc) {
       final data = doc.data();
-      return Trip(
-        tripId: data['tripId'],
-        tripName: data['tripName'],
-        startLocation: data['startLocation'],
-        endLocation: data['endLocation'],
-        score: data['score'],
-        maxScore: data['maxScore'],
-        percent: (data['percent'] as num).toDouble(),
-        itemsFound: data['itemsFound'],
-        maxItemsFound: data['maxItemsFound'],
-        subCategoriesCompleted: data['subCategoriesCompleted'],
-        categoriesCompleted: data['categoriesCompleted'],
-        totalCategories: data['totalCategories'],
-        totalSubCategories: data['totalSubCategories'],
-        finalRankIndex: data['finalRankIndex'],
-        perfectRun: data['perfectRun'],
-        startTime: data['startTime'] is Timestamp
-            ? (data['startTime'] as Timestamp).toDate()
-            : DateTime.parse(data['startTime'] as String),
-        endTime: data['endTime'] is Timestamp
-            ? (data['endTime'] as Timestamp).toDate()
-            : DateTime.parse(data['endTime'] as String),
-        doubleItemsFound: data['doubleItemsFound'],
-        totalDoubleItems: data['totalDoubleItems'],
-        doubleScore: data['doubleScore'],
-        doubleMaxScore: data['doubleMaxScore'],
-        tripleItemsFound: data['tripleItemsFound'] ?? 0,
-        totalTripleItems: data['totalTripleItems'] ?? 0,
-        tripleScore: data['tripleScore'] ?? 0,
-        tripleMaxScore: data['tripleMaxScore'] ?? 0,
 
-        oneScore: data['oneScore'],
-        oneMaxScore: data['oneMaxScore'],
-        twoScore: data['twoScore'],
-        twoMaxScore: data['twoMaxScore'],
-        threeScore: data['threeScore'],
-        threeMaxScore: data['threeMaxScore'],
-        fourScore: data['fourScore'],
-        fourMaxScore: data['fourMaxScore'],
+      int readInt(String key) => (data[key] as num?)?.toInt() ?? 0;
+      double readDouble(String key) => (data[key] as num?)?.toDouble() ?? 0.0;
+      String readString(String key) => (data[key] ?? '').toString();
+      bool readBool(String key) => data[key] == true;
+
+      DateTime readDate(String key) {
+        final value = data[key];
+        if (value is Timestamp) return value.toDate();
+        if (value is String) {
+          final parsed = DateTime.tryParse(value);
+          if (parsed != null) return parsed;
+        }
+        throw FormatException('Invalid $key in trip ${doc.id}: $value');
+      }
+
+      return Trip(
+        tripId: readString('tripId'),
+        tripName: readString('tripName'),
+        startLocation: readString('startLocation'),
+        endLocation: readString('endLocation'),
+        score: readInt('score'),
+        maxScore: readInt('maxScore'),
+        percent: readDouble('percent'),
+        itemsFound: readInt('itemsFound'),
+        maxItemsFound: readInt('maxItemsFound'),
+        subCategoriesCompleted: readInt('subCategoriesCompleted'),
+        categoriesCompleted: readInt('categoriesCompleted'),
+        totalCategories: readInt('totalCategories'),
+        totalSubCategories: readInt('totalSubCategories'),
+        finalRankIndex: readInt('finalRankIndex'),
+        perfectRun: readBool('perfectRun'),
+        startTime: readDate('startTime'),
+        endTime: readDate('endTime'),
+        doubleItemsFound: readInt('doubleItemsFound'),
+        totalDoubleItems: readInt('totalDoubleItems'),
+        doubleScore: readInt('doubleScore'),
+        doubleMaxScore: readInt('doubleMaxScore'),
+        tripleItemsFound: readInt('tripleItemsFound'),
+        totalTripleItems: readInt('totalTripleItems'),
+        tripleScore: readInt('tripleScore'),
+        tripleMaxScore: readInt('tripleMaxScore'),
+        oneScore: readInt('oneScore'),
+        oneMaxScore: readInt('oneMaxScore'),
+        twoScore: readInt('twoScore'),
+        twoMaxScore: readInt('twoMaxScore'),
+        threeScore: readInt('threeScore'),
+        threeMaxScore: readInt('threeMaxScore'),
+        fourScore: readInt('fourScore'),
+        fourMaxScore: readInt('fourMaxScore'),
         completedAchievementIds: List<String>.from(
           data['completedAchievementIds'] ?? [],
         ),
@@ -1000,6 +1010,8 @@ class _CategoryScreenState extends State<CategoryScreen> {
         ),
       );
     }).toList()..sort((a, b) => b.startTime.compareTo(a.startTime));
+
+    return trips;
   }
 
   void _resetRunStateForNewTrip() {
@@ -1960,14 +1972,26 @@ class _CategoryScreenState extends State<CategoryScreen> {
             onSelected: (value) async {
               switch (value) {
                 case 'load':
-                  final trips = await _loadTripsFromFirestore();
-                  if (!mounted) return;
-                  if (trips.isNotEmpty) {
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                        builder: (_) => TripSummaryScreen(trip: trips.first),
-                      ),
+                  try {
+                    final trips = await _loadTripsFromFirestore();
+                    if (!mounted) return;
+
+                    if (trips.isNotEmpty) {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (_) => TripSummaryScreen(trip: trips.first),
+                        ),
+                      );
+                    } else {
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        const SnackBar(content: Text('No trips found')),
+                      );
+                    }
+                  } catch (e) {
+                    if (!mounted) return;
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      SnackBar(content: Text('Failed to load trip data: $e')),
                     );
                   }
                   break;
