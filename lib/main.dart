@@ -236,22 +236,22 @@ const int SFX_ACHIEVEMENT = 6;
 const int SFX_WIN = 7;
 const int SFX_PERFECT = 8;
 const List<String> kRanks = [
-  '😞 0: Noob',
-  '👎 1: Inept',
-  '😴 2: Cringe',
-  '😐 3: Mega-Mid',
-  '👌 4: Mid',
-  '👍 5: Decent',
-  '✨ 6: Slay',
-  '💥 7: Mad-Lit',
-  '🔥 8: Fire',
-  '🦁 9: Apex',
-  '🐐 10: GOAT',
+  '😞 (0) Noob',
+  '👎 (1) Inept',
+  '😴 (2) Cringe',
+  '😐 (3) Mega-Mid',
+  '👌 (4) Mid',
+  '👍 (5) Decent',
+  '✨ (6) Slay',
+  '💥 (7) Mad-Lit',
+  '🔥 (8) Fire',
+  '🦁 (9) Apex',
+  '🐐 (10) GOAT',
 ];
 
 Color rankColor(int idx) {
   const colors = <Color>[
-    Color(0xFFE0E0E0),
+    Color(0xFFBDBDBD),
     Color(0xFF64B5F6),
     Color(0xFF4CAF50),
     Color(0xFFFBC02D),
@@ -2834,7 +2834,7 @@ class _SubCategoryScreenState extends State<SubCategoryScreen> {
               mainAxisAlignment: MainAxisAlignment.start,
               children: [
                 const Text(
-                  'Category Score',
+                  'Category Score: ',
                   style: TextStyle(fontWeight: FontWeight.bold),
                 ),
                 Text(
@@ -3480,7 +3480,7 @@ class _TripHistoryScreenState extends State<TripHistoryScreen> {
                               trip.tripName,
                               style: const TextStyle(
                                 fontWeight: FontWeight.bold,
-                                fontSize: 24,
+                                fontSize: 21,
                               ),
                             ),
                           ),
@@ -4008,7 +4008,7 @@ class RankListScreen extends StatelessWidget {
               child: Text(
                 label,
                 style: TextStyle(
-                  fontSize: 21,
+                  fontSize: 18,
                   fontWeight: FontWeight.w600,
                   color: color, // ✅ added
                 ),
@@ -4020,7 +4020,7 @@ class RankListScreen extends StatelessWidget {
               range,
               textAlign: TextAlign.right,
               style: TextStyle(
-                fontSize: 21,
+                fontSize: 18,
                 fontWeight: FontWeight.w600,
                 color: color, // ✅ added
               ),
