@@ -26,7 +26,7 @@ class CarTripApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: 'Car Trip',
+      title: 'Air Trip',
       theme: ThemeData(
         primarySwatch: Colors.blue,
         visualDensity: VisualDensity.adaptivePlatformDensity,
@@ -1919,7 +1919,7 @@ class _CategoryScreenState extends State<CategoryScreen> {
 
     if (error != null) {
       return Scaffold(
-        appBar: AppBar(title: const Text('Car Trip')),
+        appBar: AppBar(title: const Text('Air Trip')),
         body: Center(
           child: Padding(
             padding: const EdgeInsets.all(16),
@@ -1939,7 +1939,7 @@ class _CategoryScreenState extends State<CategoryScreen> {
     return Scaffold(
       appBar: AppBar(
         title: const Text(
-          'Car Trip',
+          'Air Trip',
           style: TextStyle(fontWeight: FontWeight.bold),
         ),
 
