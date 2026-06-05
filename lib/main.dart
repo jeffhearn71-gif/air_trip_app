@@ -275,18 +275,18 @@ const Map<String, String> achievementLabels = {
   'shop': '🛍️ Shop til you drop!',
   'working': '💼 Working nine-to-five!',
   'baggage': '🧳 Emotional baggage!',
-  'signs': '🪧 The signs were always there!',
-  'wavelength': '📡 We\'re on the same wavelength!',
+  'signs': '🪧 The signs were there!',
+  'wavelength': '📡 Same wavelength!',
   'limp': '🩼 Limping over the finish line!',
-  'head': '🧠 Two heads are better than one!',
+  'head': '🧠 Heads or tails!',
   'glasses': '👓 What a spectacle!',
   'fancy': '✨ Fancy pants!',
   'hat': '🎩 If you wanna get ahead!',
   'sport': '🏅 Good sport!',
   'top': '👕 Top of the tops!',
-  'colour': '🌈 Somewhere over the rainbow!',
-  'boots': '👢 These boots were made for walking!',
-  'shorts': '🩳 You made short work of it!',
+  'colour': '🌈 Over the rainbow!',
+  'boots': '👢 Personal trainer!',
+  'shorts': '🩳 Short work of it!',
   'suit': '🤵 Suits you sir!',
   'birds': '🐦 A little birdie told me!',
   'object': '💎 Object of desire!',
@@ -361,9 +361,19 @@ String dayName(DateTime now) {
 /// 2) Group name -> materialSymbolsMap
 /// 3) Overrides for common buckets
 /// 4) fallback Symbols.help
+
 IconData resolveIcon({required String iconName, required String groupName}) {
   final iconKey = _norm(iconName);
   final groupKey = _norm(groupName);
+
+  // ✅ FORCE OVERRIDES FIRST (before CSV)
+  if (groupKey.contains('people') || groupKey.contains('person')) {
+    return Symbols.accessibility;
+  }
+
+  if (groupKey.contains('airport') || groupKey.contains('terminal')) {
+    return Symbols.flight;
+  }
 
   // ✅ Force override for car category before map lookup
   if (groupKey == 'car' || groupKey.contains('cars')) {
@@ -384,12 +394,21 @@ IconData resolveIcon({required String iconName, required String groupName}) {
 }
 
 String _overrideIconKey(String groupKey) {
+  if (groupKey.contains('people') || groupKey.contains('person')) {
+    return 'accessibility';
+  }
+
+  if (groupKey.contains('airport') || groupKey.contains('terminal')) {
+    return 'flight';
+  }
+
   if (groupKey.contains('building')) return 'location_city';
   if (groupKey == 'car' || groupKey.contains('cars')) return 'directions_car';
   if (groupKey.contains('motorcycle')) return 'motorcycle';
   if (groupKey.contains('playground')) return 'playground';
   if (groupKey.contains('road')) return 'alt_route';
   if (groupKey.contains('misc') || groupKey.contains('item')) return 'category';
+
   return 'category';
 }
 
@@ -3831,6 +3850,17 @@ class TripSummaryScreen extends StatelessWidget {
                   'Doubles Contribution',
                   '${trip.doubleScore} / ${trip.doubleMaxScore} '
                       '(${trip.doubleMaxScore == 0 ? "0" : ((trip.doubleScore / trip.doubleMaxScore) * 100).toStringAsFixed(1)}%)',
+                ),
+
+                _tableRow(
+                  'Triples Found',
+                  '${trip.tripleItemsFound} / ${trip.totalTripleItems}',
+                ),
+
+                _tableRow(
+                  'Triples Contribution',
+                  '${trip.tripleScore} / ${trip.tripleMaxScore} '
+                      '(${trip.tripleMaxScore == 0 ? "0" : ((trip.tripleScore / trip.tripleMaxScore) * 100).toStringAsFixed(1)}%)',
                 ),
 
                 _tableRow(

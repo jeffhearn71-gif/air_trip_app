@@ -5,82 +5,82 @@ Airport,Facilities,Prayer Room,3,FALSE,Airport_Facilities_Prayer Room,Airport_Fa
 Airport,Facilities,Smoking Area,2,FALSE,Airport_Facilities_Smoking Area,Airport_Facilities_Smoking,info,rock,Rock n Roll!
 Airport,Facilities,Showers,4,FALSE,Airport_Facilities_Showers,Airport_Facilities_Showers,info,water,Water you doing!
 Airport,Facilities,Water Fountains,2,FALSE,Airport_Facilities_Water Fountains,Airport_Facilities_Water,info,eating|water,Eatings cheatin'!|Water you doing!
-Airport,Facilities,ATM,1,FALSE,Airport_Facilities_ATM,Airport_Facilities_ATM,info,shop|wavelength,Shop til you drop!|We're on the same wavelength!
+Airport,Facilities,ATM,1,FALSE,Airport_Facilities_ATM,Airport_Facilities_ATM,info,shop|wavelength,Shop til you drop!|Same wavelength!
 Airport,Facilities,Currency Exchange,1,FALSE,Airport_Facilities_Currency Exchange,Airport_Facilities_Currency,info,shop|working,Shop til you drop!|Working nine-to-five!
 Airport,Facilities,Information Desk,1,FALSE,Airport_Facilities_Information Desk,Airport_Facilities_Information,info,working,Working nine-to-five!
 Airport,Facilities,Lost Luggage,1,FALSE,Airport_Facilities_Lost Luggage,Airport_Facilities_Lost,info,baggage|working,Emotional baggage!|Working nine-to-five!
-Airport,Signs,Departures,1,FALSE,Airport_Signs_Departures,Airport_Signs_Departures,flight,signs,The signs were always there!
-Airport,Signs,Arrivals,1,FALSE,Airport_Signs_Arrivals,Airport_Signs_Arrivals,flight,signs,The signs were always there!
-Airport,Signs,Toilets,1,FALSE,Airport_Signs_Toilets,Airport_Signs_Toilets,flight,signs,The signs were always there!
-Airport,Signs,Elevators,1,FALSE,Airport_Signs_Elevators,Airport_Signs_Elevators,flight,signs|wavelength,The signs were always there!|We're on the same wavelength!
-Airport,Signs,Escalator,2,FALSE,Airport_Signs_Escalator,Airport_Signs_Escalator,flight,signs|wavelength,The signs were always there!|We're on the same wavelength!
-Airport,Signs,Accessability,2,FALSE,Airport_Signs_Accessability,Airport_Signs_Accessability,flight,signs|limp,The signs were always there!|Limping over the finish line!
-Airport,Signs,Fire Extinguisher,1,FALSE,Airport_Signs_Fire Extinguisher,Airport_Signs_Fire,flight,signs|rock,The signs were always there!|Rock n Roll!
-Airport,Signs,Emergency Exit,1,FALSE,Airport_Signs_Emergency Exit,Airport_Signs_Emergency,flight,signs,The signs were always there!
-Airport,Signs,No Liquids,2,FALSE,Airport_Signs_No Liquids,Airport_Signs_Liquids,flight,water|signs,Water you doing!|The signs were always there!
-Airport,Signs,Wet Floor Sign,3,FALSE,Airport_Signs_Wet Floor Sign,Airport_Signs_Wet,flight,water|signs,Water you doing!|The signs were always there!
+Airport,Signs,Departures,1,FALSE,Airport_Signs_Departures,Airport_Signs_Departures,flight,signs,The signs were there!
+Airport,Signs,Arrivals,1,FALSE,Airport_Signs_Arrivals,Airport_Signs_Arrivals,flight,signs,The signs were there!
+Airport,Signs,Toilets,1,FALSE,Airport_Signs_Toilets,Airport_Signs_Toilets,flight,signs,The signs were there!
+Airport,Signs,Elevators,1,FALSE,Airport_Signs_Elevators,Airport_Signs_Elevators,flight,signs|wavelength,The signs were there!|Same wavelength!
+Airport,Signs,Escalator,2,FALSE,Airport_Signs_Escalator,Airport_Signs_Escalator,flight,signs|wavelength,The signs were there!|Same wavelength!
+Airport,Signs,Accessability,2,FALSE,Airport_Signs_Accessability,Airport_Signs_Accessability,flight,signs|limp,The signs were there!|Limping over the finish line!
+Airport,Signs,Fire Extinguisher,1,FALSE,Airport_Signs_Fire Extinguisher,Airport_Signs_Fire,flight,signs|rock,The signs were there!|Rock n Roll!
+Airport,Signs,Emergency Exit,1,FALSE,Airport_Signs_Emergency Exit,Airport_Signs_Emergency,flight,signs,The signs were there!
+Airport,Signs,No Liquids,2,FALSE,Airport_Signs_No Liquids,Airport_Signs_Liquids,flight,water|signs,Water you doing!|The signs were there!
+Airport,Signs,Wet Floor Sign,3,FALSE,Airport_Signs_Wet Floor Sign,Airport_Signs_Wet,flight,water|signs,Water you doing!|The signs were there!
 Clothes,Accessories,Bumbag,2,FALSE,Clothes_Accessories_Bumbag,Clothes_Accessories_Bumbag,eyeglasses_2,baggage,Emotional baggage!
-Clothes,Accessories,Facemask,2,FALSE,Clothes_Accessories_Facemask,Clothes_Accessories_Facemask,eyeglasses_3,head,Two heads are better than one!
+Clothes,Accessories,Facemask,2,FALSE,Clothes_Accessories_Facemask,Clothes_Accessories_Facemask,eyeglasses_3,head,Heads or tails!
 Clothes,Accessories,Glasses Colourful,2,FALSE,Clothes_Accessories_Glasses Colourful,Clothes_Accessories_Glasses,eyeglasses_4,glasses,What a spectacle!
-Clothes,Accessories,Head covering,2,FALSE,Clothes_Accessories_Head covering,Clothes_Accessories_Head,eyeglasses_5,hat|head,If you wanna get ahead!|Two heads are better than one!
-Clothes,Accessories,Sunglasses: on head,2,FALSE,Clothes_Accessories_Sunglasses: on head,Clothes_Accessories_Sunglasses_head,eyeglasses_6,head|glasses|fancy,Two heads are better than one!|What a spectacle!|Fancy pants!
-Clothes,Accessories,Sunglasses: on eyes,1,FALSE,Clothes_Accessories_Sunglasses: on eyes,Clothes_Accessories_Sunglasses_eyes,eyeglasses_7,head|glasses|rock|fancy,Two heads are better than one!|What a spectacle!|Rock n Roll!|Fancy pants!
-Clothes,Hats,Beach: Man,3,FALSE,Clothes_Hats_Beach: Man,Clothes_Hats_Beach: Man,chef_hat,hat|head,If you wanna get ahead!|Two heads are better than one!
-Clothes,Hats,Beach: Woman,3,FALSE,Clothes_Hats_Beach: Woman,Clothes_Hats_Beach: Woman,chef_hat,hat|head,If you wanna get ahead!|Two heads are better than one!
-Clothes,Hats,Cap: Fashion Label,2,FALSE,Clothes_Hats_Cap: Fashion Label,Clothes_Hats_Cap: Fashion,chef_hat,hat|head,If you wanna get ahead!|Two heads are better than one!
-Clothes,Hats,Cap: Sportswear Brand,2,FALSE,Clothes_Hats_Cap: Sportswear Brand,Clothes_Hats_Cap: Sportswear,chef_hat,hat|head|sport,If you wanna get ahead!|Two heads are better than one!|Good sport!
-Clothes,Hats,Cap: US Sports Team,2,FALSE,Clothes_Hats_Cap: US Sports Team,Clothes_Hats_Cap: US,chef_hat,hat|head|sport,If you wanna get ahead!|Two heads are better than one!|Good sport!
-Clothes,Tops - Colour,Green,2,FALSE,Clothes_Tops - Colour_Green,Clothes_Tops - Colour_Green,apparel,top|colour,Top of the tops!|Somewhere over the rainbow!
-Clothes,Tops - Colour,Orange,3,FALSE,Clothes_Tops - Colour_Orange,Clothes_Tops - Colour_Orange,apparel,top|colour,Top of the tops!|Somewhere over the rainbow!
-Clothes,Tops - Colour,Red,2,FALSE,Clothes_Tops - Colour_Red,Clothes_Tops - Colour_Red,apparel,top|colour,Top of the tops!|Somewhere over the rainbow!
-Clothes,Tops - Colour,Yellow,3,FALSE,Clothes_Tops - Colour_Yellow,Clothes_Tops - Colour_Yellow,apparel,top|colour,Top of the tops!|Somewhere over the rainbow!
+Clothes,Accessories,Head covering,2,FALSE,Clothes_Accessories_Head covering,Clothes_Accessories_Head,eyeglasses_5,hat|head,If you wanna get ahead!|Heads or tails!
+Clothes,Accessories,Sunglasses: on head,2,FALSE,Clothes_Accessories_Sunglasses: on head,Clothes_Accessories_Sunglasses_head,eyeglasses_6,head|glasses|fancy,Heads or tails!|What a spectacle!|Fancy pants!
+Clothes,Accessories,Sunglasses: on eyes,1,FALSE,Clothes_Accessories_Sunglasses: on eyes,Clothes_Accessories_Sunglasses_eyes,eyeglasses_7,head|glasses|rock|fancy,Heads or tails!|What a spectacle!|Rock n Roll!|Fancy pants!
+Clothes,Hats,Beach: Man,3,FALSE,Clothes_Hats_Beach: Man,Clothes_Hats_Beach: Man,chef_hat,hat|head,If you wanna get ahead!|Heads or tails!
+Clothes,Hats,Beach: Woman,3,FALSE,Clothes_Hats_Beach: Woman,Clothes_Hats_Beach: Woman,chef_hat,hat|head,If you wanna get ahead!|Heads or tails!
+Clothes,Hats,Cap: Fashion Label,2,FALSE,Clothes_Hats_Cap: Fashion Label,Clothes_Hats_Cap: Fashion,chef_hat,hat|head,If you wanna get ahead!|Heads or tails!
+Clothes,Hats,Cap: Sportswear Brand,2,FALSE,Clothes_Hats_Cap: Sportswear Brand,Clothes_Hats_Cap: Sportswear,chef_hat,hat|head|sport,If you wanna get ahead!|Heads or tails!|Good sport!
+Clothes,Hats,Cap: US Sports Team,2,FALSE,Clothes_Hats_Cap: US Sports Team,Clothes_Hats_Cap: US,chef_hat,hat|head|sport,If you wanna get ahead!|Heads or tails!|Good sport!
+Clothes,Tops - Colour,Green,2,FALSE,Clothes_Tops - Colour_Green,Clothes_Tops - Colour_Green,apparel,top|colour,Top of the tops!|Over the rainbow!
+Clothes,Tops - Colour,Orange,3,FALSE,Clothes_Tops - Colour_Orange,Clothes_Tops - Colour_Orange,apparel,top|colour,Top of the tops!|Over the rainbow!
+Clothes,Tops - Colour,Red,2,FALSE,Clothes_Tops - Colour_Red,Clothes_Tops - Colour_Red,apparel,top|colour,Top of the tops!|Over the rainbow!
+Clothes,Tops - Colour,Yellow,3,FALSE,Clothes_Tops - Colour_Yellow,Clothes_Tops - Colour_Yellow,apparel,top|colour,Top of the tops!|Over the rainbow!
 Clothes,Tops - General,Hawaiin,3,FALSE,Clothes_Tops - General_Hawaiin,Clothes_Tops - General_Hawaiin,apparel,top,Top of the tops!
 Clothes,Tops - General,Group Holiday Shirts,4,FALSE,Clothes_Tops - General_Group Holiday Shirts,Clothes_Tops - General_Group,apparel,top,Top of the tops!
 Clothes,Tops - Sport,Cricket,3,FALSE,Clothes_Tops - Sport_Cricket,Clothes_Tops - Sport_Cricket,apparel,top|sport,Top of the tops!|Good sport!
 Clothes,Tops - Sport,Football: Other,2,FALSE,Clothes_Tops - Sport_Football: Other,Clothes_Tops - Sport_Other,apparel,top|sport,Top of the tops!|Good sport!
 Clothes,Tops - Sport,Football: Premier,1,FALSE,Clothes_Tops - Sport_Football: Premier,Clothes_Tops - Sport_Premier,apparel,top|sport,Top of the tops!|Good sport!
 Clothes,Tops - Sport,Rugby,2,FALSE,Clothes_Tops - Sport_Rugby,Clothes_Tops - Sport_Rugby,apparel,top|sport,Top of the tops!|Good sport!
-Clothes,Shoes - Colour,Black,1,FALSE,Clothes_Shoes - Colour_Black,Clothes_Shoes - Colour_Black,palette,boots|colour,These boots were made for walking!|Somewhere over the rainbow!
-Clothes,Shoes - Colour,Blue,3,FALSE,Clothes_Shoes - Colour_Blue,Clothes_Shoes - Colour_Blue,palette,boots|colour,These boots were made for walking!|Somewhere over the rainbow!
-Clothes,Shoes - Colour,Brown,1,FALSE,Clothes_Shoes - Colour_Brown,Clothes_Shoes - Colour_Brown,palette,boots|colour,These boots were made for walking!|Somewhere over the rainbow!
-Clothes,Shoes - Colour,Green,3,FALSE,Clothes_Shoes - Colour_Green,Clothes_Shoes - Colour_Green,palette,boots|colour,These boots were made for walking!|Somewhere over the rainbow!
-Clothes,Shoes - Colour,Orange,4,FALSE,Clothes_Shoes - Colour_Orange,Clothes_Shoes - Colour_Orange,palette,boots|colour,These boots were made for walking!|Somewhere over the rainbow!
-Clothes,Shoes - Colour,Pink,2,FALSE,Clothes_Shoes - Colour_Pink,Clothes_Shoes - Colour_Pink,palette,boots|colour,These boots were made for walking!|Somewhere over the rainbow!
-Clothes,Shoes - Colour,Red,2,FALSE,Clothes_Shoes - Colour_Red,Clothes_Shoes - Colour_Red,palette,boots|colour,These boots were made for walking!|Somewhere over the rainbow!
-Clothes,Shoes - Colour,Yellow,3,FALSE,Clothes_Shoes - Colour_Yellow,Clothes_Shoes - Colour_Yellow,palette,boots|colour,These boots were made for walking!|Somewhere over the rainbow!
-Clothes,Shoes - Makes,Adidas,1,FALSE,Clothes_Shoes - Makes_Adidas,Clothes_Shoes - Makes_Adidas,shoe_cleats,boots|sport,These boots were made for walking!|Good sport!
-Clothes,Shoes - Makes,Asics,2,FALSE,Clothes_Shoes - Makes_Asics,Clothes_Shoes - Makes_Asics,shoe_cleats,boots|sport,These boots were made for walking!|Good sport!
-Clothes,Shoes - Makes,Converse,2,FALSE,Clothes_Shoes - Makes_Converse,Clothes_Shoes - Makes_Converse,shoe_cleats,boots|sport,These boots were made for walking!|Good sport!
-Clothes,Shoes - Makes,New Balance,2,FALSE,Clothes_Shoes - Makes_New Balance,Clothes_Shoes - Makes_Balance,shoe_cleats,boots|sport,These boots were made for walking!|Good sport!
-Clothes,Shoes - Makes,Nike,1,FALSE,Clothes_Shoes - Makes_Nike,Clothes_Shoes - Makes_Nike,shoe_cleats,boots|sport,These boots were made for walking!|Good sport!
-Clothes,Shoes - Makes,Puma,2,FALSE,Clothes_Shoes - Makes_Puma,Clothes_Shoes - Makes_Puma,shoe_cleats,boots|sport,These boots were made for walking!|Good sport!
-Clothes,Shoes - Makes,Reebok,3,FALSE,Clothes_Shoes - Makes_Reebok,Clothes_Shoes - Makes_Reebok,shoe_cleats,boots|sport,These boots were made for walking!|Good sport!
-Clothes,Shoes - Makes,Skechers,2,FALSE,Clothes_Shoes - Makes_Skechers,Clothes_Shoes - Makes_Skechers,shoe_cleats,boots,These boots were made for walking!
-Clothes,Shoes - Makes,Vans,3,FALSE,Clothes_Shoes - Makes_Vans,Clothes_Shoes - Makes_Vans,shoe_cleats,boots,These boots were made for walking!
-Clothes,Shoes - General,Crocs,3,FALSE,Clothes_Shoes - General_Crocs,Clothes_Shoes - General_Crocs,steps,boots,These boots were made for walking!
-Clothes,Shoes - General,Flip Flops,2,FALSE,Clothes_Shoes - General_Flip Flops,Clothes_Shoes - General_Flops,steps,boots,These boots were made for walking!
-Clothes,Shoes - General,Sandals,1,FALSE,Clothes_Shoes - General_Sandals,Clothes_Shoes - General_Sandals,steps,boots,These boots were made for walking!
-Clothes,Shoes - General,High heels,1,FALSE,Clothes_Shoes - General_High heels,Clothes_Shoes - General_Heels,steps,boots|fancy,These boots were made for walking!|Fancy pants!
-Clothes,Shoes - General,Velcro,2,FALSE,Clothes_Shoes - General_Velcro,Clothes_Shoes - General_Velcro,steps,boots,These boots were made for walking!
-Clothes,Shorts - Colours,Black,1,FALSE,Clothes_Shorts - Colours_Black,Clothes_Shorts - Colours_Black,laundry,shorts|colour,You made short work of it!|Somewhere over the rainbow!
-Clothes,Shorts - Colours,Blue,1,FALSE,Clothes_Shorts - Colours_Blue,Clothes_Shorts - Colours_Blue,laundry,shorts|colour,You made short work of it!|Somewhere over the rainbow!
-Clothes,Shorts - Colours,Green,3,FALSE,Clothes_Shorts - Colours_Green,Clothes_Shorts - Colours_Green,laundry,shorts|colour,You made short work of it!|Somewhere over the rainbow!
-Clothes,Shorts - Colours,Orange,4,FALSE,Clothes_Shorts - Colours_Orange,Clothes_Shorts - Colours_Orange,laundry,shorts|colour,You made short work of it!|Somewhere over the rainbow!
-Clothes,Shorts - Colours,Red,2,FALSE,Clothes_Shorts - Colours_Red,Clothes_Shorts - Colours_Red,laundry,shorts|colour,You made short work of it!|Somewhere over the rainbow!
-Clothes,Shorts - Colours,Yellow,4,FALSE,Clothes_Shorts - Colours_Yellow,Clothes_Shorts - Colours_Yellow,laundry,shorts|colour,You made short work of it!|Somewhere over the rainbow!
+Clothes,Shoes - Colour,Black,1,FALSE,Clothes_Shoes - Colour_Black,Clothes_Shoes - Colour_Black,palette,boots|colour,Personal trainer!|Over the rainbow!
+Clothes,Shoes - Colour,Blue,3,FALSE,Clothes_Shoes - Colour_Blue,Clothes_Shoes - Colour_Blue,palette,boots|colour,Personal trainer!|Over the rainbow!
+Clothes,Shoes - Colour,Brown,1,FALSE,Clothes_Shoes - Colour_Brown,Clothes_Shoes - Colour_Brown,palette,boots|colour,Personal trainer!|Over the rainbow!
+Clothes,Shoes - Colour,Green,3,FALSE,Clothes_Shoes - Colour_Green,Clothes_Shoes - Colour_Green,palette,boots|colour,Personal trainer!|Over the rainbow!
+Clothes,Shoes - Colour,Orange,4,FALSE,Clothes_Shoes - Colour_Orange,Clothes_Shoes - Colour_Orange,palette,boots|colour,Personal trainer!|Over the rainbow!
+Clothes,Shoes - Colour,Pink,2,FALSE,Clothes_Shoes - Colour_Pink,Clothes_Shoes - Colour_Pink,palette,boots|colour,Personal trainer!|Over the rainbow!
+Clothes,Shoes - Colour,Red,2,FALSE,Clothes_Shoes - Colour_Red,Clothes_Shoes - Colour_Red,palette,boots|colour,Personal trainer!|Over the rainbow!
+Clothes,Shoes - Colour,Yellow,3,FALSE,Clothes_Shoes - Colour_Yellow,Clothes_Shoes - Colour_Yellow,palette,boots|colour,Personal trainer!|Over the rainbow!
+Clothes,Shoes - Makes,Adidas,1,FALSE,Clothes_Shoes - Makes_Adidas,Clothes_Shoes - Makes_Adidas,shoe_cleats,boots|sport,Personal trainer!|Good sport!
+Clothes,Shoes - Makes,Asics,2,FALSE,Clothes_Shoes - Makes_Asics,Clothes_Shoes - Makes_Asics,shoe_cleats,boots|sport,Personal trainer!|Good sport!
+Clothes,Shoes - Makes,Converse,2,FALSE,Clothes_Shoes - Makes_Converse,Clothes_Shoes - Makes_Converse,shoe_cleats,boots|sport,Personal trainer!|Good sport!
+Clothes,Shoes - Makes,New Balance,2,FALSE,Clothes_Shoes - Makes_New Balance,Clothes_Shoes - Makes_Balance,shoe_cleats,boots|sport,Personal trainer!|Good sport!
+Clothes,Shoes - Makes,Nike,1,FALSE,Clothes_Shoes - Makes_Nike,Clothes_Shoes - Makes_Nike,shoe_cleats,boots|sport,Personal trainer!|Good sport!
+Clothes,Shoes - Makes,Puma,2,FALSE,Clothes_Shoes - Makes_Puma,Clothes_Shoes - Makes_Puma,shoe_cleats,boots|sport,Personal trainer!|Good sport!
+Clothes,Shoes - Makes,Reebok,3,FALSE,Clothes_Shoes - Makes_Reebok,Clothes_Shoes - Makes_Reebok,shoe_cleats,boots|sport,Personal trainer!|Good sport!
+Clothes,Shoes - Makes,Skechers,2,FALSE,Clothes_Shoes - Makes_Skechers,Clothes_Shoes - Makes_Skechers,shoe_cleats,boots,Personal trainer!
+Clothes,Shoes - Makes,Vans,3,FALSE,Clothes_Shoes - Makes_Vans,Clothes_Shoes - Makes_Vans,shoe_cleats,boots,Personal trainer!
+Clothes,Shoes - General,Crocs,3,FALSE,Clothes_Shoes - General_Crocs,Clothes_Shoes - General_Crocs,steps,boots,Personal trainer!
+Clothes,Shoes - General,Flip Flops,2,FALSE,Clothes_Shoes - General_Flip Flops,Clothes_Shoes - General_Flops,steps,boots,Personal trainer!
+Clothes,Shoes - General,Sandals,1,FALSE,Clothes_Shoes - General_Sandals,Clothes_Shoes - General_Sandals,steps,boots,Personal trainer!
+Clothes,Shoes - General,High heels,1,FALSE,Clothes_Shoes - General_High heels,Clothes_Shoes - General_Heels,steps,boots|fancy,Personal trainer!|Fancy pants!
+Clothes,Shoes - General,Velcro,2,FALSE,Clothes_Shoes - General_Velcro,Clothes_Shoes - General_Velcro,steps,boots,Personal trainer!
+Clothes,Shorts - Colours,Black,1,FALSE,Clothes_Shorts - Colours_Black,Clothes_Shorts - Colours_Black,laundry,shorts|colour,Short work of it!|Over the rainbow!
+Clothes,Shorts - Colours,Blue,1,FALSE,Clothes_Shorts - Colours_Blue,Clothes_Shorts - Colours_Blue,laundry,shorts|colour,Short work of it!|Over the rainbow!
+Clothes,Shorts - Colours,Green,3,FALSE,Clothes_Shorts - Colours_Green,Clothes_Shorts - Colours_Green,laundry,shorts|colour,Short work of it!|Over the rainbow!
+Clothes,Shorts - Colours,Orange,4,FALSE,Clothes_Shorts - Colours_Orange,Clothes_Shorts - Colours_Orange,laundry,shorts|colour,Short work of it!|Over the rainbow!
+Clothes,Shorts - Colours,Red,2,FALSE,Clothes_Shorts - Colours_Red,Clothes_Shorts - Colours_Red,laundry,shorts|colour,Short work of it!|Over the rainbow!
+Clothes,Shorts - Colours,Yellow,4,FALSE,Clothes_Shorts - Colours_Yellow,Clothes_Shorts - Colours_Yellow,laundry,shorts|colour,Short work of it!|Over the rainbow!
 Clothes,Outfits,Animal Print,4,FALSE,Clothes_Outfits_Animal Print,Clothes_Outfits_Animal,checkroom,suit|fancy,Suits you sir!|Fancy pants!
 Clothes,Outfits,Suit,2,FALSE,Clothes_Outfits_Suit,Clothes_Outfits_Suit,checkroom,suit|fancy,Suits you sir!|Fancy pants!
 Clothes,Outfits,Tracksuit,2,FALSE,Clothes_Outfits_Tracksuit,Clothes_Outfits_Tracksuit,checkroom,suit|sport,Suits you sir!|Good sport!
-Luggage,Bag - Colour,Blue,1,FALSE,Luggage_Bag - Colour_Blue,Luggage_Bag - Colour_Blue,luggage,baggage|colour,Emotional baggage!|Somewhere over the rainbow!
-Luggage,Bag - Colour,Green,1,FALSE,Luggage_Bag - Colour_Green,Luggage_Bag - Colour_Green,luggage,baggage|colour,Emotional baggage!|Somewhere over the rainbow!
-Luggage,Bag - Colour,Orange,3,FALSE,Luggage_Bag - Colour_Orange,Luggage_Bag - Colour_Orange,luggage,baggage|colour,Emotional baggage!|Somewhere over the rainbow!
-Luggage,Bag - Colour,Red,2,FALSE,Luggage_Bag - Colour_Red,Luggage_Bag - Colour_Red,luggage,baggage|colour,Emotional baggage!|Somewhere over the rainbow!
-Luggage,Bag - Colour,Yellow,3,FALSE,Luggage_Bag - Colour_Yellow,Luggage_Bag - Colour_Yellow,luggage,baggage|colour,Emotional baggage!|Somewhere over the rainbow!
-Luggage,Case Strap - Colour,Blue,2,FALSE,Luggage_Case Strap - Colour_Blue,Luggage_Case Strap - Blue,checked_bag,baggage|colour,Emotional baggage!|Somewhere over the rainbow!
-Luggage,Case Strap - Colour,Green,2,FALSE,Luggage_Case Strap - Colour_Green,Luggage_Case Strap - Green,checked_bag,baggage|colour,Emotional baggage!|Somewhere over the rainbow!
-Luggage,Case Strap - Colour,Orange,4,FALSE,Luggage_Case Strap - Colour_Orange,Luggage_Case Strap - Orange,checked_bag,baggage|colour,Emotional baggage!|Somewhere over the rainbow!
-Luggage,Case Strap - Colour,Red,2,FALSE,Luggage_Case Strap - Colour_Red,Luggage_Case Strap - Red,checked_bag,baggage|colour,Emotional baggage!|Somewhere over the rainbow!
-Luggage,Case Strap - Colour,Yellow,3,FALSE,Luggage_Case Strap - Colour_Yellow,Luggage_Case Strap - Yellow,checked_bag,baggage|colour,Emotional baggage!|Somewhere over the rainbow!
+Luggage,Bag - Colour,Blue,1,FALSE,Luggage_Bag - Colour_Blue,Luggage_Bag - Colour_Blue,luggage,baggage|colour,Emotional baggage!|Over the rainbow!
+Luggage,Bag - Colour,Green,1,FALSE,Luggage_Bag - Colour_Green,Luggage_Bag - Colour_Green,luggage,baggage|colour,Emotional baggage!|Over the rainbow!
+Luggage,Bag - Colour,Orange,3,FALSE,Luggage_Bag - Colour_Orange,Luggage_Bag - Colour_Orange,luggage,baggage|colour,Emotional baggage!|Over the rainbow!
+Luggage,Bag - Colour,Red,2,FALSE,Luggage_Bag - Colour_Red,Luggage_Bag - Colour_Red,luggage,baggage|colour,Emotional baggage!|Over the rainbow!
+Luggage,Bag - Colour,Yellow,3,FALSE,Luggage_Bag - Colour_Yellow,Luggage_Bag - Colour_Yellow,luggage,baggage|colour,Emotional baggage!|Over the rainbow!
+Luggage,Case Strap - Colour,Blue,2,FALSE,Luggage_Case Strap - Colour_Blue,Luggage_Case Strap - Blue,checked_bag,baggage|colour,Emotional baggage!|Over the rainbow!
+Luggage,Case Strap - Colour,Green,2,FALSE,Luggage_Case Strap - Colour_Green,Luggage_Case Strap - Green,checked_bag,baggage|colour,Emotional baggage!|Over the rainbow!
+Luggage,Case Strap - Colour,Orange,4,FALSE,Luggage_Case Strap - Colour_Orange,Luggage_Case Strap - Orange,checked_bag,baggage|colour,Emotional baggage!|Over the rainbow!
+Luggage,Case Strap - Colour,Red,2,FALSE,Luggage_Case Strap - Colour_Red,Luggage_Case Strap - Red,checked_bag,baggage|colour,Emotional baggage!|Over the rainbow!
+Luggage,Case Strap - Colour,Yellow,3,FALSE,Luggage_Case Strap - Colour_Yellow,Luggage_Case Strap - Yellow,checked_bag,baggage|colour,Emotional baggage!|Over the rainbow!
 Luggage,Style,Broken and Taped,3,FALSE,Luggage_Style_Broken and Taped,Luggage_Style_Broken,travel_luggage_and_bags,baggage,Emotional baggage!
 Luggage,Style,Designer,2,FALSE,Luggage_Style_Designer,Luggage_Style_Designer,travel_luggage_and_bags,baggage|shop|fancy,Emotional baggage!|Shop til you drop!|Fancy pants!
 Luggage,Style,Duty-Free Bag,1,FALSE,Luggage_Style_Duty-Free Bag,Luggage_Style_Duty-Free,travel_luggage_and_bags,baggage,Emotional baggage!
@@ -99,16 +99,16 @@ Misc - Items,Birds - Species,Pigeon,1,FALSE,Misc - Items_Birds - Species_Pigeon,
 Misc - Items,Objects,Balloon,3,FALSE,Misc - Items_Objects_Balloon,Misc - Items_Objects_Balloon,category,kids|object,The kids are alright!|Object of desire!
 Misc - Items,Objects,Book,1,FALSE,Misc - Items_Objects_Book,Misc - Items_Objects_Book,category,object,Object of desire!
 Misc - Items,Objects,Coffee Cup Holder,2,FALSE,Misc - Items_Objects_Coffee Cup Holder,Misc - Items_Objects_Holder,category,eating|object,Eatings cheatin'!|Object of desire!
-Misc - Items,Objects,Headphones Head,1,FALSE,Misc - Items_Objects_Headphones Head,Misc - Items_Objects_Head,category,head|object|wavelength,Two heads are better than one!|Object of desire!|We're on the same wavelength!
-Misc - Items,Objects,Headphones Neck,1,FALSE,Misc - Items_Objects_Headphones Neck,Misc - Items_Objects_Neck,category,head|object|wavelength,Two heads are better than one!|Object of desire!|We're on the same wavelength!
-Misc - Items,Objects,Neck Pillow,2,FALSE,Misc - Items_Objects_Neck Pillow,Misc - Items_Objects_Pillow,category,head|object,Two heads are better than one!|Object of desire!
+Misc - Items,Objects,Headphones Head,1,FALSE,Misc - Items_Objects_Headphones Head,Misc - Items_Objects_Head,category,head|object|wavelength,Heads or tails!|Object of desire!|Same wavelength!
+Misc - Items,Objects,Headphones Neck,1,FALSE,Misc - Items_Objects_Headphones Neck,Misc - Items_Objects_Neck,category,head|object|wavelength,Heads or tails!|Object of desire!|Same wavelength!
+Misc - Items,Objects,Neck Pillow,2,FALSE,Misc - Items_Objects_Neck Pillow,Misc - Items_Objects_Pillow,category,head|object,Heads or tails!|Object of desire!
 Misc - Items,Objects,Pushchair,3,FALSE,Misc - Items_Objects_Pushchair,Misc - Items_Objects_Pushchair,category,kids|object,The kids are alright!|Object of desire!
 Misc - Items,Objects,Wheelchair,3,FALSE,Misc - Items_Objects_Wheelchair,Misc - Items_Objects_Wheelchair,category,object|limp,Object of desire!|Limping over the finish line!
 People,Accessories,Crutch,4,FALSE,People_Accessories_Crutch,People_Accessories_Crutch,settings_accessibility,limp,Limping over the finish line!
 People,Accessories,Cuddly Toy,2,FALSE,People_Accessories_Cuddly Toy,People_Accessories_Cuddly,settings_accessibility,kids,The kids are alright!
-People,Accessories,Eyebrow,3,FALSE,People_Accessories_Eyebrow,People_Accessories_Eyebrow,settings_accessibility,head|rock,Two heads are better than one!|Rock n Roll!
-People,Accessories,Lip,3,FALSE,People_Accessories_Lip,People_Accessories_Lip,settings_accessibility,head|rock,Two heads are better than one!|Rock n Roll!
-People,Accessories,Nose,2,FALSE,People_Accessories_Nose,People_Accessories_Nose,settings_accessibility,head|rock,Two heads are better than one!|Rock n Roll!
+People,Accessories,Eyebrow,3,FALSE,People_Accessories_Eyebrow,People_Accessories_Eyebrow,settings_accessibility,head|rock,Heads or tails!|Rock n Roll!
+People,Accessories,Lip,3,FALSE,People_Accessories_Lip,People_Accessories_Lip,settings_accessibility,head|rock,Heads or tails!|Rock n Roll!
+People,Accessories,Nose,2,FALSE,People_Accessories_Nose,People_Accessories_Nose,settings_accessibility,head|rock,Heads or tails!|Rock n Roll!
 People,Accessories,Tattoo,1,FALSE,People_Accessories_Tattoo,People_Accessories_Tattoo,settings_accessibility,rock,Rock n Roll!
 People,Activity,Backpack 1-Strap,1,FALSE,People_Activity_Backpack 1-Strap,People_Activity_Backpack 1,arrow_circle_up,baggage|do_it,Emotional baggage!|Do it!
 People,Activity,Backpack 2-Straps,1,FALSE,People_Activity_Backpack 2-Straps,People_Activity_Backpack 2,arrow_circle_up,baggage|do_it,Emotional baggage!|Do it!
@@ -123,7 +123,7 @@ People,Activity,Removing Belt,2,FALSE,People_Activity_Removing Belt,People_Activ
 People,Activity,Removing Shoes,1,FALSE,People_Activity_Removing Shoes,People_Activity_Shoes,arrow_circle_up,do_it,Do it!
 People,Activity,Running,2,FALSE,People_Activity_Running,People_Activity_Running,arrow_circle_up,do_it,Do it!
 People,Activity,Sleeping,2,FALSE,People_Activity_Sleeping,People_Activity_Sleeping,arrow_circle_up,do_it|quiet,Do it!|Having some quiet time!
-People,Activity,Talking on Phone,2,FALSE,People_Activity_Talking on Phone,People_Activity_Talking,arrow_circle_up,head|do_it|wavelength,Two heads are better than one!|Do it!|We're on the same wavelength!
+People,Activity,Talking on Phone,2,FALSE,People_Activity_Talking on Phone,People_Activity_Talking,arrow_circle_up,head|do_it|wavelength,Heads or tails!|Do it!|Same wavelength!
 People,Children,Crying,3,FALSE,People_Children_Crying,People_Children_Crying,child_hat,kids,The kids are alright!
 People,Children,Laying on the floor,3,FALSE,People_Children_Laying on the floor,People_Children_Laying,child_hat,kids,The kids are alright!
 People,Children,Papoose,4,FALSE,People_Children_Papoose,People_Children_Papoose,child_hat,kids,The kids are alright!
@@ -138,15 +138,15 @@ People,Staff,Luggage Handler,1,FALSE,People_Staff_Luggage Handler,People_Staff_L
 People,Staff,Pilot in Uniform,3,FALSE,People_Staff_Pilot in Uniform,People_Staff_Pilot,local_police,working,Working nine-to-five!
 People,Staff,Police,3,FALSE,People_Staff_Police,People_Staff_Police,local_police,working,Working nine-to-five!
 People,Staff,Sniffer Dog,4,FALSE,People_Staff_Sniffer Dog,People_Staff_Sniffer,local_police,working,Working nine-to-five!
-People,Hair,Bald with Beard,2,FALSE,People_Hair_Bald with Beard,People_Hair_Bald_Beard,content_cut,hair|head,Hair today gone tomorrow!|Two heads are better than one!
-People,Hair,Bald with Glasses,2,FALSE,People_Hair_Bald with Glasses,People_Hair_Bald_Glasses,content_cut,hair|head|glasses,Hair today gone tomorrow!|Two heads are better than one!|What a spectacle!
-People,Hair,Bald Woman (Skinhead),3,FALSE,People_Hair_Bald Woman (Skinhead),People_Hair_Skinhead,content_cut,hair|head,Hair today gone tomorrow!|Two heads are better than one!
-People,Hair,Colour: Blue or Green,3,FALSE,People_Hair_Colour: Blue or Green,People_Hair_Blue,content_cut,hair|head|colour,Hair today gone tomorrow!|Two heads are better than one!|Somewhere over the rainbow!
-People,Hair,Colour: Ginger,2,FALSE,People_Hair_Colour: Ginger,People_Hair_Ginger,content_cut,hair|head|colour,Hair today gone tomorrow!|Two heads are better than one!|Somewhere over the rainbow!
-People,Hair,Colour: Other,2,FALSE,People_Hair_Colour: Other,People_Hair_Other,content_cut,hair|head|colour,Hair today gone tomorrow!|Two heads are better than one!|Somewhere over the rainbow!
-People,Hair,Colour: Pink or Red,3,FALSE,People_Hair_Colour: Pink or Red,People_Hair_Pink,content_cut,hair|head|colour,Hair today gone tomorrow!|Two heads are better than one!|Somewhere over the rainbow!
-People,Hair,Corn Rows,4,FALSE,People_Hair_Corn Rows,People_Hair_Corn,content_cut,hair|head,Hair today gone tomorrow!|Two heads are better than one!
-People,Hair,False Eyelashes,2,FALSE,People_Hair_False Eyelashes,People_Hair_Eyelashes,content_cut,hair|head,Hair today gone tomorrow!|Two heads are better than one!
+People,Hair,Bald with Beard,2,FALSE,People_Hair_Bald with Beard,People_Hair_Bald_Beard,content_cut,hair|head,Hair today gone tomorrow!|Heads or tails!
+People,Hair,Bald with Glasses,2,FALSE,People_Hair_Bald with Glasses,People_Hair_Bald_Glasses,content_cut,hair|head|glasses,Hair today gone tomorrow!|Heads or tails!|What a spectacle!
+People,Hair,Bald Woman (Skinhead),3,FALSE,People_Hair_Bald Woman (Skinhead),People_Hair_Skinhead,content_cut,hair|head,Hair today gone tomorrow!|Heads or tails!
+People,Hair,Colour: Blue or Green,3,FALSE,People_Hair_Colour: Blue or Green,People_Hair_Blue,content_cut,hair|head|colour,Hair today gone tomorrow!|Heads or tails!|Over the rainbow!
+People,Hair,Colour: Ginger,2,FALSE,People_Hair_Colour: Ginger,People_Hair_Ginger,content_cut,hair|head|colour,Hair today gone tomorrow!|Heads or tails!|Over the rainbow!
+People,Hair,Colour: Other,2,FALSE,People_Hair_Colour: Other,People_Hair_Other,content_cut,hair|head|colour,Hair today gone tomorrow!|Heads or tails!|Over the rainbow!
+People,Hair,Colour: Pink or Red,3,FALSE,People_Hair_Colour: Pink or Red,People_Hair_Pink,content_cut,hair|head|colour,Hair today gone tomorrow!|Heads or tails!|Over the rainbow!
+People,Hair,Corn Rows,4,FALSE,People_Hair_Corn Rows,People_Hair_Corn,content_cut,hair|head,Hair today gone tomorrow!|Heads or tails!
+People,Hair,False Eyelashes,2,FALSE,People_Hair_False Eyelashes,People_Hair_Eyelashes,content_cut,hair|head,Hair today gone tomorrow!|Heads or tails!
 Shops,Consumables,Alcohol Display,1,FALSE,Shops_Consumables_Alcohol Display,Shops_Consumables_Alcohol,dining,eating|rock,Eatings cheatin'!|Rock n Roll!
 Shops,Consumables,Bar,1,FALSE,Shops_Consumables_Bar,Shops_Consumables_Bar,dining,eating|rock,Eatings cheatin'!|Rock n Roll!
 Shops,Consumables,Coffee,1,FALSE,Shops_Consumables_Coffee,Shops_Consumables_Coffee,dining,eating,Eatings cheatin'!
@@ -154,12 +154,12 @@ Shops,Consumables,Duty-Free,1,FALSE,Shops_Consumables_Duty-Free,Shops_Consumable
 Shops,Consumables,Fast Food,1,FALSE,Shops_Consumables_Fast Food,Shops_Consumables_Fast,dining,eating,Eatings cheatin'!
 Shops,Consumables,Restaurant,1,FALSE,Shops_Consumables_Restaurant,Shops_Consumables_Restaurant,dining,eating,Eatings cheatin'!
 Shops,Consumables,Tobacco,1,FALSE,Shops_Consumables_Tobacco,Shops_Consumables_Tobacco,dining,eating|rock,Eatings cheatin'!|Rock n Roll!
-Shops,Consumables,Vending Machine,3,FALSE,Shops_Consumables_Vending Machine,Shops_Consumables_Vending,dining,eating|wavelength,Eatings cheatin'!|We're on the same wavelength!
+Shops,Consumables,Vending Machine,3,FALSE,Shops_Consumables_Vending Machine,Shops_Consumables_Vending,dining,eating|wavelength,Eatings cheatin'!|Same wavelength!
 Shops,Consumables,Water Refill Station,1,FALSE,Shops_Consumables_Water Refill Station,Shops_Consumables_Water,dining,eating|water,Eatings cheatin'!|Water you doing!
 Shops,Retail,Books,1,FALSE,Shops_Retail_Books,Shops_Retail_Books,shopping_bag,shop,Shop til you drop!
 Shops,Retail,Chocolate,2,FALSE,Shops_Retail_Chocolate,Shops_Retail_Chocolate,shopping_bag,kids|eating|shop,The kids are alright!|Eatings cheatin'!|Shop til you drop!
 Shops,Retail,Designer Clothing,1,FALSE,Shops_Retail_Designer Clothing,Shops_Retail_Designer,shopping_bag,shop,Shop til you drop!
-Shops,Retail,Electronics,1,FALSE,Shops_Retail_Electronics,Shops_Retail_Electronics,shopping_bag,shop|wavelength,Shop til you drop!|We're on the same wavelength!
+Shops,Retail,Electronics,1,FALSE,Shops_Retail_Electronics,Shops_Retail_Electronics,shopping_bag,shop|wavelength,Shop til you drop!|Same wavelength!
 Shops,Retail,Jewellery,2,FALSE,Shops_Retail_Jewellery,Shops_Retail_Jewellery,shopping_bag,shop|rock|fancy,Shop til you drop!|Rock n Roll!|Fancy pants!
 Shops,Retail,Luxury Watch,1,FALSE,Shops_Retail_Luxury Watch,Shops_Retail_Luxury,shopping_bag,shop|fancy,Shop til you drop!|Fancy pants!
 Shops,Retail,Newsagents,1,FALSE,Shops_Retail_Newsagents,Shops_Retail_Newsagents,shopping_bag,shop,Shop til you drop!
