@@ -17,11 +17,11 @@ import 'firebase_options.dart';
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
-  runApp(const CarTripApp());
+  runApp(const AirTripApp());
 }
 
-class CarTripApp extends StatelessWidget {
-  const CarTripApp({super.key});
+class AirTripApp extends StatelessWidget {
+  const AirTripApp({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -267,41 +267,31 @@ Color rankColor(int idx) {
 }
 
 const Map<String, String> achievementLabels = {
-  'flying': '✈️ Air today gone tomorrow!',
-  'animals': '🐄 Animals crackers!',
-  'farmer': '🚜 Me and the farmer!',
-  'builder': '🔨 Bob the builder!',
-  'location': '📍 Location location location!',
-  'rainbow': '🌈 Somewhere over the rainbow!',
-  'interest': '📸 Been there done that!',
-  'fuel': '⛽ Fuel the imagination!',
-  'rule': '🇬🇧 Rule Britannia!',
-  'pub': '🍺 Cheers!',
-  'shop_drop': '🛍️ Shop \'til you drop!',
-  'bike': '🚲 On yer bike!',
-  'poppy': '🌺 Lest we forget!',
-  'park_mate': '🚫 You can\'t park there mate!',
-  'top_gear': '🏎️ Top Gear!',
-  'plate': '🍽️ Put it on a plate!',
-  'learning': '📚 Learning the hard way!',
-  'bin': '🗑️ It\'s bin a long time coming!',
-  'bus_coach': '🚌 Bus-ted!',
-  'object': '💎 Object of desire!',
+  'water': '💧 Water you doing!',
+  'kids': '🧒 The kids are alright!',
+  'quiet': '🤫 Having some quiet time!',
+  'rock': '🤘 Rock n Roll!',
+  'eating': '🍽️ Eatings cheatin\'!',
+  'shop': '🛍️ Shop til you drop!',
+  'working': '💼 Working nine-to-five!',
+  'baggage': '🧳 Emotional baggage!',
+  'signs': '🪧 The signs were always there!',
   'wavelength': '📡 We\'re on the same wavelength!',
-  'naturel': '🌿 Au naturel!',
-  'middle_road': '🛣️ Middle of the road!',
-  'speed_freak': '⚡ Speed freak!',
-  'cone_head': '🚧 Cone head!',
-  'distance': '🏃 Long distance runner!',
-  'highway': '💰 Highway robbery!',
-  'orange_black': '🟠 Orange is the new black!',
-  'stand_deliver': '⚔️ Stand and deliver!',
-  'long_haul': '🚚 In it for the long haul!',
-  'vans_man': '🚐 A vans man!',
-  'retail_therapy': '🛒 Retail therapy!',
-  'little_help': '🫶 Every little helps!',
-  'blues_twos': '🚓 Blues and twos!',
-  'bread': '🍞 Bread and butter!',
+  'limp': '🩼 Limping over the finish line!',
+  'head': '🧠 Two heads are better than one!',
+  'glasses': '👓 What a spectacle!',
+  'fancy': '✨ Fancy pants!',
+  'hat': '🎩 If you wanna get ahead!',
+  'sport': '🏅 Good sport!',
+  'top': '👕 Top of the tops!',
+  'colour': '🌈 Somewhere over the rainbow!',
+  'boots': '👢 These boots were made for walking!',
+  'shorts': '🩳 You made short work of it!',
+  'suit': '🤵 Suits you sir!',
+  'birds': '🐦 A little birdie told me!',
+  'object': '💎 Object of desire!',
+  'do_it': '✅ Do it!',
+  'hair': '💇 Hair today gone tomorrow!',
 };
 
 const Map<int, String> pointerTierLabels = {
@@ -417,7 +407,7 @@ class CategoryScreen extends StatefulWidget {
 class _CategoryScreenState extends State<CategoryScreen> {
   static const prefsKey = 'found_map';
   static const achievementsKey = 'all_time_achievements';
-  static const csvPath = 'assets/Car Trip List App Latest Version.csv';
+  static const csvPath = 'assets/Air Trip List App Latest Version.csv';
 
   List<TripItem> items = [];
   Map<String, bool> foundById = {};
@@ -593,7 +583,7 @@ class _CategoryScreenState extends State<CategoryScreen> {
       if (_currentSessionId == null) return;
 
       final doc = await FirebaseFirestore.instance
-          .collection('trip_sessions')
+          .collection('air_trip_sessions')
           .doc(_currentSessionId)
           .get();
 
@@ -928,7 +918,7 @@ class _CategoryScreenState extends State<CategoryScreen> {
     // ✅ If in multiplayer session, sync to Firestore
     if (_currentSessionId != null) {
       await FirebaseFirestore.instance
-          .collection('trip_sessions')
+          .collection('air_trip_sessions')
           .doc(_currentSessionId)
           .update({
             'foundItems': foundById,
@@ -939,7 +929,7 @@ class _CategoryScreenState extends State<CategoryScreen> {
 
   Future<void> _saveTripToFirestore(Trip trip) async {
     await FirebaseFirestore.instance
-        .collection('trips')
+        .collection('air_trips')
         .doc(trip.tripId)
         .set(trip.toMap());
   }
@@ -947,7 +937,9 @@ class _CategoryScreenState extends State<CategoryScreen> {
   Future<List<Trip>> _loadTripsFromFirestore() async {
     await Future.delayed(const Duration(milliseconds: 200));
 
-    final snapshot = await FirebaseFirestore.instance.collection('trips').get();
+    final snapshot = await FirebaseFirestore.instance
+        .collection('air_trips')
+        .get();
 
     final trips = snapshot.docs.map((doc) {
       final data = doc.data();
@@ -1410,7 +1402,7 @@ class _CategoryScreenState extends State<CategoryScreen> {
     if (_currentSessionId != null) {
       try {
         await FirebaseFirestore.instance
-            .collection('trip_sessions')
+            .collection('air_trip_sessions')
             .doc(_currentSessionId)
             .update({
               'active': false,
@@ -1623,7 +1615,7 @@ class _CategoryScreenState extends State<CategoryScreen> {
                     );
 
                     await FirebaseFirestore.instance
-                        .collection('trip_sessions')
+                        .collection('air_trip_sessions')
                         .doc(sessionId)
                         .set({
                           'tripName': typeController.text.trim(),
@@ -1723,7 +1715,7 @@ class _CategoryScreenState extends State<CategoryScreen> {
                     }
 
                     final sessionDoc = await FirebaseFirestore.instance
-                        .collection('trip_sessions')
+                        .collection('air_trip_sessions')
                         .doc(normalizedJoinId)
                         .get();
 
@@ -3395,7 +3387,7 @@ class _TripHistoryScreenState extends State<TripHistoryScreen> {
 
     if (confirm == true) {
       await FirebaseFirestore.instance
-          .collection('trips')
+          .collection('air_trips')
           .doc(trip.tripId)
           .delete();
 

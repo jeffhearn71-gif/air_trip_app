@@ -1,13 +1,13 @@
 {
   "project_info": {
-    "project_number": "240281914253",
-    "project_id": "car-trip-app-8b71f",
-    "storage_bucket": "car-trip-app-8b71f.firebasestorage.app"
+    "project_number": "873699715559",
+    "project_id": "air-trip-app",
+    "storage_bucket": "air-trip-app.firebasestorage.app"
   },
   "client": [
     {
       "client_info": {
-        "mobilesdk_app_id": "1:240281914253:android:c93c0f94906ffd27228bc4",
+        "mobilesdk_app_id": "1:873699715559:android:2a903393aa2827c423f542",
         "android_client_info": {
           "package_name": "com.example.car_trip_app"
         }
@@ -15,7 +15,7 @@
       "oauth_client": [],
       "api_key": [
         {
-          "current_key": "AIzaSyDU9n9tnYsv7ulGlgelsYiLMheUOnH1vnw"
+          "current_key": "AIzaSyBIWv5CGxfD3aWA1mHBIMzKE6NfHPC1xTk"
         }
       ],
       "services": {

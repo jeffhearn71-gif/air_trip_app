@@ -47,29 +47,27 @@ class DefaultFirebaseOptions {
   }
 
   static const FirebaseOptions android = FirebaseOptions(
-    apiKey: 'AIzaSyDU9n9tnYsv7ulGlgelsYiLMheUOnH1vnw',
-    appId: '1:240281914253:android:c93c0f94906ffd27228bc4',
-    messagingSenderId: '240281914253',
-    projectId: 'car-trip-app-8b71f',
-    storageBucket: 'car-trip-app-8b71f.firebasestorage.app',
+    apiKey: 'AIzaSyBIWv5CGxfD3aWA1mHBIMzKE6NfHPC1xTk',
+    appId: '1:873699715559:android:2a903393aa2827c423f542',
+    messagingSenderId: '873699715559',
+    projectId: 'air-trip-app',
+    storageBucket: 'air-trip-app.firebasestorage.app',
   );
 
   static const FirebaseOptions ios = FirebaseOptions(
-    apiKey: 'AIzaSyA99FO95HDaInrIW1eJ55PMlKeyz7rWjSw',
-    appId: '1:240281914253:ios:bca8b4fd506f3afd228bc4',
-    messagingSenderId: '240281914253',
-    projectId: 'car-trip-app-8b71f',
-    storageBucket: 'car-trip-app-8b71f.firebasestorage.app',
-    iosBundleId: 'com.jeffhearn.cartrip',
+    apiKey: 'AIzaSyCwuY5tp_PUcZAIGJqJvdqBzlLHnWSoYcc',
+    appId: '1:873699715559:ios:bd0517c35d02a1e523f542',
+    messagingSenderId: '873699715559',
+    projectId: 'air-trip-app',
+    storageBucket: 'air-trip-app.firebasestorage.app',
+    iosBundleId: 'com.jeff.airtripapp',
   );
-
   static const FirebaseOptions web = FirebaseOptions(
-    apiKey: 'AIzaSyBNqYHjtz-YUT7RAHPsXamEQFLUkAEtAUs',
-    appId: '1:240281914253:web:319863f439ee3f31228bc4',
-    messagingSenderId: '240281914253',
-    projectId: 'car-trip-app-8b71f',
-    authDomain: 'car-trip-app-8b71f.firebaseapp.com',
-    storageBucket: 'car-trip-app-8b71f.firebasestorage.app',
+    apiKey: 'AIzaSyBqeJsQ_9TWSwC2jyQ3-YK0OmUJv1mpiFo',
+    appId: '1:873699715559:web:96a85484571a3cb123f542',
+    messagingSenderId: '873699715559',
+    projectId: 'air-trip-app',
+    authDomain: 'air-trip-app.firebaseapp.com',
+    storageBucket: 'air-trip-app.firebasestorage.app',
   );
-
 }
