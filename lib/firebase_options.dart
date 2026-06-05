@@ -56,11 +56,11 @@ class DefaultFirebaseOptions {
 
   static const FirebaseOptions ios = FirebaseOptions(
     apiKey: 'AIzaSyCwuY5tp_PUcZAIGJqJvdqBzlLHnWSoYcc',
-    appId: '1:873699715559:ios:bd0517c35d02a1e523f542',
+    appId: '1:873699715559:ios:6b8d7fd2aad9b2ce23f542',
     messagingSenderId: '873699715559',
     projectId: 'air-trip-app',
     storageBucket: 'air-trip-app.firebasestorage.app',
-    iosBundleId: 'com.jeff.airtripapp',
+    iosBundleId: 'com.jeffhearn.airtrip',
   );
   static const FirebaseOptions web = FirebaseOptions(
     apiKey: 'AIzaSyBqeJsQ_9TWSwC2jyQ3-YK0OmUJv1mpiFo',
