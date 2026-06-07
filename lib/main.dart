@@ -2020,6 +2020,17 @@ class _CategoryScreenState extends State<CategoryScreen> {
                   );
                   break;
 
+                case 'stats':
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (_) => TripStatisticsScreen(
+                        loadTrips: _loadTripsFromFirestore,
+                      ),
+                    ),
+                  );
+                  break;
+
                 case 'ranks':
                   Navigator.push(
                     context,
@@ -2110,6 +2121,21 @@ class _CategoryScreenState extends State<CategoryScreen> {
                     ),
                     SizedBox(width: 6),
                     Text('Trip Archives'),
+                  ],
+                ),
+              ),
+              const PopupMenuItem(
+                value: 'stats',
+                child: Row(
+                  children: [
+                    SizedBox(
+                      width: 24,
+                      child: Center(
+                        child: Text('📊', style: TextStyle(fontSize: 18)),
+                      ),
+                    ),
+                    SizedBox(width: 6),
+                    Text('Trip Statistics'),
                   ],
                 ),
               ),
@@ -4172,6 +4198,374 @@ class AchievementsScreen extends StatelessWidget {
                   ? const Icon(Icons.check_circle, color: Colors.green)
                   : null,
             ),
+          );
+        },
+      ),
+    );
+  }
+}
+
+enum StatsSortMode { score, percent, items, achievements, subCats, cats, rank }
+
+class TripStatisticsScreen extends StatefulWidget {
+  final Future<List<Trip>> Function() loadTrips;
+
+  const TripStatisticsScreen({super.key, required this.loadTrips});
+
+  @override
+  State<TripStatisticsScreen> createState() => _TripStatisticsScreenState();
+}
+
+class _TripStatisticsScreenState extends State<TripStatisticsScreen> {
+  late Future<List<Trip>> _tripsFuture;
+  StatsSortMode _sortMode = StatsSortMode.percent;
+
+  @override
+  void initState() {
+    super.initState();
+    _tripsFuture = widget.loadTrips();
+  }
+
+  String _formatDate(DateTime dt) {
+    const months = [
+      'Jan',
+      'Feb',
+      'Mar',
+      'Apr',
+      'May',
+      'Jun',
+      'Jul',
+      'Aug',
+      'Sep',
+      'Oct',
+      'Nov',
+      'Dec',
+    ];
+
+    final day = dt.day.toString().padLeft(2, '0');
+    final month = months[dt.month - 1];
+    final year = dt.year.toString();
+
+    return '$day $month $year';
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(title: const Text('Trip Statistics')),
+      body: FutureBuilder<List<Trip>>(
+        future: _tripsFuture,
+        builder: (context, snapshot) {
+          if (snapshot.connectionState != ConnectionState.done) {
+            return const Center(child: CircularProgressIndicator());
+          }
+
+          if (snapshot.hasError) {
+            return Center(
+              child: Text('Error loading trips:\n${snapshot.error}'),
+            );
+          }
+
+          final trips = List<Trip>.from(snapshot.data ?? []);
+
+          if (trips.isEmpty) {
+            return const Center(child: Text('No trips yet'));
+          }
+
+          // ✅ SORT LOGIC
+          trips.sort((a, b) {
+            switch (_sortMode) {
+              case StatsSortMode.score:
+                return b.score.compareTo(a.score);
+
+              case StatsSortMode.percent:
+                return b.percent.compareTo(a.percent);
+
+              case StatsSortMode.items:
+                return b.itemsFound.compareTo(a.itemsFound);
+
+              case StatsSortMode.achievements:
+                return b.completedAchievementIds.length.compareTo(
+                  a.completedAchievementIds.length,
+                );
+
+              case StatsSortMode.subCats:
+                return b.subCategoriesCompleted.compareTo(
+                  a.subCategoriesCompleted,
+                );
+
+              case StatsSortMode.cats:
+                return b.categoriesCompleted.compareTo(a.categoriesCompleted);
+
+              case StatsSortMode.rank:
+                return b.finalRankIndex.compareTo(a.finalRankIndex);
+            }
+          });
+
+          return Column(
+            children: [
+              // ✅ SUMMARY
+              Padding(
+                padding: const EdgeInsets.all(10),
+                child: Builder(
+                  builder: (context) {
+                    final totalTrips = trips.length;
+
+                    final bestScore = trips
+                        .map((t) => t.percent)
+                        .reduce((a, b) => a > b ? a : b);
+
+                    final mostAchievements = trips
+                        .map((t) => t.completedAchievementIds.length)
+                        .reduce((a, b) => a > b ? a : b);
+
+                    return Card(
+                      elevation: 3,
+                      child: Padding(
+                        padding: const EdgeInsets.all(12),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            const Text(
+                              'Summary',
+                              style: TextStyle(
+                                fontWeight: FontWeight.bold,
+                                fontSize: 16,
+                              ),
+                            ),
+                            const SizedBox(height: 8),
+                            Text('Total Trips: $totalTrips'),
+                            Text(
+                              'Best Score: ${bestScore.toStringAsFixed(1)}%',
+                            ),
+                            Text('Most Achievements: $mostAchievements'),
+                          ],
+                        ),
+                      ),
+                    );
+                  },
+                ),
+              ),
+
+              // ✅ DROPDOWN
+              Padding(
+                padding: const EdgeInsets.all(10),
+                child: Row(
+                  children: [
+                    const Text('Sort by: '),
+                    const SizedBox(width: 10),
+                    DropdownButton<StatsSortMode>(
+                      value: _sortMode,
+                      onChanged: (mode) {
+                        if (mode == null) return;
+                        setState(() {
+                          _sortMode = mode;
+                        });
+                      },
+                      items: const [
+                        DropdownMenuItem(
+                          value: StatsSortMode.score,
+                          child: Row(
+                            children: [
+                              SizedBox(
+                                width: 24,
+                                child: Center(
+                                  child: Text(
+                                    '📈',
+                                    style: TextStyle(fontSize: 18),
+                                  ),
+                                ),
+                              ),
+                              SizedBox(width: 6),
+                              Text('Score'),
+                            ],
+                          ),
+                        ),
+
+                        DropdownMenuItem(
+                          value: StatsSortMode.percent,
+                          child: Row(
+                            children: [
+                              SizedBox(
+                                width: 24,
+                                child: Center(
+                                  child: Text(
+                                    '📊',
+                                    style: TextStyle(fontSize: 18),
+                                  ),
+                                ),
+                              ),
+                              SizedBox(width: 6),
+                              Text('Percent'),
+                            ],
+                          ),
+                        ),
+
+                        DropdownMenuItem(
+                          value: StatsSortMode.items,
+                          child: Row(
+                            children: [
+                              SizedBox(
+                                width: 24,
+                                child: Center(
+                                  child: Text(
+                                    '📦',
+                                    style: TextStyle(fontSize: 18),
+                                  ),
+                                ),
+                              ),
+                              SizedBox(width: 6),
+                              Text('Items Found'),
+                            ],
+                          ),
+                        ),
+
+                        DropdownMenuItem(
+                          value: StatsSortMode.achievements,
+                          child: Row(
+                            children: [
+                              SizedBox(
+                                width: 24,
+                                child: Center(
+                                  child: Text(
+                                    '🎯',
+                                    style: TextStyle(fontSize: 18),
+                                  ),
+                                ),
+                              ),
+                              SizedBox(width: 6),
+                              Text('Achievements'),
+                            ],
+                          ),
+                        ),
+
+                        DropdownMenuItem(
+                          value: StatsSortMode.subCats,
+                          child: Row(
+                            children: [
+                              SizedBox(
+                                width: 24,
+                                child: Center(
+                                  child: Text(
+                                    '🧩',
+                                    style: TextStyle(fontSize: 18),
+                                  ),
+                                ),
+                              ),
+                              SizedBox(width: 6),
+                              Text('Sub-Categories'),
+                            ],
+                          ),
+                        ),
+
+                        DropdownMenuItem(
+                          value: StatsSortMode.cats,
+                          child: Row(
+                            children: [
+                              SizedBox(
+                                width: 24,
+                                child: Center(
+                                  child: Text(
+                                    '📂',
+                                    style: TextStyle(fontSize: 18),
+                                  ),
+                                ),
+                              ),
+                              SizedBox(width: 6),
+                              Text('Categories'),
+                            ],
+                          ),
+                        ),
+
+                        DropdownMenuItem(
+                          value: StatsSortMode.rank,
+                          child: Row(
+                            children: [
+                              SizedBox(
+                                width: 24,
+                                child: Center(
+                                  child: Text(
+                                    '🏆',
+                                    style: TextStyle(fontSize: 18),
+                                  ),
+                                ),
+                              ),
+                              SizedBox(width: 6),
+                              Text('Rank'),
+                            ],
+                          ),
+                        ),
+                      ],
+                    ),
+                  ],
+                ),
+              ),
+
+              // ✅ LIST
+              Expanded(
+                child: ListView.builder(
+                  itemCount: trips.length,
+                  itemBuilder: (context, index) {
+                    final trip = trips[index];
+
+                    return Card(
+                      margin: const EdgeInsets.symmetric(
+                        horizontal: 12,
+                        vertical: 6,
+                      ),
+                      child: ListTile(
+                        title: Text(
+                          trip.tripName,
+                          style: const TextStyle(fontWeight: FontWeight.bold),
+                        ),
+                        subtitle: Text(
+                          '✈️ ${trip.startLocation} → ${trip.endLocation}\n'
+                          '📅 ${_formatDate(trip.startTime)}',
+                        ),
+                        trailing: Column(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          crossAxisAlignment: CrossAxisAlignment.end,
+                          children: [
+                            Container(
+                              padding: const EdgeInsets.symmetric(
+                                horizontal: 10,
+                                vertical: 6,
+                              ),
+                              decoration: BoxDecoration(
+                                color: _progressColor(
+                                  (trip.percent / 100).clamp(0.0, 1.0),
+                                ),
+                                borderRadius: BorderRadius.circular(20),
+                              ),
+                              child: Text(
+                                '${trip.percent.toStringAsFixed(0)}%',
+                                style: const TextStyle(
+                                  color: Colors.white,
+                                  fontWeight: FontWeight.bold,
+                                ),
+                              ),
+                            ),
+                            const SizedBox(height: 4),
+                            Flexible(
+                              child: Text(
+                                kRanks[trip.finalRankIndex],
+                                textAlign: TextAlign.right,
+                                overflow: TextOverflow.ellipsis,
+                                style: TextStyle(
+                                  fontSize: 12,
+                                  fontWeight: FontWeight.w600,
+                                  color: rankColor(trip.finalRankIndex),
+                                ),
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                    );
+                  },
+                ),
+              ),
+            ],
           );
         },
       ),
