@@ -2413,9 +2413,62 @@ class _CategoryScreenState extends State<CategoryScreen> {
 
           Expanded(
             child: ListView.builder(
-              itemCount: categoryStats.length,
+              itemCount: categoryStats.length + 1,
               itemBuilder: (context, index) {
-                final stat = categoryStats[index];
+                // ✅ MASTER LIST entry
+                if (index == 0) {
+                  final remainingCount = items
+                      .where((it) => foundById[it.itemId] != true)
+                      .length;
+
+                  return Card(
+                    margin: const EdgeInsets.symmetric(
+                      horizontal: 12,
+                      vertical: 7,
+                    ),
+                    elevation: 4,
+                    color: Colors.blueGrey.shade100,
+                    child: ListTile(
+                      leading: const Icon(Icons.list, size: 36),
+                      title: Text(
+                        '★ MASTER LIST ★   ($remainingCount left)',
+                        style: const TextStyle(fontWeight: FontWeight.bold),
+                      ),
+                      trailing: const Icon(Icons.chevron_right),
+
+                      onTap: () async {
+                        final remainingItems = items
+                            .where((it) => foundById[it.itemId] != true)
+                            .toList();
+
+                        await Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (_) => ItemScreen(
+                              title: '★ MASTER LIST ★',
+                              items: remainingItems,
+                              foundById: foundById,
+                              onToggle: _toggleAndPersist,
+                              isTripActive: _tripStartTime != null,
+                              bonusItemIds: _bonusItemIds,
+                              tripleItemIds: _tripleItemIds,
+                              playSfx: _requestSfx,
+                              onAchievementCheck: _handleAchievementCheck,
+                              onPointerTierCheck: _handlePointerTierCheck,
+                            ),
+                          ),
+                        );
+
+                        setState(() {
+                          _recomputeCategoryStats();
+                        });
+                      },
+                    ),
+                  );
+                }
+
+                final stat = categoryStats[index - 1];
+
                 final p = stat.progress;
                 final percent = (p * 100).round();
                 final remaining = stat.remainingCount;
@@ -3079,7 +3132,11 @@ class _ItemScreenState extends State<ItemScreen> {
               text: TextSpan(
                 style: DefaultTextStyle.of(context).style,
                 children: [
-                  TextSpan(text: '${it.name}  (+${it.points})'),
+                  TextSpan(text: '${it.name}  (+${it.points})\n'),
+                  TextSpan(
+                    text: '${it.category} • ${it.subCategory}',
+                    style: const TextStyle(fontSize: 12, color: Colors.black54),
+                  ),
 
                   if (widget.tripleItemIds.contains(it.itemId))
                     const TextSpan(text: '  '),
